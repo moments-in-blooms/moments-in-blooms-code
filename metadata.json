@@ -1,0 +1,8 @@
+{
+  "name": "Moments in Bloom",
+  "description": "Luxury Event Styling & Floral Design Application",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
