@@ -61,6 +61,11 @@ function Login() {
       return
     }
 
+    try {
+      window.sessionStorage.setItem('mib_pwa_show_after_login', '1')
+    } catch {
+      void 0
+    }
     const from = location.state?.from
     navigate(from || '/admin/dashboard', { replace: true })
   }

@@ -1,28 +1,51 @@
 import styled from 'styled-components'
 
 export const SaveBarShell = styled.div`
-  position: sticky;
+  position: fixed;
   bottom: 0;
+  left: var(--admin-sidebar-width, 0px);
+  right: 0;
   z-index: ${({ theme }) => theme.layers.backToTop};
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: ${({ theme }) => theme.spacing.md};
-  margin-top: ${({ theme }) => theme.spacing.xxl};
-  padding: 0.9rem ${({ theme }) => theme.spacing.lg};
-  padding-bottom: calc(0.9rem + env(safe-area-inset-bottom));
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.radii.lg};
+  padding: 0.75rem ${({ theme }) => theme.spacing.lg};
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+  border-top: 1px solid ${({ theme }) => theme.colors.border};
   background: ${({ theme }) => theme.surfaces.headerScrolled};
   box-shadow: ${({ theme }) => theme.shadows.header};
   backdrop-filter: blur(${({ theme }) => theme.effects.headerBlur});
 
+  @media (max-width: ${({ theme }) => theme.breakpoints.desktop}) {
+    left: 0;
+  }
+
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    padding: ${({ theme }) => theme.spacing.md};
-    padding-bottom: calc(${({ theme }) => theme.spacing.md} + env(safe-area-inset-bottom));
-    flex-direction: column;
-    align-items: stretch;
+    padding: 0.5rem ${({ theme }) => theme.spacing.xs};
+    gap: ${({ theme }) => theme.spacing.xs};
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+
+    /* icon-only: hide text labels, keep square buttons in one row */
+    .btn-label {
+      display: none;
+    }
+
+    button {
+      padding: 0;
+      width: 2.25rem;
+      height: 2.25rem;
+      min-width: 2.25rem;
+      justify-content: center;
+      gap: 0;
+    }
+
+    button svg {
+      transform: none !important;
+    }
   }
 `
 
@@ -41,6 +64,10 @@ export const SaveStatus = styled.span`
     height: 0.5rem;
     border-radius: 50%;
     background: ${({ theme }) => theme.colors.warning};
+  }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    display: none;
   }
 `
 
@@ -69,13 +96,21 @@ export const SaveActionsRow = styled.div`
   margin-left: auto;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    margin-left: 0;
-    width: 100%;
-    flex-direction: column;
-    align-items: stretch;
+    margin-left: auto;
+    width: auto;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: ${({ theme }) => theme.spacing.xs};
+  }
+`
 
-    > * {
-      width: 100%;
-    }
+export const SaveBarDeleteZone = styled.div`
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    width: auto;
   }
 `

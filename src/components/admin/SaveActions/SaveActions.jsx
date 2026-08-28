@@ -1,11 +1,20 @@
 import { useState } from 'react'
-import { FiAlertCircle, FiCheckCircle, FiInfo } from 'react-icons/fi'
+import {
+  FiAlertCircle,
+  FiCheck,
+  FiCheckCircle,
+  FiInfo,
+  FiRotateCcw,
+  FiTrash2,
+  FiX,
+} from 'react-icons/fi'
 import Button from '../../Button/index.js'
 import { formatSavedAt } from '../../../utils/formatDate.js'
 import { showError as showSwalError, showSuccess } from '../../../utils/sweetAlert.js'
 import {
   SaveActionsError,
   SaveActionsRow,
+  SaveBarDeleteZone,
   SaveBarShell,
   SaveStatus,
 } from './SaveActions.styles.js'
@@ -19,6 +28,8 @@ function SaveActions({
   onSave,
   onCancel,
   onReset,
+  onDelete,
+  deleteLabel = 'Delete',
   submitLabel = 'Save Changes',
   cancelLabel = 'Cancel',
   resetLabel = 'Discard',
@@ -64,22 +75,38 @@ function SaveActions({
 
   return (
     <SaveBarShell>
+      {onDelete ? (
+        <SaveBarDeleteZone>
+          <Button
+            type="button"
+            variant="ghost"
+            radius="md"
+            disabled={isSaving}
+            onClick={onDelete}
+            aria-label={deleteLabel}
+            title={deleteLabel}
+          >
+            <FiTrash2 aria-hidden="true" size={16} />
+            <span className="btn-label">{deleteLabel}</span>
+          </Button>
+        </SaveBarDeleteZone>
+      ) : null}
       <div>
         <SaveStatus $dirty={dirty} role="status" aria-live="polite">
           {dirty ? (
             <>
               <span className="status-dot" aria-hidden="true" />
-              Unsaved changes
+              <span className="status-label">Unsaved changes</span>
             </>
           ) : savedAt ? (
             <>
               <FiCheckCircle aria-hidden="true" size={15} />
-              Saved {formatSavedAt(savedAt)}
+              <span className="status-label">Saved {formatSavedAt(savedAt)}</span>
             </>
           ) : (
             <>
               <FiInfo aria-hidden="true" size={15} />
-              No changes yet
+              <span className="status-label">No changes yet</span>
             </>
           )}
         </SaveStatus>
@@ -98,8 +125,11 @@ function SaveActions({
             radius="md"
             disabled={!dirty || isSaving}
             onClick={handleReset}
+            aria-label={resetLabel}
+            title={resetLabel}
           >
-            {resetLabel}
+            <FiRotateCcw aria-hidden="true" size={16} />
+            <span className="btn-label">{resetLabel}</span>
           </Button>
         ) : null}
         {onCancel ? (
@@ -109,8 +139,11 @@ function SaveActions({
             radius="md"
             disabled={isSaving}
             onClick={onCancel}
+            aria-label={cancelLabel}
+            title={cancelLabel}
           >
-            {cancelLabel}
+            <FiX aria-hidden="true" size={16} />
+            <span className="btn-label">{cancelLabel}</span>
           </Button>
         ) : null}
         <Button
@@ -121,8 +154,11 @@ function SaveActions({
           loading={isSaving}
           onClick={handleSave}
           aria-busy={isSaving}
+          aria-label={isSaving ? 'Saving' : submitLabel}
+          title={isSaving ? 'Saving' : submitLabel}
         >
-          {isSaving ? 'Saving…' : submitLabel}
+          <FiCheck aria-hidden="true" size={16} />
+          <span className="btn-label">{isSaving ? 'Saving…' : submitLabel}</span>
         </Button>
       </SaveActionsRow>
     </SaveBarShell>

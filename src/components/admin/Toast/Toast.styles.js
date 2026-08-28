@@ -30,7 +30,8 @@ export const ToastShell = styled(motion.div)`
     css`
       position: fixed;
       top: 1rem;
-      right: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
       z-index: ${theme.layers.loading + 1};
       width: min(24rem, calc(100vw - 2rem));
       max-width: none;

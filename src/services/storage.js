@@ -1,7 +1,7 @@
 import { isSupabaseConfigured, supabase } from './supabaseClient.js'
 
 const BUCKET = 'public-media'
-const MAX_SIZE_MB = 5
+const MAX_SIZE_MB = 20
 const ALLOWED_TYPES = new Set([
   'image/jpeg',
   'image/png',

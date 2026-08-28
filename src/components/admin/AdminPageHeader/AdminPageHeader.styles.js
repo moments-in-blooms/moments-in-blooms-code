@@ -33,9 +33,10 @@ export const PageHeaderTitle = styled.h2`
   margin: 0;
   color: ${({ theme }) => theme.colors.textPrimary};
   font-family: ${({ theme }) => theme.typography.headingFont};
-  font-size: clamp(1.5rem, 2.5vw, 1.9rem);
-  font-weight: 500;
+  font-size: clamp(1.9rem, 3.2vw, 2.4rem);
+  font-weight: 600;
   line-height: 1.15;
+  letter-spacing: -0.015em;
 `
 
 export const PageHeaderDescription = styled.p`

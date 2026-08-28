@@ -22,7 +22,7 @@ function ImageField({
   alt,
   onAltChange,
   error,
-  maxSizeMb = 5,
+  maxSizeMb = 20,
 }) {
   const [modalOpen, setModalOpen] = useState(false)
   const [thumbError, setThumbError] = useState(false)
@@ -77,7 +77,7 @@ function ImageField({
         <TextField
           label="Alt text"
           value={alt ?? ''}
-          onChange={(event) => onAltChange(event.target.value)}
+          onChange={(event) => onAltChange(event)}
           hint="Describes the image for accessibility and SEO."
         />
       ) : null}

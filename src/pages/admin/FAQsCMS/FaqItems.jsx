@@ -214,7 +214,7 @@ function FaqItems() {
       <AdminPageHeader
         {...adminPageMeta.faqsItems}
         actions={
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
             {selectedIds.size > 0 ? (
               <Button variant="danger" onClick={() => setBulkConfirm(true)} disabled={busy}>
                 <FiTrash2 aria-hidden="true" size={15} />
@@ -270,12 +270,13 @@ function FaqItems() {
           />
 
           {filteredFaqs.length > 0 ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.75rem' }}>
               <input
                 type="checkbox"
                 checked={selectedIds.size === filteredFaqs.length && filteredFaqs.length > 0}
                 onChange={toggleSelectAll}
                 aria-label="Select all FAQs"
+                style={{ width: '1.2rem', height: '1.2rem', accentColor: '#1A1A1A' }}
               />
               <span style={{ fontSize: '0.82rem', color: '#6E6761' }}>
                 Select all ({filteredFaqs.length})
@@ -337,14 +338,15 @@ function FaqItems() {
                 .sort(byOrder)
               const index = siblings.findIndex((entry) => entry.id === faq.id)
               return (
-                <div key={faq.id} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div key={faq.id} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', minWidth: 0, overflow: 'hidden' }}>
                   <input
                     type="checkbox"
                     checked={selectedIds.has(faq.id)}
                     onChange={() => toggleSelect(faq.id)}
                     aria-label={`Select ${faq.question}`}
+                    style={{ width: '1.2rem', height: '1.2rem', accentColor: '#1A1A1A', marginTop: '1.1rem', flex: '0 0 auto' }}
                   />
-                  <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
                     <FaqRow
                       faq={faq}
                       categoryName={categoryName(faq.category_id)}

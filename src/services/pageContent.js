@@ -1,5 +1,6 @@
 import {
   getStoredContent,
+  normalizeContent,
   resetPageContent,
   savePageContent,
 } from './content.js'
@@ -74,7 +75,7 @@ export async function fetchPageContent(pageKey) {
 
   const row = result.data
   return {
-    data: row ? { values: row.content, savedAt: row.updated_at } : null,
+    data: row ? { values: normalizeContent(pageKey, row.content), savedAt: row.updated_at } : null,
     error: null,
   }
 }
@@ -101,7 +102,7 @@ export async function savePageContentRemote(pageKey, values) {
   }
 
   return {
-    data: { values: result.data.content, savedAt: result.data.updated_at },
+    data: { values: normalizeContent(pageKey, result.data.content), savedAt: result.data.updated_at },
     error: null,
   }
 }
@@ -142,7 +143,7 @@ export function subscribeToPageContent(onChange) {
         }
         const row = payload.new
         if (!row?.page_key || !SUPABASE_CONTENT_PAGES.has(row.page_key)) return
-        onChange({ pageKey: row.page_key, values: row.content, savedAt: row.updated_at })
+        onChange({ pageKey: row.page_key, values: normalizeContent(row.page_key, row.content), savedAt: row.updated_at })
       },
     )
     .subscribe()

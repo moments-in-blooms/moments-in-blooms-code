@@ -53,13 +53,25 @@ function Dashboard() {
   const { deferredPrompt, isStandalone, promptInstall } = usePwaInstall()
 
   useEffect(() => {
+    const shouldShowAfterLogin = (() => {
+      try {
+        return window.sessionStorage.getItem('mib_pwa_show_after_login') === '1'
+      } catch {
+        return false
+      }
+    })()
     if (
       !isStandalone &&
       !window.localStorage.getItem('mib_pwa_modal_dismissed') &&
-      !window.sessionStorage.getItem('mib_pwa_modal_shown_session')
+      shouldShowAfterLogin
     ) {
-      const timer = window.setTimeout(() => setShowPwaModal(true), 800)
-      window.sessionStorage.setItem('mib_pwa_modal_shown_session', '1')
+      try {
+        window.sessionStorage.removeItem('mib_pwa_show_after_login')
+        window.sessionStorage.setItem('mib_pwa_modal_shown_session', '1')
+      } catch {
+        void 0
+      }
+      const timer = window.setTimeout(() => setShowPwaModal(true), 600)
       return () => window.clearTimeout(timer)
     }
     return undefined

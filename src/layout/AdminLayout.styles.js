@@ -28,7 +28,7 @@ export const AdminMain = styled.main`
   max-width: ${({ theme }) => theme.layout.containerMaxWidth};
   margin-inline: auto;
   padding: clamp(1.25rem, 3vw, 2.5rem);
-  padding-block-end: ${({ theme }) => theme.spacing.xxl};
+  padding-block-end: calc(5.5rem + env(safe-area-inset-bottom));
 
   &:focus {
     outline: none;

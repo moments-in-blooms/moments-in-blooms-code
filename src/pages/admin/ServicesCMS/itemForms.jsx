@@ -98,6 +98,8 @@ export function PhotoboothPackageForm({ value, onChange }) {
 
 export function BlissfulNestPackageForm({ value, onChange }) {
   const patch = (next) => onChange((prev) => ({ ...prev, ...(typeof next === 'function' ? next(prev) : next) }))
+  const imageSrc = typeof value?.image === 'string' ? value.image : value?.image?.src ?? ''
+  const imageAlt = typeof value?.image === 'string' ? '' : value?.image?.alt ?? ''
   return (
     <>
       <TextField
@@ -122,6 +124,12 @@ export function BlissfulNestPackageForm({ value, onChange }) {
         value={value?.description ?? ''}
         onChange={(event) => patch({ description: event.target.value })}
       />
+      <ToggleSwitch
+        label="Featured"
+        hint="Featured prize options are highlighted on the public site. Multiple can be featured."
+        checked={Boolean(value?.isFeatured)}
+        onChange={(checked) => patch({ isFeatured: checked })}
+      />
       <StringsRepeater
         label="Prize"
         items={value?.items ?? []}
@@ -131,8 +139,10 @@ export function BlissfulNestPackageForm({ value, onChange }) {
       />
       <ImageField
         label="Package image"
-        value={value?.image ?? ''}
-        onChange={(image) => patch({ image })}
+        value={imageSrc}
+        onChange={(src) => patch({ image: { src, alt: imageAlt } })}
+        alt={imageAlt}
+        onAltChange={(event) => patch({ image: { src: imageSrc, alt: event.target.value } })}
       />
     </>
   )

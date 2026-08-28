@@ -45,6 +45,10 @@ export const FaqEqualGrid = styled.div`
   align-items: stretch;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.desktop}) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     grid-template-columns: 1fr;
   }
 
@@ -52,6 +56,10 @@ export const FaqEqualGrid = styled.div`
   > a {
     height: 100%;
     min-height: 14rem;
+
+    @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+      min-height: auto;
+    }
   }
 `
 
@@ -88,6 +96,10 @@ export const FaqHubCard = styled(NavLink)`
     outline-offset: 2px;
     border-radius: ${({ theme }) => theme.radii.md};
   }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    padding: ${({ theme }) => theme.spacing.lg};
+  }
 `
 
 export const FaqHubCardTitle = styled.h2`
@@ -111,7 +123,8 @@ export const FaqHubFooter = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: ${({ theme }) => theme.spacing.md};
+  flex-wrap: wrap;
+  gap: ${({ theme }) => theme.spacing.sm};
   margin-top: auto;
   padding-top: ${({ theme }) => theme.spacing.md};
 `
@@ -161,6 +174,11 @@ export const FaqCard = styled.article`
     align-items: stretch;
     gap: ${({ theme }) => theme.spacing.md};
   }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    padding: ${({ theme }) => theme.spacing.md};
+    gap: ${({ theme }) => theme.spacing.sm};
+  }
 `
 
 export const FaqCardMain = styled.div`
@@ -194,6 +212,10 @@ export const FaqCardTitle = styled(NavLink)`
     outline-offset: 2px;
     border-radius: ${({ theme }) => theme.radii.sm};
   }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    font-size: 1.05rem;
+  }
 `
 
 export const FaqCardMeta = styled.p`
@@ -209,20 +231,32 @@ export const FaqCardAnswerPreview = styled.p`
   color: ${({ theme }) => theme.colors.textSecondary};
   font-size: 0.85rem;
   line-height: 1.5;
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   overflow: hidden;
-  text-overflow: ellipsis;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    -webkit-line-clamp: 3;
+    font-size: 0.8rem;
+  }
 `
 
 export const FaqCardSide = styled.div`
   display: flex;
   flex: 0 0 auto;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing.md};
+  gap: ${({ theme }) => theme.spacing.sm};
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: ${({ theme }) => theme.spacing.xs};
+  }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    width: 100%;
+    justify-content: flex-start;
   }
 `
 
@@ -230,13 +264,20 @@ export const FaqCardActions = styled.div`
   display: inline-flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing.xs};
+  flex-wrap: wrap;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    gap: 0.35rem;
+  }
 `
 
 export const FaqActionButton = styled.button`
   display: inline-grid;
   place-items: center;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.radii.sm};
   background: ${({ theme }) => theme.colors.background};
@@ -273,8 +314,10 @@ export const FaqActionDanger = styled(FaqActionButton)`
 export const FaqActionLink = styled(NavLink)`
   display: inline-grid;
   place-items: center;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.radii.sm};
   background: ${({ theme }) => theme.colors.background};
@@ -353,6 +396,11 @@ export const FaqArchivedBanner = styled.div`
   color: ${({ theme }) => theme.colors.danger};
   font-size: 0.9rem;
   line-height: 1.6;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
+    font-size: 0.85rem;
+  }
 `
 
 export const FaqInfoNotice = styled.div`
@@ -368,6 +416,11 @@ export const FaqInfoNotice = styled.div`
   color: ${({ theme }) => theme.colors.textSecondary};
   font-size: 0.9rem;
   line-height: 1.6;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
+    padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
+    font-size: 0.85rem;
+  }
 `
 
 export const FaqFormGrid = styled.div`

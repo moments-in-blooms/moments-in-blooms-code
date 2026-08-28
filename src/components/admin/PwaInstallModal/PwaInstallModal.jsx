@@ -3,6 +3,7 @@ import { FiCheckCircle, FiDownload, FiSmartphone, FiTablet, FiX } from 'react-ic
 import Button from '../../Button/index.js'
 import Modal from '../Modal/index.js'
 import {
+  AppIcon,
   ChoiceButton,
   ChoiceGrid,
   ModalHeader,
@@ -108,7 +109,7 @@ function PwaInstallModal({ open, onClose, deferredPrompt, onInstall, isStandalon
     <Modal
       open={open}
       title="Install Moments in Blooms"
-      description="Add to your home screen for quick access — works on Android and iPhone."
+      description="Add to your home screen for instant, offline access — auto-updates in background."
       onClose={handleClose}
       footer={
         <>
@@ -123,6 +124,10 @@ function PwaInstallModal({ open, onClose, deferredPrompt, onInstall, isStandalon
         </>
       }
     >
+      <div style={{ display: 'grid', placeItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+        <AppIcon src="/pwa-512x512.png" alt="Moments in Blooms app icon" width={72} height={72} />
+        <span style={{ fontSize: '0.72rem', color: '#6E6761', fontFamily: 'Montserrat, sans-serif' }}>White background • Offline ready • Auto-update</span>
+      </div>
       <ModalHeader>
         <FiSmartphone aria-hidden="true" size={18} />
         <ModalTitle>Choose your device</ModalTitle>

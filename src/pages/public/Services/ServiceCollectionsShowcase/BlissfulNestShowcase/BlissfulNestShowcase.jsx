@@ -45,29 +45,33 @@ function BlissfulNestShowcase({ collection, intro, packages = [] }) {
             whileInView="visible"
             viewport={VIEWPORT_DEFAULT}
           >
-            {packages.map((pkg) => (
-              <motion.div key={pkg.id} variants={rise}>
-                <S.PackageCard>
-                  <S.PackageImageWrapper>
-                    <img src={pkg.image} alt={pkg.name} loading="lazy" />
-                  </S.PackageImageWrapper>
-                  <S.PackageBody>
-                    <S.PackageBadge>{pkg.badge}</S.PackageBadge>
-                    <S.PackageName>{pkg.name}</S.PackageName>
-                    <S.PackageTagline>{pkg.tagline}</S.PackageTagline>
-                    <S.PackageDesc>{pkg.description}</S.PackageDesc>
-                    <S.PackageItems>
-                      {(pkg.items ?? []).map((item) => (
-                        <li key={item}>
-                          <FiGift />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </S.PackageItems>
-                  </S.PackageBody>
-                </S.PackageCard>
-              </motion.div>
-            ))}
+            {packages.map((pkg) => {
+              const imgSrc = typeof pkg.image === 'string' ? pkg.image : pkg.image?.src ?? ''
+              const imgAlt = typeof pkg.image === 'string' ? pkg.name : pkg.image?.alt || pkg.name
+              return (
+                <motion.div key={pkg.id} variants={rise}>
+                  <S.PackageCard>
+                    <S.PackageImageWrapper>
+                      <img src={imgSrc} alt={imgAlt} loading="lazy" />
+                    </S.PackageImageWrapper>
+                    <S.PackageBody>
+                      {pkg.isFeatured ? <S.PackageBadge>Featured</S.PackageBadge> : <S.PackageBadge>{pkg.badge}</S.PackageBadge>}
+                      <S.PackageName>{pkg.name}</S.PackageName>
+                      <S.PackageTagline>{pkg.tagline}</S.PackageTagline>
+                      <S.PackageDesc>{pkg.description}</S.PackageDesc>
+                      <S.PackageItems>
+                        {(pkg.items ?? []).map((item) => (
+                          <li key={item}>
+                            <FiGift />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </S.PackageItems>
+                    </S.PackageBody>
+                  </S.PackageCard>
+                </motion.div>
+              )
+            })}
           </S.PackageGrid>
         </S.ProductCategory>
       ))}

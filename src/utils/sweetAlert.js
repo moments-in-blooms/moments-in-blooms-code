@@ -15,6 +15,7 @@ const baseConfig = {
 export const showSuccess = (title = 'Success', text) =>
   Swal.fire({
     ...baseConfig,
+    position: 'center',
     icon: 'success',
     title,
     text,

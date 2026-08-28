@@ -19,6 +19,11 @@ function CollectionContent({
   blissfulNestIntro,
   blissfulNestPackages,
 }) {
+  // Generic: any collection with sections uses data-driven catalogue
+  if (Array.isArray(collection.sections) && collection.sections.length > 0) {
+    return <DecorHireCatalogue collection={collection} />;
+  }
+
   if (collection.id === "decor-hire") {
     return <DecorHireCatalogue collection={collection} />;
   }
@@ -42,6 +47,7 @@ function CollectionContent({
     );
   }
 
+  // New generic collections without sections — hero already rendered, no extra
   return null;
 }
 

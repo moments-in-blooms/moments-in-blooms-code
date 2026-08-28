@@ -143,12 +143,18 @@ export const servicesSections = [
       description: '',
       badge: '',
       items: [],
-      image: '',
+      image: { src: '', alt: '' },
+      isFeatured: false,
     }),
     itemTitle: (item) => item.name || 'New package',
     itemDescription: (item) => item.tagline,
     itemMeta: (item) => [item.badge].filter(Boolean),
-    itemThumb: (item) => (item.image ? { src: item.image, alt: item.name } : undefined),
+    itemThumb: (item) => {
+      const src = typeof item.image === 'string' ? item.image : item.image?.src
+      const alt = typeof item.image === 'string' ? item.name : item.image?.alt ?? item.name
+      return src ? { src, alt } : undefined
+    },
+    itemStatus: (item) => (item.isFeatured ? 'featured' : undefined),
     validate: (draft) => {
       const errors = {}
       if (!draft?.name?.trim()) {

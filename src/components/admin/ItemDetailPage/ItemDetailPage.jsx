@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { FiAlertTriangle, FiPlus } from 'react-icons/fi'
+import { FiPlus } from 'react-icons/fi'
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 import Button from '../../Button/index.js'
 import ConfirmDialog from '../ConfirmDialog/index.js'
@@ -153,16 +153,10 @@ function ItemDetailPage({ pageKey, basePath, pageTitle, sections }) {
         onSave={handleSave}
         onCancel={() => navigate(`${basePath}/${sectionKey}`)}
         onReset={discardDraft}
+        onDelete={!creating ? () => setConfirmDelete(true) : undefined}
+        deleteLabel={`Delete ${section.itemLabel}`}
         submitLabel={creating ? `Create ${section.itemLabel}` : 'Save Changes'}
       />
-      {!creating ? (
-        <div>
-          <Button type="button" variant="ghost" onClick={() => setConfirmDelete(true)}>
-            <FiAlertTriangle aria-hidden="true" size={15} />
-            Delete {section.itemLabel}
-          </Button>
-        </div>
-      ) : null}
       <ConfirmDialog
         open={confirmDelete}
         title={`Delete ${title}?`}

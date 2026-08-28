@@ -73,11 +73,141 @@ const STORAGE_KEY = 'mib_admin_content_v1'
 
 const clone = (value) => JSON.parse(JSON.stringify(value))
 
+// -----------------------------------------------------------------------
+// Backward-compatibility adapters — normalize legacy string images to
+// {src,alt} objects and singular featuredItem to featuredItems[].
+// Kept in content.js so every consumer (seed, localStorage, Supabase) sees
+// the same contract regardless of source.
+// -----------------------------------------------------------------------
+const normalizeImage = (value) => {
+  if (typeof value === 'string') return { src: value, alt: '' }
+  if (value && typeof value === 'object' && typeof value.src === 'string') {
+    return { src: value.src, alt: value.alt ?? '' }
+  }
+  if (value == null) return { src: '', alt: '' }
+  return value
+}
+
+const normalizeOption = (option) => {
+  if (!option || typeof option !== 'object') return option
+  const image = typeof option.image === 'string' ? normalizeImage(option.image) : option.image
+  // legacy string image with alt fallback to name
+  const normImage = image && image.src !== undefined ? image : normalizeImage(option.image)
+  return { ...option, image: normImage }
+}
+
+const normalizeGalleryEntry = (entry) => {
+  if (!entry || typeof entry !== 'object') return entry
+  if (typeof entry.src === 'string') {
+    return { ...entry, src: entry.src, alt: entry.alt ?? entry.title ?? '' }
+  }
+  return entry
+}
+
+const normalizeFeaturedItem = (item) => {
+  if (!item || typeof item !== 'object') return item
+  const image = item.image != null ? normalizeImage(item.image) : item.image
+  const options = Array.isArray(item.options) ? item.options.map(normalizeOption) : item.options
+  const gallery = Array.isArray(item.gallery) ? item.gallery.map(normalizeGalleryEntry) : item.gallery
+  return {
+    ...item,
+    isFeatured: item.isFeatured ?? item.featured ?? true,
+    image,
+    options,
+    gallery,
+  }
+}
+
+const normalizeSection = (section) => {
+  if (!section || typeof section !== 'object') return section
+  let featuredItems
+  if (Array.isArray(section.featuredItems)) {
+    featuredItems = section.featuredItems.map(normalizeFeaturedItem)
+  } else if (section.featuredItem) {
+    featuredItems = [normalizeFeaturedItem(section.featuredItem)]
+  }
+  const next = { ...section }
+  if (featuredItems) {
+    next.featuredItems = featuredItems
+    // keep legacy featuredItem for one release so old public code that reads
+    // featuredItem still works; new code prefers featuredItems
+    next.featuredItem = featuredItems[0] ?? section.featuredItem
+  }
+  if (section.image != null) next.image = normalizeImage(section.image)
+  return next
+}
+
+const normalizeServiceCollections = (collections) =>
+  Array.isArray(collections)
+    ? collections.map((col) => {
+        const next = { ...col }
+        if (col.coverImage != null) next.coverImage = normalizeImage(col.coverImage)
+        if (Array.isArray(col.sections)) next.sections = col.sections.map(normalizeSection)
+        // support legacy blissful productCategories image strings if any
+        if (Array.isArray(col.productCategories)) {
+          next.productCategories = col.productCategories.map((cat) => ({ ...cat }))
+        }
+        return next
+      })
+    : collections
+
+const normalizeBlissfulPackages = (packages) =>
+  Array.isArray(packages)
+    ? packages.map((pkg) => {
+        const next = { ...pkg }
+        if (pkg.image != null && typeof pkg.image === 'string') {
+          next.image = normalizeImage(pkg.image)
+          if (!next.image.alt && pkg.name) next.image.alt = pkg.name
+        } else if (pkg.image && typeof pkg.image === 'object') {
+          next.image = normalizeImage(pkg.image)
+        }
+        if (next.isFeatured == null && next.featured == null) next.isFeatured = false
+        if (next.featured != null && next.isFeatured == null) next.isFeatured = Boolean(next.featured)
+        return next
+      })
+    : packages
+
+const normalizeGalleryPageItems = (items) =>
+  Array.isArray(items)
+    ? items.map((it) => {
+        const next = { ...it }
+        if (typeof it.src === 'string') {
+          next.src = it.src
+          next.alt = it.alt ?? it.title ?? ''
+        } else if (it.src && typeof it.src === 'object') {
+          const img = normalizeImage(it.src)
+          next.src = img.src
+          next.alt = it.alt ?? img.alt ?? it.title ?? ''
+        }
+        return next
+      })
+    : items
+
+const normalizeContent = (pageKey, values) => {
+  if (!values || typeof values !== 'object') return values
+  const next = { ...values }
+  if (pageKey === 'services') {
+    if (next.serviceCollections) next.serviceCollections = normalizeServiceCollections(next.serviceCollections)
+    if (next.blissfulNestPackages) next.blissfulNestPackages = normalizeBlissfulPackages(next.blissfulNestPackages)
+    // photoboothPackages keep popular as is, ensure isFeatured alias not needed
+    if (Array.isArray(next.photoboothPackages)) {
+      next.photoboothPackages = next.photoboothPackages.map((p) => ({ ...p }))
+    }
+    // cover images for hero/intro etc are handled by their forms directly
+  }
+  if (pageKey === 'gallery' && next.items) {
+    next.items = normalizeGalleryPageItems(next.items)
+  }
+  // sections inside gallery/ services still handled per above
+  return next
+}
+
 const seedCache = {}
 
 export const getSeedContent = (pageKey) => {
   if (!seedCache[pageKey]) {
-    seedCache[pageKey] = clone(contentSeeds[pageKey] ?? {})
+    const raw = clone(contentSeeds[pageKey] ?? {})
+    seedCache[pageKey] = normalizeContent(pageKey, raw)
   }
   return seedCache[pageKey]
 }
@@ -182,11 +312,23 @@ export const contentSeeds = Object.freeze({
 
 export const CONTENT_PAGE_KEYS = Object.freeze(Object.keys(contentSeeds))
 
+export { normalizeContent, normalizeImage }
+
 function readStored() {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY)
     const parsed = raw ? JSON.parse(raw) : {}
-    return parsed && typeof parsed === 'object' ? parsed : {}
+    const obj = parsed && typeof parsed === 'object' ? parsed : {}
+    // normalize stored page values so legacy string images work after adapter
+    Object.keys(obj).forEach((key) => {
+      if (obj[key]?.values) {
+        obj[key] = {
+          ...obj[key],
+          values: normalizeContent(key, obj[key].values),
+        }
+      }
+    })
+    return obj
   } catch {
     return {}
   }
@@ -205,8 +347,9 @@ export const getStoredContent = () => readStored()
 export const getPageSavedAt = (pageKey) => readStored()[pageKey]?.savedAt ?? null
 
 export function savePageContent(pageKey, values) {
+  const normalized = normalizeContent(pageKey, clone(values))
   const entry = {
-    values: clone(values),
+    values: normalized,
     savedAt: new Date().toISOString(),
   }
   const stored = readStored()

@@ -1,8 +1,7 @@
 /**
- * The public Services page renders its collections through hardcoded showcases
- * (Decor Hire catalogue, Luxe Photobooth showcase, Blissful Nest sub-brand), so
- * only these three collections can be displayed. The CMS therefore edits them
- * in place and never creates or removes collections.
+ * Legacy fixed collection IDs — kept for backward compatibility and migration.
+ * Collections are now fully dynamic (create/read/update/delete). This list is
+ * no longer used to gate CMS operations; see adapters in src/services/content.js.
  */
 const FIXED_COLLECTION_IDS = Object.freeze([
   'decor-hire',

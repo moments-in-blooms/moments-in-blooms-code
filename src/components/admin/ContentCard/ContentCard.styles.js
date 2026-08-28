@@ -20,6 +20,7 @@ export const CardLink = styled(Link)`
   gap: ${({ theme }) => theme.spacing.md};
   padding: ${({ theme }) => theme.spacing.lg};
   border: 1px solid ${({ theme }) => theme.colors.border};
+  border-left: 3px solid ${({ theme }) => theme.colors.secondary};
   border-radius: ${({ theme }) => theme.radii.lg};
   background: ${({ theme }) => theme.colors.surface};
   color: inherit;
@@ -31,6 +32,7 @@ export const CardLink = styled(Link)`
 
   &:hover {
     border-color: ${({ theme }) => theme.colors.taupe};
+    border-left-color: ${({ theme }) => theme.colors.taupe};
     box-shadow: ${({ theme }) => theme.shadows.soft};
     transform: translateY(-1px);
 
@@ -95,10 +97,11 @@ export const CardTitle = styled.h3`
   text-overflow: ellipsis;
   white-space: nowrap;
   color: ${({ theme }) => theme.colors.textPrimary};
-  font-family: ${({ theme }) => theme.typography.uiFont};
-  font-size: 0.95rem;
-  font-weight: 700;
-  letter-spacing: 0.01em;
+  font-family: ${({ theme }) => theme.typography.headingFont};
+  font-size: clamp(1.15rem, 1.8vw, 1.35rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
 `
 
 export const CardMetaRow = styled.div`

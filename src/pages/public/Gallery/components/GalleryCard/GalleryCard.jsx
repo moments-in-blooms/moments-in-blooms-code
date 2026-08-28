@@ -25,7 +25,7 @@ function GalleryCard({ item, index, onSelect }) {
       <S.GalleryImageWrapper>
         <S.GalleryImage
           src={src}
-          alt={item.title}
+          alt={item.alt || item.title}
           loading="lazy"
           decoding="async"
           onError={onError}

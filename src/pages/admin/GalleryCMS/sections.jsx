@@ -76,6 +76,7 @@ export const gallerySections = [
     createInitial: (values) => ({
       id: createItemId(),
       src: '',
+      alt: '',
       title: '',
       subtitle: '',
       category: values?.categories?.[0]?.id ?? '',
@@ -87,7 +88,7 @@ export const gallerySections = [
       categoryLabel(values, item.category),
       item.size ?? 'medium',
     ],
-    itemThumb: (item) => ({ src: item.src, alt: item.title }),
+    itemThumb: (item) => ({ src: item.src, alt: item.alt ?? item.title }),
     validate: (draft) => {
       const errors = {}
       if (!draft?.title?.trim()) {
@@ -197,6 +198,8 @@ function GalleryItemForm({ value, onChange, errors, values }) {
         label="Image"
         value={value?.src ?? ''}
         onChange={(src) => onChange({ ...value, src })}
+        alt={value?.alt ?? ''}
+        onAltChange={(event) => onChange({ ...value, alt: event.target.value })}
       />
     </>
   )

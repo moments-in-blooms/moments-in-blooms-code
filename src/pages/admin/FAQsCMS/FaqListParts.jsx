@@ -92,25 +92,16 @@ export function FaqRow({ faq, categoryName, categorySlug, first, last, busy, onM
           >
             <FiEdit2 aria-hidden="true" size={15} />
           </FaqActionLink>
-          <a
+          <FaqActionLink
+            as="a"
             href={previewHref}
             target="_blank"
             rel="noreferrer"
             title="View on site"
             aria-label={`View ${label} on site`}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '2rem',
-              height: '2rem',
-              borderRadius: '0.5rem',
-              color: '#6E6761',
-              textDecoration: 'none',
-            }}
           >
             <FiExternalLink aria-hidden="true" size={15} />
-          </a>
+          </FaqActionLink>
           <FaqActionDanger
             type="button"
             title="Archive FAQ"

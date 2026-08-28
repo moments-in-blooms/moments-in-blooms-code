@@ -10,6 +10,17 @@ export const ModalHeader = styled.div`
   font-weight: 700;
 `
 
+export const AppIcon = styled.img`
+  display: block;
+  width: 4.5rem;
+  height: 4.5rem;
+  margin: 0 auto;
+  border-radius: ${({ theme }) => theme.radii.md};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  box-shadow: ${({ theme }) => theme.shadows.card};
+  background: #FFFFFF;
+`
+
 export const ModalTitle = styled.h3`
   margin: 0;
   color: ${({ theme }) => theme.colors.textPrimary};

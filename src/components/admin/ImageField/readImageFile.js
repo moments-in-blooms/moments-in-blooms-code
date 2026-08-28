@@ -29,7 +29,7 @@ const scaleDown = async (file, type) => {
   }
 }
 
-async function readImageFile(file, maxSizeMb = 5) {
+async function readImageFile(file, maxSizeMb = 20) {
   if (!file.type.startsWith('image/')) {
     throw new Error('Only image files can be uploaded.')
   }
