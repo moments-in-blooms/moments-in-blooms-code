@@ -9,6 +9,8 @@ const DEMO_SIGN_IN_ERROR = 'Invalid email or password. Please try again.'
 const SUPABASE_SIGN_IN_ERROR = 'Invalid email or password. Please try again.'
 const SUPABASE_SIGN_OUT_ERROR = 'We couldn\'t sign you out right now. Please try again.'
 const PASSWORD_RESET_ERROR = "We couldn't send the reset email. Please try again."
+const PASSWORD_RESET_RATE_LIMIT_ERROR =
+  'Too many reset emails have been sent recently. Please wait about an hour, then try again.'
 const PASSWORD_UPDATE_ERROR = "We couldn't update your password. Please try again."
 
 const normalizeSupabaseSession = (session) =>
@@ -166,7 +168,8 @@ export async function sendPasswordResetEmail(email) {
 
   if (error) {
     console.warn('[auth] resetPasswordForEmail failed', error)
-    return { error: { message: PASSWORD_RESET_ERROR } }
+    const rateLimited = error?.status === 429 || /rate limit/i.test(error?.message ?? '')
+    return { error: { message: rateLimited ? PASSWORD_RESET_RATE_LIMIT_ERROR : PASSWORD_RESET_ERROR } }
   }
 
   return { error: null }
