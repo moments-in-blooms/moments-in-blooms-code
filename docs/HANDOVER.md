@@ -30,7 +30,7 @@ All credentials handed over via a secure method (password manager shared vault, 
 
 **CMS Training**
 - [ ] Live or recorded walkthrough of the admin dashboard covering: editing each content type, publishing/unpublishing, reordering, managing enquiries and notes, and updating basic SEO fields
-- [ ] Written quick-reference guide left with the client (can be a trimmed version of `CMS.md`)
+- [ ] Written user manual left with the client (`USER_MANUAL.md` — admin tasks, public-site tour, live-vs-local honesty box, troubleshooting)
 - [ ] Client given the opportunity to make a real edit during the training session, not just watch
 
 **Deployment**

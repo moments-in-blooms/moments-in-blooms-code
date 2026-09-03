@@ -201,6 +201,31 @@ configured (demo credentials are only used when `.env` is missing).
 4. Change the status to **Contacted** (table or detail modal).
 5. Confirm the badge updates. The `updated_at` timestamp also updates.
 
+## 10. Allowlist auth redirect URLs (password reset)
+
+The forgot-password flow (`/admin/forgot-password` → email link →
+`/admin/reset-password`) sends the user back to whatever deployment they
+requested it from (`window.location.origin` in `src/services/auth.js`).
+Supabase only honours redirect targets listed here, so without this step
+the reset link fails and the password is never updated.
+
+1. Sidebar → **Authentication** → **URL Configuration** → **Redirect URLs**.
+2. Add each deployment the admin signs in from, with the reset path:
+   - Production, e.g. `https://momentsinblooms-au.vercel.app/admin/reset-password`
+   - Any preview deployment you test from, e.g.
+     `https://<deployment>.vercel.app/admin/reset-password`
+   - Local dev: `http://localhost:3000/admin/reset-password`
+3. **Save**, then test end to end: sign out → **Forgot password?** → submit
+   your admin email → open the email link → set a new password → sign in
+   with it at `/admin/login`.
+
+Troubleshooting: link lands on the wrong site — you are on a deployment
+older than the dynamic-`origin` fix; redeploy. Link errors about redirect —
+the exact URL (including `/admin/reset-password`) is missing from the list
+above. No email arrives at all — check spam, confirm the user exists under
+**Authentication → Users**, and note Supabase's default SMTP is
+rate-limited (fine for occasional admin resets).
+
 ---
 
 ## Environment variables (summary)

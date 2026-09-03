@@ -157,8 +157,11 @@ export async function sendPasswordResetEmail(email) {
     }
   }
 
+  // Redirect back to THIS deployment (localhost, preview or production) —
+  // a hardcoded domain breaks the flow on every other environment.
+  const redirectTo = `${window.location.origin}/admin/reset-password`
   const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
-    redirectTo: 'https://moments-in-bloom-studio.vercel.app/admin/reset-password',
+    redirectTo,
   })
 
   if (error) {
@@ -289,7 +292,7 @@ export async function signUpStaff({ email, password, displayName, role = 'staff'
     password: String(password),
     options: {
       data: { display_name: String(displayName ?? '').trim() || splitEmail(normalizedEmail) },
-      emailRedirectTo: 'https://moments-in-bloom-studio.vercel.app/admin/login',
+      emailRedirectTo: `${window.location.origin}/admin/login`,
     },
   })
   if (error) {
