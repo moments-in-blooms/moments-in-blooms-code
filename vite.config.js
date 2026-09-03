@@ -9,10 +9,10 @@ export default defineConfig({
     svgr(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'pwa-192x192.png', 'pwa-512x512.png'],
+      includeAssets: ['favicon.png', 'logo-old-primary-public.png', 'apple-touch-icon.png', 'pwa-192x192.png', 'pwa-512x512.png'],
       manifest: {
         name: 'Moments in Blooms',
-        short_name: 'MiB',
+        short_name: 'Moments in Blooms',
         description: 'Luxury event styling Melbourne',
         start_url: '/',
         scope: '/',
