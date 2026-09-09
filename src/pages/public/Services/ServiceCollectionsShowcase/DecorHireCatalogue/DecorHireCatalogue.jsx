@@ -1,8 +1,15 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { FiArrowRight } from "react-icons/fi";
 
 import Button from "../../../../../components/Button/index.js";
+import { BUTTON_VARIANTS } from "../../../../../constants/ui.js";
 import SubcategoryNav from "../SubcategoryNav/index.js";
+import ItemDetailModal from "../ItemDetailModal/ItemDetailModal.jsx";
+import {
+  toDecorFeatureDetail,
+  toDecorGalleryDetail,
+  toDecorOptionDetail,
+} from "../itemDetail.js";
 
 import * as S from "./DecorHireCatalogue.styles.js";
 
@@ -18,7 +25,7 @@ const getImageAlt = (image, fallback = "") => {
   return image.alt || fallback;
 };
 
-function FeaturedItemBlock({ item }) {
+function FeaturedItemBlock({ item, contextLabel, onOpenDetail }) {
   const imageSrc = getImageSrc(item.image);
   const hasOptions = Array.isArray(item.options) && item.options.length > 0;
   const hasGallery = Array.isArray(item.gallery) && item.gallery.length > 0;
@@ -38,15 +45,32 @@ function FeaturedItemBlock({ item }) {
         <S.OptionGrid>
           {item.options.map((option, index) => {
             const optSrc = getImageSrc(option.image);
+            if (!optSrc) {
+              return (
+                <S.OptionCard key={option.id ?? index}>
+                  <S.OptionCardBody>
+                    <S.OptionName>{option.name}</S.OptionName>
+                    {option.specs ? <S.OptionSpecs>{option.specs}</S.OptionSpecs> : null}
+                    {option.desc ? <S.OptionDesc>{option.desc}</S.OptionDesc> : null}
+                  </S.OptionCardBody>
+                </S.OptionCard>
+              );
+            }
             return (
-              <S.OptionCard key={option.id ?? index}>
-                {optSrc ? <img src={optSrc} alt={getImageAlt(option.image, option.name)} loading="lazy" /> : null}
+              <S.OptionCardButton
+                key={option.id ?? index}
+                type="button"
+                aria-haspopup="dialog"
+                aria-label={`View full details: ${option.name}`}
+                onClick={() => onOpenDetail(toDecorOptionDetail(option), contextLabel)}
+              >
+                <img src={optSrc} alt={getImageAlt(option.image, option.name)} loading="lazy" />
                 <S.OptionCardBody>
                   <S.OptionName>{option.name}</S.OptionName>
                   {option.specs ? <S.OptionSpecs>{option.specs}</S.OptionSpecs> : null}
                   {option.desc ? <S.OptionDesc>{option.desc}</S.OptionDesc> : null}
                 </S.OptionCardBody>
-              </S.OptionCard>
+              </S.OptionCardButton>
             );
           })}
         </S.OptionGrid>
@@ -64,10 +88,16 @@ function FeaturedItemBlock({ item }) {
         </S.FeaturedIntro>
         <S.GalleryGrid>
           {item.gallery.map((gItem, index) => (
-            <S.GalleryItem key={gItem.id ?? index}>
+            <S.GalleryItemButton
+              key={gItem.id ?? index}
+              type="button"
+              aria-haspopup="dialog"
+              aria-label={`View full details: ${gItem.title}`}
+              onClick={() => onOpenDetail(toDecorGalleryDetail(gItem), contextLabel)}
+            >
               <img src={gItem.src} alt={gItem.alt || gItem.title} loading="lazy" />
               <S.GalleryCaption>{gItem.title}</S.GalleryCaption>
-            </S.GalleryItem>
+            </S.GalleryItemButton>
           ))}
         </S.GalleryGrid>
       </div>
@@ -77,20 +107,33 @@ function FeaturedItemBlock({ item }) {
   if (hasImage) {
     return (
       <S.SplitFeature>
-        <S.SplitImageWrapper>
+        <S.SplitImageButton
+          type="button"
+          aria-haspopup="dialog"
+          aria-label={`View full preview: ${item.name}`}
+          onClick={() => onOpenDetail(toDecorFeatureDetail(item), contextLabel)}
+        >
           <img src={imageSrc} alt={getImageAlt(item.image, item.name)} loading="lazy" />
-        </S.SplitImageWrapper>
+        </S.SplitImageButton>
         <S.SplitContent>
           {item.dimensions ? <S.OptionSpecs>Dimensions: {item.dimensions}</S.OptionSpecs> : <S.OptionSpecs>Catalogue Showcase</S.OptionSpecs>}
           <S.FeaturedName>{item.name}</S.FeaturedName>
           {item.tagline ? <S.CollectionSubtitle>{item.tagline}</S.CollectionSubtitle> : null}
           {item.description ? <S.CollectionSubtitle>{item.description}</S.CollectionSubtitle> : null}
-          <div>
+          <S.SplitActions>
             <Button to="/contact" variant="primary" size="medium">
               <span>Request a Quote</span>
               <FiArrowRight />
             </Button>
-          </div>
+            <Button
+              type="button"
+              variant={BUTTON_VARIANTS.GHOST}
+              size="medium"
+              onClick={() => onOpenDetail(toDecorFeatureDetail(item), contextLabel)}
+            >
+              <span>View full details</span>
+            </Button>
+          </S.SplitActions>
         </S.SplitContent>
       </S.SplitFeature>
     );
@@ -107,6 +150,15 @@ function FeaturedItemBlock({ item }) {
 
 function DecorHireCatalogue({ collection }) {
   const [activeSubcategory, setActiveSubcategory] = useState("all");
+  const [detail, setDetail] = useState(null);
+
+  const openDetail = useCallback((item, contextLabel) => {
+    setDetail({ item, contextLabel });
+  }, []);
+
+  const closeDetail = useCallback(() => {
+    setDetail(null);
+  }, []);
 
   if (!collection.sections || !collection.sections.length) return null;
 
@@ -144,11 +196,21 @@ function DecorHireCatalogue({ collection }) {
             const featuredItems = allItems.filter((it) => it.isFeatured !== false);
             if (featuredItems.length === 0) return null;
             return featuredItems.map((item, idx) => (
-              <FeaturedItemBlock key={item.id ?? idx} item={item} />
+              <FeaturedItemBlock
+                key={item.id ?? idx}
+                item={item}
+                contextLabel={`${collection.title} · ${section.title}`}
+                onOpenDetail={openDetail}
+              />
             ));
           })()}
         </S.CollectionBlock>
       ))}
+      <ItemDetailModal
+        item={detail?.item}
+        contextLabel={detail?.contextLabel}
+        onClose={closeDetail}
+      />
     </S.CatalogueSection>
   );
 }

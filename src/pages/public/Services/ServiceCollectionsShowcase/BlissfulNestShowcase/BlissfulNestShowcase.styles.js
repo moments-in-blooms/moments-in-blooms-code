@@ -124,20 +124,31 @@ export const PackageGrid = styled(motion.div)`
   }
 `;
 
-export const PackageCard = styled.article`
+export const PackageCardButton = styled.button`
   display: flex;
   flex-direction: column;
   height: 100%;
+  width: 100%;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
   background: ${({ theme }) => theme.colors.surface};
   border: 1px solid rgba(165, 137, 116, 0.3);
   border-radius: ${({ theme }) => theme.radii.lg};
   overflow: hidden;
   box-shadow: 0 10px 30px rgba(26, 24, 23, 0.06);
+  cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 
   &:hover {
     transform: translateY(-6px);
     box-shadow: 0 18px 40px rgba(26, 24, 23, 0.12);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: ${({ theme }) => theme.shadows.focus};
   }
 `;
 
@@ -155,7 +166,7 @@ export const PackageImageWrapper = styled.div`
     transition: transform 0.5s ease;
   }
 
-  ${PackageCard}:hover img {
+  ${PackageCardButton}:hover img {
     transform: scale(1.06);
   }
 `;

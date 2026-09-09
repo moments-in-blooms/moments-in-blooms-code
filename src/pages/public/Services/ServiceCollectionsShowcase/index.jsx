@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import CollectionSelector from "../../../../components/CollectionSelector/index.js";
@@ -60,7 +60,10 @@ function ServiceCollectionsShowcase({
   blissfulNestPackages = [],
   id,
 }) {
-  const [searchParams] = useSearchParams();
+  // The URL is the single source of truth for the active collection:
+  // router-aware reads/writes only (no native history.replaceState, which
+  // React Router cannot observe and which used to fight manual selection).
+  const [searchParams, setSearchParams] = useSearchParams();
   const requestedCollectionId = searchParams.get("collection");
 
   const collectionIds = useMemo(
@@ -70,33 +73,12 @@ function ServiceCollectionsShowcase({
   const isValidRequest =
     Boolean(requestedCollectionId) && collectionIds.has(requestedCollectionId);
 
-  const [activeCollectionId, setActiveCollectionId] = useState(
-    isValidRequest ? requestedCollectionId : collections?.[0]?.id || "",
-  );
-
-  // Sync when the ?collection= param changes or collections resolve async
-  // (CMS content can arrive after mount). Never clobbers a valid selection
-  // with anything else — unknown params fall back to the first collection.
-  useEffect(() => {
-    if (!collections?.length) return;
-    if (isValidRequest && requestedCollectionId !== activeCollectionId) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- external URL param sync
-      setActiveCollectionId(requestedCollectionId);
-    } else if (!collectionIds.has(activeCollectionId)) {
-      setActiveCollectionId(collections[0].id);
-    }
-  }, [
-    requestedCollectionId,
-    isValidRequest,
-    collections,
-    collectionIds,
-    activeCollectionId,
-  ]);
+  const activeCollectionId = isValidRequest
+    ? requestedCollectionId
+    : collections?.[0]?.id || "";
 
   // Deep-link landing: scroll to the showcase after ScrollToTop has forced
   // top-of-page. Runs once per mount so in-page tab clicks stay put.
-  // The URL is updated with history.replaceState (not setSearchParams) so tab
-  // clicks don't retrigger ScrollToTop's scroll-to-top on search change.
   const didDeepLinkScrollRef = useRef(false);
   useEffect(() => {
     if (didDeepLinkScrollRef.current || !isValidRequest || !id) return;
@@ -114,16 +96,15 @@ function ServiceCollectionsShowcase({
     });
   }, [isValidRequest, id, collections]);
 
-  const handleSelectCollection = (nextId) => {
-    setActiveCollectionId(nextId);
-    try {
-      const url = new URL(window.location.href);
-      url.searchParams.set("collection", nextId);
-      window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
-    } catch {
-      // URL sync is best-effort; selection state is already updated.
-    }
-  };
+  const handleSelectCollection = useCallback(
+    (nextId) => {
+      if (!collectionIds.has(nextId)) return;
+      const params = new URLSearchParams(searchParams);
+      params.set("collection", nextId);
+      setSearchParams(params, { replace: true });
+    },
+    [collectionIds, searchParams, setSearchParams],
+  );
 
   if (!collections || !collections.length) return null;
 

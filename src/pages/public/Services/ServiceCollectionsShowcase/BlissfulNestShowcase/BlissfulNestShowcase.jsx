@@ -1,3 +1,4 @@
+import { useCallback, useState } from "react";
 import { motion } from "framer-motion";
 import { FiArrowRight, FiGift } from "react-icons/fi";
 
@@ -7,12 +8,23 @@ import {
   staggerContainer,
   VIEWPORT_DEFAULT,
 } from "../../../../../styles/animations.js";
+import ItemDetailModal from "../ItemDetailModal/ItemDetailModal.jsx";
+import { toBlissfulPackageDetail } from "../itemDetail.js";
 
 import * as S from "./BlissfulNestShowcase.styles.js";
 
 function BlissfulNestShowcase({ collection, intro, packages = [] }) {
   const productCategories = collection.productCategories || [];
   const introText = intro?.paragraph ?? "";
+  const [detail, setDetail] = useState(null);
+
+  const openDetail = useCallback((pkg, contextLabel) => {
+    setDetail({ item: toBlissfulPackageDetail(pkg), contextLabel });
+  }, []);
+
+  const closeDetail = useCallback(() => {
+    setDetail(null);
+  }, []);
 
   if (!productCategories.length) return null;
 
@@ -50,7 +62,12 @@ function BlissfulNestShowcase({ collection, intro, packages = [] }) {
               const imgAlt = typeof pkg.image === 'string' ? pkg.name : pkg.image?.alt || pkg.name
               return (
                 <motion.div key={pkg.id} variants={rise}>
-                  <S.PackageCard>
+                  <S.PackageCardButton
+                    type="button"
+                    aria-haspopup="dialog"
+                    aria-label={`View full details: ${pkg.name}`}
+                    onClick={() => openDetail(pkg, `${collection.title} · ${category.name}`)}
+                  >
                     <S.PackageImageWrapper>
                       <img src={imgSrc} alt={imgAlt} loading="lazy" />
                     </S.PackageImageWrapper>
@@ -68,13 +85,18 @@ function BlissfulNestShowcase({ collection, intro, packages = [] }) {
                         ))}
                       </S.PackageItems>
                     </S.PackageBody>
-                  </S.PackageCard>
+                  </S.PackageCardButton>
                 </motion.div>
               )
             })}
           </S.PackageGrid>
         </S.ProductCategory>
       ))}
+      <ItemDetailModal
+        item={detail?.item}
+        contextLabel={detail?.contextLabel}
+        onClose={closeDetail}
+      />
     </S.NestSection>
   );
 }

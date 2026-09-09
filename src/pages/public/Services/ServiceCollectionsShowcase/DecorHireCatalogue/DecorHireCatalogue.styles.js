@@ -129,6 +129,39 @@ export const OptionCard = styled.div`
   }
 `;
 
+export const OptionCardButton = styled.button`
+  width: 100%;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  background: ${({ theme }) => theme.colors.surface};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radii.md};
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 15px rgba(26, 24, 23, 0.04);
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 32px rgba(26, 24, 23, 0.1);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: ${({ theme }) => theme.shadows.focus};
+  }
+`;
+
 export const OptionCardBody = styled.div`
   padding: 1.25rem;
   display: flex;
@@ -168,11 +201,20 @@ export const GalleryGrid = styled.div`
   gap: 1.25rem;
 `;
 
-export const GalleryItem = styled.div`
+export const GalleryItemButton = styled.button`
   position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  font: inherit;
+  text-align: left;
+  color: ${({ theme }) => theme.colors.surface};
+  background: none;
+  border: none;
   border-radius: ${({ theme }) => theme.radii.md};
   overflow: hidden;
   aspect-ratio: 4 / 3;
+  cursor: pointer;
 
   img {
     width: 100%;
@@ -183,6 +225,11 @@ export const GalleryItem = styled.div`
 
   &:hover img {
     transform: scale(1.05);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: ${({ theme }) => theme.shadows.focus};
   }
 `;
 
@@ -210,23 +257,46 @@ export const SplitFeature = styled.div`
     ${({ $reversed }) =>
       $reversed &&
       css`
-        & ${SplitImageWrapper} {
+        & ${SplitImageButton} {
           order: 2;
         }
       `}
   }
 `;
 
-export const SplitImageWrapper = styled.div`
+export const SplitImageButton = styled.button`
+  display: block;
+  width: 100%;
+  padding: 0;
+  background: none;
+  border: none;
   border-radius: 16px;
   overflow: hidden;
   height: 280px;
+  cursor: pointer;
 
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.5s ease;
   }
+
+  &:hover img {
+    transform: scale(1.04);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: ${({ theme }) => theme.shadows.focus};
+  }
+`;
+
+export const SplitActions = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${({ theme }) => theme.spacing.sm};
+  margin-top: ${({ theme }) => theme.spacing.xs};
 `;
 
 export const SplitContent = styled.div`
