@@ -6,6 +6,12 @@ import ToggleSwitch from '../../../components/admin/ToggleSwitch/index.js'
 
 const GALLERY_VARIANTS = ['feature', 'portrait', 'detail']
 
+const SERVICE_COLLECTION_OPTIONS = [
+  { value: 'decor-hire', label: 'Decor Hire' },
+  { value: 'luxe-photobooth', label: 'Luxe Photobooth' },
+  { value: 'blissful-nest', label: 'Blissful Nest' },
+]
+
 const createServiceId = () => `service-${Date.now()}`
 const createGalleryId = () => `gallery-${Date.now()}`
 const createTestimonialId = () => `testimonial-${Date.now()}`
@@ -53,6 +59,7 @@ export const homepageSections = [
     sectionMeta: (values) => [`${(values.services ?? []).length} services`],
     createInitial: () => ({
       id: createServiceId(),
+      collectionId: '',
       eyebrow: 'New service',
       title: 'New service',
       description: '',
@@ -286,11 +293,19 @@ function ReasonsForm({ value, onChange }) {
             value={item.title ?? ''}
             onChange={(event) => patch({ title: event.target.value })}
           />
-          <TextAreaField
-            label="Description"
-            value={item.description ?? ''}
-            onChange={(event) => patch({ description: event.target.value })}
-          />
+      <TextAreaField
+        label="Description"
+        value={value?.description ?? ''}
+        onChange={(event) => patch({ description: event.target.value })}
+      />
+      <SelectField
+        label="Linked service category"
+        hint="Which category is pre-selected when visitors click this card on the homepage."
+        value={value?.collectionId ?? ''}
+        onChange={(event) => patch({ collectionId: event.target.value })}
+        options={SERVICE_COLLECTION_OPTIONS}
+        placeholder="Same as card (no pre-selection)"
+      />
         </>
       )}
     />

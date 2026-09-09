@@ -24,6 +24,7 @@ export const homepageTrustMarks = Object.freeze([
 export const homepageServices = Object.freeze([
   {
     id: 'decor-hire',
+    collectionId: 'decor-hire',
     eyebrow: '01 · Atmosphere',
     title: 'Decor Hire',
     description: 'Layered linens, sculptural details and candlelight that make a room feel unforgettable.',
@@ -37,6 +38,7 @@ export const homepageServices = Object.freeze([
   },
   {
     id: 'luxe-photobooth',
+    collectionId: 'luxe-photobooth',
     eyebrow: '02 · Playful luxury',
     title: 'Luxe Photobooth',
     description: 'A refined photo moment with soft draping, flattering light and memories worth keeping.',
@@ -50,6 +52,7 @@ export const homepageServices = Object.freeze([
   },
   {
     id: 'blissful-nest',
+    collectionId: 'blissful-nest',
     eyebrow: '03 · A little unexpected',
     title: 'Blissful Nest',
     description: 'Our playful sister experience — beautifully presented claw machines and curated prizes for guests of every age.',

@@ -198,6 +198,24 @@ const normalizeContent = (pageKey, values) => {
   if (pageKey === 'gallery' && next.items) {
     next.items = normalizeGalleryPageItems(next.items)
   }
+  if (pageKey === 'homepage' && Array.isArray(next.services)) {
+    // Backfill deep-link target for cards saved before `collectionId`
+    // existed. Card ids originate from the seed (decor-hire,
+    // luxe-photobooth, blissful-nest) and survive CMS text edits, so an
+    // unmapped card id that matches a known collection is a safe mapping.
+    const collectionIds = new Set(
+      Array.isArray(serviceCollections)
+        ? serviceCollections.map((collection) => collection?.id)
+        : [],
+    )
+    next.services = next.services.map((item) => {
+      if (!item || typeof item !== 'object') return item
+      if (!item.collectionId && collectionIds.has(item.id)) {
+        return { ...item, collectionId: item.id }
+      }
+      return item
+    })
+  }
   // sections inside gallery/ services still handled per above
   return next
 }

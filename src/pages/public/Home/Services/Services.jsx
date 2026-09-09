@@ -2,6 +2,7 @@ import { FiArrowUpRight } from 'react-icons/fi'
 import { NavLink } from 'react-router-dom'
 import Button from '../../../../components/Button/index.js'
 import { ImageReveal, SafeReveal, TitleReveal } from '../../../../components/Reveal/index.js'
+import { serviceCollections } from '../../../../constants/services.js'
 import { BUTTON_VARIANTS } from '../../../../constants/ui.js'
 import {
   ServiceBody,
@@ -21,6 +22,23 @@ import {
   ServicesTitle,
   ServiceTitle,
 } from './Services.styles.js'
+
+const KNOWN_COLLECTION_IDS = new Set(
+  Array.isArray(serviceCollections)
+    ? serviceCollections.map((collection) => collection?.id)
+    : [],
+)
+
+function getServiceLink(service) {
+  // Prefer the explicit CMS field; fall back to the card id, which survives
+  // CMS text edits and matches a collection for cards saved before
+  // `collectionId` existed.
+  const target = service?.collectionId || service?.id
+  if (target && KNOWN_COLLECTION_IDS.has(target)) {
+    return `/services?collection=${encodeURIComponent(target)}`
+  }
+  return service?.path ?? '/services'
+}
 
 function Services({ items, id = 'home-services' }) {
   return (
@@ -54,7 +72,7 @@ function Services({ items, id = 'home-services' }) {
               from={{ y: 28, scale: 0.985 }}
               whileHover={{ y: -4 }}
             >
-              <ServiceImageLink as={NavLink} to={service.path} aria-label={`Explore ${service.title}`}>
+              <ServiceImageLink as={NavLink} to={getServiceLink(service)} aria-label={`Explore ${service.title}`}>
                 <ServiceImageFrame>
                   <ImageReveal>
                     <ServiceImage src={service.image.src} alt={service.image.alt} loading="lazy" />
@@ -66,7 +84,7 @@ function Services({ items, id = 'home-services' }) {
                   <ServiceEyebrow>{service.eyebrow}</ServiceEyebrow>
                 </SafeReveal>
                 <SafeReveal from={{ y: 14 }} duration={0.7}>
-                  <NavLink to={service.path}>
+                  <NavLink to={getServiceLink(service)}>
                     <ServiceTitle>{service.title}</ServiceTitle>
                   </NavLink>
                 </SafeReveal>
@@ -74,7 +92,7 @@ function Services({ items, id = 'home-services' }) {
                   <ServiceDescription>{service.description}</ServiceDescription>
                 </SafeReveal>
                 <SafeReveal from={{ y: 14 }} duration={0.7}>
-                  <ServiceLink as={NavLink} to={service.path}>
+                  <ServiceLink as={NavLink} to={getServiceLink(service)}>
                     Learn more
                     <FiArrowUpRight aria-hidden="true" color="currentColor" size={14} />
                   </ServiceLink>
