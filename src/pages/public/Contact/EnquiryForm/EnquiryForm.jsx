@@ -6,7 +6,7 @@ import { ButtonSpinner } from '../../../../components/Button/Button.styles.js'
 import Container from '../../../../components/Container/index.js'
 import SafeReveal from '../../../../components/Reveal/SafeReveal.jsx'
 import TitleReveal from '../../../../components/Reveal/TitleReveal.jsx'
-import { footerContact } from '../../../../constants/navigation.js'
+import useSiteSettings from '../../../../hooks/useSiteSettings.js'
 import { createEnquiry } from '../../../../services/enquiries.js'
 import EventDetails from './fieldsets/EventDetails.jsx'
 import PersonalDetails from './fieldsets/PersonalDetails.jsx'
@@ -39,6 +39,7 @@ const DEFAULT_VALUES = {
 }
 
 function EnquiryForm({ content, id, eventTypeOptions, serviceInterestOptions, guestCountOptions, setupRequirementOptions }) {
+  const { contact } = useSiteSettings()
   const [step, setStep] = useState(0)
   const [status, setStatus] = useState('idle')
   const [submitError, setSubmitError] = useState(null)
@@ -198,7 +199,7 @@ function EnquiryForm({ content, id, eventTypeOptions, serviceInterestOptions, gu
                   </S.SuccessText>
                   <S.SuccessText>
                     In the meantime, you can also reach the team directly at{' '}
-                    <a href={`mailto:${footerContact.email}`}>{footerContact.email}</a>.
+                    <a href={`mailto:${contact.email}`}>{contact.email}</a>.
                   </S.SuccessText>
                   <S.SuccessActions>
                     <Button to="/" variant="primary">
@@ -265,8 +266,8 @@ function EnquiryForm({ content, id, eventTypeOptions, serviceInterestOptions, gu
                       <span>{submitError}</span>
                       <span>
                         Or write to us directly at{' '}
-                        <a href={`mailto:${footerContact.email}`}>
-                          {footerContact.email}
+                        <a href={`mailto:${contact.email}`}>
+                          {contact.email}
                         </a>
                         .
                       </span>

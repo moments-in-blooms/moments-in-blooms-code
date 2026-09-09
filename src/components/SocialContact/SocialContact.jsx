@@ -1,7 +1,7 @@
 import { AnimatePresence, useReducedMotion } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
-import { FiFacebook, FiInstagram, FiMessageCircle, FiX } from 'react-icons/fi'
-import { footerSocialLinks } from '../../constants/navigation.js'
+import { FiFacebook, FiGlobe, FiInstagram, FiMessageCircle, FiX } from 'react-icons/fi'
+import useSiteSettings from '../../hooks/useSiteSettings.js'
 import { EASE_LUXE } from '../../styles/animations.js'
 import { ActionLink, ActionsRail, ChatLabel, IconWrap, Launcher, MainButton } from './SocialContact.styles.js'
 
@@ -14,19 +14,19 @@ const ACTIONS_ID = 'social-contact-actions'
 
 function SocialContact() {
   const [isOpen, setIsOpen] = useState(false)
+  const { socialLinks } = useSiteSettings()
   const rootRef = useRef(null)
   const mainButtonRef = useRef(null)
   const firstActionRef = useRef(null)
   const reduceMotion = useReducedMotion()
 
-  const actions = footerSocialLinks
+  const actions = socialLinks
     .filter((social) => social.href)
     .map((social) => ({
       ...social,
-      icon: SOCIAL_ACTIONS[social.label]?.icon,
+      icon: SOCIAL_ACTIONS[social.label]?.icon ?? FiGlobe,
       ariaLabel: SOCIAL_ACTIONS[social.label]?.label ?? `Open ${social.label}`,
     }))
-    .filter((action) => action.icon)
 
   useEffect(() => {
     if (!isOpen) return undefined

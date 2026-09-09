@@ -8,14 +8,14 @@ import { SettingsPage } from './Settings.styles.js'
 
 const SETTINGS_GROUPS = [
   {
-    title: 'Footer contact details',
-    description: 'The phone number, email and location shown in the footer.',
-    keys: ['footerContact'],
+    title: 'Contact & social',
+    description: 'Business email, phone, location and social links shown across the public site.',
+    keys: ['footerContact', 'footerSocialLinks'],
   },
   {
-    title: 'Links & navigation',
-    description: 'Social links and the footer navigation columns.',
-    keys: ['footerSocialLinks', 'footerGroups'],
+    title: 'Footer navigation',
+    description: 'The footer navigation columns.',
+    keys: ['footerGroups'],
   },
 ]
 

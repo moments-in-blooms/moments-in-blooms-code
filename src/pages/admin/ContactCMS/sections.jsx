@@ -92,6 +92,11 @@ function InformationForm({ value, onChange }) {
   const patch = (next) => onChange((prev) => ({ ...prev, ...(typeof next === 'function' ? next(prev) : next) }))
   return (
     <>
+      <HelpText>
+        The actual email address, phone number, location and social links are edited once in{' '}
+        <a href="/admin/settings" target="_blank" rel="noreferrer">Settings → Contact &amp; social</a>{' '}
+        so they stay in sync everywhere.
+      </HelpText>
       <TextField
         label="Eyebrow"
         hint="Small label above the title (e.g. 'Prefer a conversation?')."

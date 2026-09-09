@@ -1,8 +1,9 @@
-import { FiArrowRight, FiFacebook, FiInstagram } from 'react-icons/fi'
+import { FiArrowRight, FiFacebook, FiGlobe, FiInstagram } from 'react-icons/fi'
 import { NavLink } from 'react-router-dom'
 import logoWhite from '../../assets/images/logo-old-white.png'
 import { routeMetadata } from '../../constants/navigation.js'
 import { useContent } from '../../hooks/useContent.js'
+import useSiteSettings from '../../hooks/useSiteSettings.js'
 import Button from '../Button/index.js'
 import * as S from './Footer.styles.js'
 
@@ -13,11 +14,7 @@ const socialIcons = {
 
 function Footer() {
   const { values: settingsValues } = useContent('settings')
-  const footerContact = settingsValues.footerContact ?? {
-    location: 'Melbourne, Australia',
-    email: 'hello@momentsinblooms.com',
-    phone: '+61 3 0000 0000',
-  }
+  const { contact: footerContact, socialLinks: footerSocialLinks } = useSiteSettings()
   const footerNavigationGroups = settingsValues.footerGroups ?? [
     {
       title: 'Explore',
@@ -38,11 +35,6 @@ function Footer() {
       ],
     },
   ]
-  const footerSocialLinks = settingsValues.footerSocialLinks ?? [
-    { label: 'Instagram', href: 'https://ig.me/m/momentsinblooms' },
-    { label: 'Facebook', href: 'https://m.me/61575145079420' },
-  ]
-
   return (
     <S.FooterShell>
       <S.FooterContainer>
@@ -89,7 +81,7 @@ function Footer() {
                 <a href={`tel:${footerContact.phone.replaceAll(' ', '')}`}>{footerContact.phone}</a>
                 <S.FooterSocials aria-label="Social links">
                   {footerSocialLinks.map((social) => {
-                    const Icon = socialIcons[social.label]
+                    const Icon = socialIcons[social.label] ?? FiGlobe
                     return (
                       <a key={social.label} href={social.href} target="_blank" rel="noreferrer">
                         <Icon aria-hidden="true" color="currentColor" size={16} />

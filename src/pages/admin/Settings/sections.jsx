@@ -6,7 +6,7 @@ export const settingsSections = [
   {
     key: 'footerContact',
     title: 'Studio contact details',
-    description: 'The phone number, email and location shown in the footer.',
+    description: 'The email, phone and location shown in the footer, mobile menu and Contact page.',
     type: 'object',
     sectionMeta: (values) =>
       [values.footerContact?.email, values.footerContact?.phone].filter(Boolean),
@@ -15,7 +15,7 @@ export const settingsSections = [
   {
     key: 'footerSocialLinks',
     title: 'Social links',
-    description: 'The links shown in the footer and social buttons across the site.',
+    description: 'The links shown in the footer, floating contact button and the Contact page "Follow along".',
     type: 'flatList',
     sectionMeta: (values) => [`${(values.footerSocialLinks ?? []).length} links`],
     form: SocialLinksForm,

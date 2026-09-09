@@ -1,20 +1,23 @@
-import { FiArrowUpRight, FiFacebook, FiInstagram, FiMail, FiMapPin, FiPhone } from 'react-icons/fi'
+import { FiArrowUpRight, FiFacebook, FiGlobe, FiInstagram, FiMail, FiMapPin, FiPhone } from 'react-icons/fi'
 import Container from '../../../../components/Container/index.js'
 import SafeReveal from '../../../../components/Reveal/SafeReveal.jsx'
 import TitleReveal from '../../../../components/Reveal/TitleReveal.jsx'
-import { footerContact, footerSocialLinks } from '../../../../constants/navigation.js'
+import useSiteSettings from '../../../../hooks/useSiteSettings.js'
 import * as S from './ContactInformation.styles.js'
 
 function ContactInformation({ content, id }) {
+  const { contact, socialLinks } = useSiteSettings()
+
   if (!content) return null
 
   const contactItems = [
     {
       icon: <FiMail aria-hidden="true" color="currentColor" size={17} />,
       label: 'Email',
+      value: contact.email,
       render: () => (
-        <S.InfoLink href={`mailto:${footerContact.email}`}>
-          {footerContact.email}
+        <S.InfoLink href={`mailto:${contact.email}`}>
+          {contact.email}
           <FiArrowUpRight aria-hidden="true" color="currentColor" size={13} />
         </S.InfoLink>
       ),
@@ -22,9 +25,10 @@ function ContactInformation({ content, id }) {
     {
       icon: <FiPhone aria-hidden="true" color="currentColor" size={17} />,
       label: 'Phone',
+      value: contact.phone,
       render: () => (
-        <S.InfoLink href={`tel:${footerContact.phone.replaceAll(' ', '')}`}>
-          {footerContact.phone}
+        <S.InfoLink href={`tel:${contact.phone.replaceAll(' ', '')}`}>
+          {contact.phone}
           <FiArrowUpRight aria-hidden="true" color="currentColor" size={13} />
         </S.InfoLink>
       ),
@@ -32,9 +36,10 @@ function ContactInformation({ content, id }) {
     {
       icon: <FiMapPin aria-hidden="true" color="currentColor" size={17} />,
       label: 'Location',
-      render: () => <S.InfoValue>{footerContact.location}</S.InfoValue>,
+      value: contact.location,
+      render: () => <S.InfoValue>{contact.location}</S.InfoValue>,
     },
-  ]
+  ].filter((item) => item.value)
 
   const socialIcons = {
     Instagram: FiInstagram,
@@ -78,8 +83,8 @@ function ContactInformation({ content, id }) {
                 <div>
                   <S.InfoLabel>Follow along</S.InfoLabel>
                   <S.InfoSocialRow>
-                    {footerSocialLinks.map((social) => {
-                      const Icon = socialIcons[social.label]
+                    {socialLinks.map((social) => {
+                      const Icon = socialIcons[social.label] ?? FiGlobe
                       return (
                         <S.InfoLink
                           key={social.label}

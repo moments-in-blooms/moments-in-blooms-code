@@ -2,8 +2,9 @@ import { AnimatePresence } from 'framer-motion'
 import { useEffect, useRef } from 'react'
 import { NavLink } from 'react-router-dom'
 import logo from '../../assets/images/logo-old.png'
-import { footerContact, footerSocialLinks, publicNavigation } from '../../constants/navigation.js'
+import { publicNavigation } from '../../constants/navigation.js'
 import useAuth from '../../hooks/useAuth.js'
+import useSiteSettings from '../../hooks/useSiteSettings.js'
 import Button from '../Button/index.js'
 import * as S from './MobileMenu.styles.js'
 
@@ -27,6 +28,7 @@ const focusableSelector =
 
 function MobileMenu({ isOpen, onClose }) {
   const { session } = useAuth()
+  const { contact, socialLinks } = useSiteSettings()
   const panelRef = useRef(null)
   const firstLinkRef = useRef(null)
 
@@ -120,11 +122,11 @@ function MobileMenu({ isOpen, onClose }) {
                 Enquire Now
               </Button>
               <S.MenuContact>
-                <span>{footerContact.location}</span>
-                <a href={`mailto:${footerContact.email}`}>{footerContact.email}</a>
+                <span>{contact.location}</span>
+                <a href={`mailto:${contact.email}`}>{contact.email}</a>
               </S.MenuContact>
               <S.MenuSocials aria-label="Social links">
-                {footerSocialLinks.map((social) => (
+                {socialLinks.map((social) => (
                   <a key={social.label} href={social.href} target="_blank" rel="noreferrer">
                     {social.label}
                   </a>
