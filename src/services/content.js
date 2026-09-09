@@ -183,6 +183,40 @@ const normalizeGalleryPageItems = (items) =>
       })
     : items
 
+// Legacy copy rewrites — exact-phrase only, so deliberate "prints" wording
+// elsewhere (instant prints, 4x6 prints, high-quality prints) is untouched.
+const LEGACY_COPY_REWRITES = [
+  [
+    'Unlimited prints throughout the event',
+    'Unlimited photo sessions throughout the event',
+  ],
+  [
+    'unlimited prints, and fun props',
+    'unlimited photo sessions, and fun props',
+  ],
+  ['Unlimited Prints', 'Unlimited Photo Sessions'],
+  [
+    'Unlimited prints available throughout the event for every guest.',
+    'Unlimited photo sessions available throughout the event for every guest.',
+  ],
+]
+
+const rewriteLegacyCopy = (value) => {
+  if (typeof value === 'string') {
+    return LEGACY_COPY_REWRITES.reduce(
+      (text, [from, to]) => text.split(from).join(to),
+      value,
+    )
+  }
+  if (Array.isArray(value)) return value.map(rewriteLegacyCopy)
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, entry]) => [key, rewriteLegacyCopy(entry)]),
+    )
+  }
+  return value
+}
+
 const normalizeContent = (pageKey, values) => {
   if (!values || typeof values !== 'object') return values
   const next = { ...values }
@@ -193,7 +227,10 @@ const normalizeContent = (pageKey, values) => {
     if (Array.isArray(next.photoboothPackages)) {
       next.photoboothPackages = next.photoboothPackages.map((p) => ({ ...p }))
     }
-    // cover images for hero/intro etc are handled by their forms directly
+    // Retired "unlimited prints" copy in content saved before the rewording
+    // (Supabase page_content / localStorage) so it reads correctly on every
+    // render until the page is next saved through the CMS.
+    return rewriteLegacyCopy(next)
   }
   if (pageKey === 'gallery' && next.items) {
     next.items = normalizeGalleryPageItems(next.items)

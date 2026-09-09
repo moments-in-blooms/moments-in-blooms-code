@@ -89,10 +89,10 @@ export const photoboothPackages = Object.freeze([
     popular: false,
     badge: "3 Hours",
     description:
-      "Our foundation photo studio experience — a sleek mirror booth with an interactive touch display, unlimited prints, and fun props for every guest.",
+      "Our foundation photo studio experience — a sleek mirror booth with an interactive touch display, unlimited photo sessions, and fun props for every guest.",
     inclusions: [
       "Sleek mirror booth with interactive touch display",
-      "Unlimited prints throughout the event",
+      "Unlimited photo sessions throughout the event",
       "Choice of photobooth strips or 4x6 sizes",
       "Choice of template from our designs",
       "Fun props",
@@ -121,7 +121,7 @@ export const photoboothPackages = Object.freeze([
       "Extended coverage with custom templates, a premium backdrop selection, and red carpet arrival styling for your guests.",
     inclusions: [
       "Sleek mirror booth with interactive touch display",
-      "Unlimited prints throughout the event",
+      "Unlimited photo sessions throughout the event",
       "Choice of photobooth strips or 4x6 sizes",
       "Digital gallery of all photos",
       "Custom templates",
@@ -151,7 +151,7 @@ export const photoboothPackages = Object.freeze([
       "Our flagship all-inclusive experience, featuring a dedicated on-site attendant and a set of 100 elegant take-home photobooth frames for your guests.",
     inclusions: [
       "Sleek mirror booth with interactive touch display",
-      "Unlimited prints throughout the event",
+      "Unlimited photo sessions throughout the event",
       "Choice of photobooth strips or 4x6 sizes",
       "Digital gallery of all photos",
       "Custom templates",
@@ -201,8 +201,8 @@ export const photoboothHighlights = Object.freeze({
         desc: "Diffused studio lighting engineered to eliminate harsh shadows and flatter every guest.",
       },
       {
-        title: "Unlimited Prints",
-        desc: "Unlimited prints available throughout the event for every guest.",
+        title: "Unlimited Photo Sessions",
+        desc: "Unlimited photo sessions available throughout the event for every guest.",
       },
       {
         title: "Personalised Templates",
