@@ -75,15 +75,10 @@ export const HeroTitle = styled.h1`
   margin-bottom: -0.1em;
   color: ${({ theme }) => theme.colors.textPrimary};
   font-family: ${({ theme }) => theme.typography.headingFont};
-  font-size: clamp(3rem, 9vw, 8.5rem);
-  font-weight: 500;
-  letter-spacing: -0.075em;
-  line-height: 0.88;
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
-    font-size: clamp(2.75rem, 15vw, 4.5rem);
-    letter-spacing: -0.06em;
-  }
+  font-size: clamp(2.75rem, 6vw, 4.75rem);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1.02;
 `
 
 export const HeroDescription = styled.p`
