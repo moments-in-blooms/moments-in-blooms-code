@@ -33,6 +33,8 @@ const CollectionDetailPage = lazy(() =>
   import('../pages/admin/ServicesCMS/DetailPages.jsx').then((m) => ({ default: m.CollectionDetailPage })))
 const CollectionSectionDetailPage = lazy(() =>
   import('../pages/admin/ServicesCMS/DetailPages.jsx').then((m) => ({ default: m.CollectionSectionDetailPage })))
+const ServiceCatalogPage = lazy(() =>
+  import('../pages/admin/ServicesCMS/ServiceCatalogPage.jsx'))
 const GalleryCMS = lazy(() => import('../pages/admin/GalleryCMS/GalleryCMS.jsx'))
 const GalleryItemsPage = lazy(() => import('../pages/admin/GalleryCMS/GalleryItemsPage.jsx'))
 const GallerySectionDetail = lazy(() =>
@@ -123,6 +125,8 @@ const router = createBrowserRouter([
             path: 'services/serviceCollections/:collectionId/sections/:sectionId',
             element: <CollectionSectionDetailPage />,
           },
+          { path: 'services/catalog/:categoryId/new', element: <ServiceCatalogPage /> },
+          { path: 'services/catalog/:categoryId/:serviceId', element: <ServiceCatalogPage /> },
           { path: 'services/:sectionKey', element: <ServicesSectionDetail /> },
           { path: 'services/:sectionKey/:itemId', element: <ServicesItemDetail /> },
           { path: 'gallery', element: <GalleryCMS /> },

@@ -47,7 +47,7 @@ export const adminPageMeta = Object.freeze({
     eyebrow: 'Content management',
     title: 'Services',
     description:
-      'Manage your packages, pricing, inclusions and the details of every service collection.',
+      'Add services by category and edit every section of your services page.',
   },
   gallery: {
     eyebrow: 'Content management',

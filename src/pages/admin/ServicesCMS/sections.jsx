@@ -40,8 +40,8 @@ export const servicesSections = [
   },
   {
     key: 'serviceCollections',
-    title: 'Collections',
-    description: 'The main service collections and everything inside them.',
+    title: 'Categories',
+    description: 'Service categories (Decor Hire, Luxe Photobooth, Blissful Nest) and the services inside them.',
     type: 'collections',
     itemLabel: 'collection',
     createInitial: () => ({
@@ -84,7 +84,7 @@ export const servicesSections = [
   {
     key: 'photoboothPackages',
     title: 'Luxe Photobooth packages',
-    description: 'Pricing, inclusions and add-ons for the photobooth.',
+    description: 'Pricing, inclusions and add-ons for the photobooth. Prefer managing these as services in the catalog.',
     type: 'list',
     itemLabel: 'package',
     sectionMeta: (values) => [`${(values.photoboothPackages ?? []).length} packages`],
@@ -132,7 +132,7 @@ export const servicesSections = [
   {
     key: 'blissfulNestPackages',
     title: 'Blissful Nest prize options',
-    description: 'The prize packages for the claw machines.',
+    description: 'The prize packages for the claw machines. Prefer managing these as services in the catalog.',
     type: 'list',
     itemLabel: 'prize option',
     sectionMeta: (values) => [`${(values.blissfulNestPackages ?? []).length} options`],
@@ -178,9 +178,10 @@ export const servicesSections = [
     type: 'object',
     form: CtaForm,
   },
-  // Legacy — not rendered on public Services page (kept for data preservation, shown at end)
+  // Legacy — not rendered on public Services page (kept for data preservation, hidden from the admin landing)
   {
     key: 'intro',
+    legacy: true,
     title: 'Introduction',
     description:
       'Legacy CMS-managed philosophy content — not currently rendered on the public services page.',
@@ -189,6 +190,7 @@ export const servicesSections = [
   },
   {
     key: 'gallery',
+    legacy: true,
     title: 'Services gallery',
     description:
       'Legacy CMS-managed images — not currently rendered on the public services page.',
@@ -218,6 +220,7 @@ export const servicesSections = [
   },
   {
     key: 'testimonials',
+    legacy: true,
     title: 'Testimonials',
     description:
       'Legacy CMS-managed client reviews — not currently rendered on the public services page.',

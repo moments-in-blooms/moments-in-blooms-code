@@ -1,6 +1,6 @@
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useEffect, useMemo, useState } from 'react'
-import { FiPlus, FiTrash2 } from 'react-icons/fi'
+import { FiPlus } from 'react-icons/fi'
 import ConfirmDialog from '../../../components/admin/ConfirmDialog/index.js'
 import ContentCard from '../../../components/admin/ContentCard/index.js'
 import ContentDetailHeader from '../../../components/admin/ContentDetailHeader/index.js'
@@ -16,27 +16,19 @@ import Button from '../../../components/Button/index.js'
 import { useContent } from '../../../hooks/useContent.js'
 import { useContentDetail } from '../../../hooks/useContentDetail.js'
 import { useUnsavedGuard } from '../../../hooks/useUnsavedGuard.jsx'
-import { deleteImage, isStorageUrl } from '../../../services/storage.js'
+import {
+  listCategoryServices,
+  newServicePath,
+  serviceEditorPath,
+} from './catalog.js'
 import { servicesSections } from './sections.jsx'
 import { CollectionDetailStyles } from './CollectionDetailPage.styles.js'
 
-const managedElsewhere = {
-  'luxe-photobooth': {
-    note: 'The packages and highlights for this collection are managed in their own page sections.',
-    links: [
-      { label: 'Photobooth packages', to: '/admin/services/photoboothPackages' },
-      { label: 'Photobooth highlights', to: '/admin/services/photoboothHighlights' },
-    ],
-  },
-  'blissful-nest': {
-    note: 'The introduction and prize options for this collection are managed in their own page sections.',
-    links: [
-      { label: 'Blissful Nest introduction', to: '/admin/services/blissfulNestIntro' },
-      { label: 'Blissful Nest prize options', to: '/admin/services/blissfulNestPackages' },
-    ],
-  },
-}
-
+/**
+ * Category settings: overview fields for one service category plus its
+ * service list. Individual services are added/edited in the service
+ * catalog editor — this page never edits them inline.
+ */
 function CollectionDetailPage({ itemId }) {
   const params = useParams()
   const collectionId = params.collectionId ?? itemId
@@ -51,9 +43,8 @@ function CollectionDetailPage({ itemId }) {
   const [toast, setToast] = useState(null)
   const [saving, setSaving] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
-  const [confirmSectionDeleteId, setConfirmSectionDeleteId] = useState(null)
   const { guard, bypass } = useUnsavedGuard({ active: dirty })
-  const { values: contentValues, update, save } = useContent('services')
+  const { values: contentValues } = useContent('services')
 
   useEffect(() => {
     if (!toast) return undefined
@@ -65,8 +56,8 @@ function CollectionDetailPage({ itemId }) {
     return (
       <CollectionDetailStyles.Page>
         <EmptyState
-          title="Collection not found"
-          description="This collection is missing from the saved Services content."
+          title="Category not found"
+          description="This category is missing from the saved Services content."
           action={
             <Button variant="outline" onClick={() => navigate('/admin/services')}>
               Back to Services
@@ -78,8 +69,9 @@ function CollectionDetailPage({ itemId }) {
   }
 
   const collection = draft
-  const managedBy = collection?.id ? managedElsewhere[collection.id] : undefined
-  const sections = Array.isArray(collection?.sections) ? collection.sections : []
+  // Show live draft sections for decor categories; packages read from saved
+  // content (they are edited in the service catalog editor).
+  const serviceEntries = listCategoryServices(contentValues, collection, collection?.sections)
 
   const handleSave = async () => {
     const nextErrors = section.validate?.(draft) ?? {}
@@ -107,83 +99,21 @@ function CollectionDetailPage({ itemId }) {
     navigate('/admin/services')
   }
 
-  const collectUrls = (value, acc = new Set()) => {
-    if (!value) return acc
-    if (typeof value === 'string') {
-      if (isStorageUrl(value)) acc.add(value)
-      return acc
-    }
-    if (Array.isArray(value)) {
-      value.forEach((entry) => collectUrls(entry, acc))
-      return acc
-    }
-    if (typeof value === 'object') {
-      Object.values(value).forEach((entry) => collectUrls(entry, acc))
-    }
-    return acc
-  }
-
-  const handleDeleteSection = async () => {
-    const sectionId = confirmSectionDeleteId
-    if (!sectionId) return
-    const target = sections.find((s) => s.id === sectionId)
-    setConfirmSectionDeleteId(null)
-    // If draft is dirty, apply to draft; otherwise update content directly with immediate save
-    if (dirty) {
-      patch((prev) => ({ ...prev, sections: (prev.sections ?? []).filter((s) => s.id !== sectionId) }))
-      setToast({ tone: 'success', message: 'Section removed — save to confirm.' })
-      return
-    }
-    const nextSections = (contentValues.serviceCollections ?? [])
-      .find((c) => c.id === collectionId)?.sections?.filter((s) => s.id !== sectionId) ?? []
-    const updatedCollections = (contentValues.serviceCollections ?? []).map((entry) =>
-      entry.id === collectionId ? { ...entry, sections: nextSections } : entry,
-    )
-    update((current) => ({ ...current, serviceCollections: updatedCollections }))
-    const result = await save('services')
-    if (result?.error) {
-      setToast({ tone: 'error', message: result.error.message || "We couldn't delete the section." })
-      return
-    }
-    if (target) {
-      const urls = collectUrls(target)
-      urls.forEach((url) => deleteImage(url).catch(() => {}))
-    }
-    setToast({ tone: 'success', message: 'Section deleted.' })
-  }
-
-  const getAddLabel = (col) => {
-    const title = (col?.title || '').toLowerCase()
-    const id = col?.id || ''
-    if (id === 'decor-hire' || title.includes('decor')) return 'Add Collection'
-    if (id === 'luxe-photobooth' || title.includes('luxe') || title.includes('booth') || title.includes('photo')) return 'Add Booth'
-    if (id === 'blissful-nest' || title.includes('blissful') || title.includes('nest') || col?.type === 'sub-brand') return 'Add Category'
-    return 'Add Collection'
-  }
-  const addLabel = getAddLabel(collection)
-
-  const sectionsCount = sections.length
-  const itemsCount = sections.reduce((acc, s) => {
-    const fi = Array.isArray(s.featuredItems) ? s.featuredItems.length : s.featuredItem ? 1 : 0
-    const opts = Array.isArray(s.featuredItems)
-      ? s.featuredItems.reduce((a, fi2) => a + (fi2.options?.length ?? 0), 0)
-      : s.featuredItem?.options?.length ?? 0
-    return acc + fi + opts
-  }, 0)
+  const servicesCount = serviceEntries.length
 
   return (
     <CollectionDetailStyles.Page>
       <ContentDetailHeader
         backTo="/admin/services"
         backLabel="Back to Services"
-        eyebrow="Collections"
-        title={creating ? 'New collection' : collection?.title || 'Untitled collection'}
+        eyebrow="Categories"
+        title={creating ? 'New category' : collection?.title || 'Untitled category'}
         status={section.itemStatus?.(collection)}
         lastUpdated={savedAt}
       />
       <ContentFormSection
-        title="Collection overview"
-        description="How this collection appears in the services navigation and on its page."
+        title="Category overview"
+        description="How this category appears in the services navigation and on its page."
       >
         <SelectField
           label="Type"
@@ -224,7 +154,7 @@ function CollectionDetailPage({ itemId }) {
         />
         <ToggleSwitch
           label="Featured"
-          hint="Adds a Featured badge to this collection inside the admin content lists."
+          hint="Adds a Featured badge to this category inside the admin content lists."
           checked={Boolean(collection?.featured)}
           onChange={(checked) => patch((prev) => ({ ...prev, featured: checked }))}
         />
@@ -238,81 +168,43 @@ function CollectionDetailPage({ itemId }) {
           }
         />
       </ContentFormSection>
-      <ContentFormSection
-        title="Collection sections"
-        description={
-          managedBy
-            ? `${managedBy.note} You can also add custom sections below.`
-            : 'Add sections to this collection — each section can hold multiple featured items with images and options.'
-        }
-      >
-        {managedBy ? (
-          <EmptyState
-            title="Managed separately"
-            description="This collection has dedicated page sections for its primary content."
-            action={managedBy.links.map((link) => (
-              <Button key={link.to} variant="outline" as={Link} to={link.to}>
-                {link.label}
-              </Button>
-            ))}
-          />
-        ) : null}
-      </ContentFormSection>
 
-      <ContentList
-        title={`Sections within ${collection?.title ?? 'this collection'}`}
-        description="Click a section to review and update its featured items and gallery."
-        emptyState={
-          <EmptyState
-            title="No sections yet"
-            description="Add your first section to this collection."
-            action={
-              creating ? null : (
-                <Button to={`/admin/services/serviceCollections/${collection.id}/sections/new`} variant="outline">
+      {!creating ? (
+        <ContentList
+          title={`Services in ${collection?.title ?? 'this category'}`}
+          description="Open a service to edit it, or add a new one."
+          emptyState={
+            <EmptyState
+              title="No services yet"
+              description={`Add the first service in ${collection?.title ?? 'this category'}.`}
+              action={
+                <Button to={newServicePath(collection.id)} variant="outline">
                   <FiPlus aria-hidden="true" size={15} />
-                  {addLabel}
+                  Add service
                 </Button>
-              )
-            }
-          />
-        }
-      >
-        {sections.map((entry, index) => {
-          const featuredCount = Array.isArray(entry.featuredItems)
-            ? entry.featuredItems.length
-            : entry.featuredItem
-              ? 1
-              : 0
-          return (
-            <div key={entry.id ?? index} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <ContentCard
-                  to={`/admin/services/serviceCollections/${collection.id}/sections/${entry.id}`}
-                  title={entry.title || 'Untitled section'}
-                  description={entry.description}
-                  meta={[entry.subtitle, `${featuredCount} featured item${featuredCount !== 1 ? 's' : ''}`].filter(Boolean)}
-                  lastUpdated={savedAt}
-                />
-              </div>
-              <Button
-                type="button"
-                variant="ghost"
-                radius="md"
-                aria-label={`Delete ${entry.title || 'section'}`}
-                onClick={() => setConfirmSectionDeleteId(entry.id)}
-                title="Delete section"
-              >
-                <FiTrash2 aria-hidden="true" size={16} />
-              </Button>
-            </div>
-          )
-        })}
-      </ContentList>
+              }
+            />
+          }
+        >
+          {serviceEntries.map((entry) => (
+            <ContentCard
+              key={entry.id}
+              to={serviceEditorPath(collection.id, entry.id)}
+              title={entry.title}
+              description={entry.description}
+              meta={entry.meta}
+              status={entry.featured ? 'featured' : undefined}
+              thumbnail={entry.imageSrc ? { src: entry.imageSrc, alt: entry.imageAlt } : undefined}
+              lastUpdated={savedAt}
+            />
+          ))}
+        </ContentList>
+      ) : null}
       {!creating ? (
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <Button to={`/admin/services/serviceCollections/${collection.id}/sections/new`} variant="outline">
+          <Button to={newServicePath(collection.id)} variant="outline">
             <FiPlus aria-hidden="true" size={15} />
-            {addLabel}
+            Add service
           </Button>
         </div>
       ) : null}
@@ -322,30 +214,21 @@ function CollectionDetailPage({ itemId }) {
         onCancel={() => navigate('/admin/services')}
         onSave={handleSave}
         onDelete={!creating ? () => setConfirmDelete(true) : undefined}
-        deleteLabel="Delete collection"
-        submitLabel={creating ? 'Create collection' : 'Save Changes'}
+        deleteLabel="Delete category"
+        submitLabel={creating ? 'Create category' : 'Save Changes'}
       />
       <ConfirmDialog
         open={confirmDelete}
-        title={`Delete ${collection?.title || 'this collection'}?`}
+        title={`Delete ${collection?.title || 'this category'}?`}
         description={
-          sectionsCount > 0
-            ? `This will permanently delete this collection and its ${sectionsCount} section${sectionsCount !== 1 ? 's' : ''}${itemsCount > 0 ? ` and ${itemsCount} nested item${itemsCount !== 1 ? 's' : ''}` : ''}. This cannot be undone and any stored images will be removed.`
-            : 'This will permanently delete this collection. This cannot be undone.'
+          servicesCount > 0
+            ? `This will permanently delete this category and its ${servicesCount} service${servicesCount !== 1 ? 's' : ''}. This cannot be undone and any stored images will be removed.`
+            : 'This will permanently delete this category. This cannot be undone.'
         }
-        confirmLabel="Delete collection"
+        confirmLabel="Delete category"
         cancelLabel="Cancel"
         onConfirm={handleDelete}
         onCancel={() => setConfirmDelete(false)}
-      />
-      <ConfirmDialog
-        open={Boolean(confirmSectionDeleteId)}
-        title={`Delete ${sections.find((s) => s.id === confirmSectionDeleteId)?.title || 'this section'}?`}
-        description="This will permanently delete this section and its featured items. This cannot be undone."
-        confirmLabel="Delete section"
-        cancelLabel="Cancel"
-        onConfirm={handleDeleteSection}
-        onCancel={() => setConfirmSectionDeleteId(null)}
       />
       {toast && (
         <Toast
