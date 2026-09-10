@@ -277,37 +277,4 @@ export const TopbarUserEmail = styled.span`
   ${mobileBreak} {
     display: none;
   }
-`
-
-export const TopbarSignOut = styled.button`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.4rem;
-  height: 2.4rem;
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.radii.md};
-  background: ${({ theme }) => theme.colors.surface};
-  color: ${({ theme }) => theme.colors.textSecondary};
-  cursor: pointer;
-  transition: color ${({ theme }) => theme.transitions.fast},
-    border-color ${({ theme }) => theme.transitions.fast},
-    background ${({ theme }) => theme.transitions.fast};
-
-  &:hover {
-    border-color: ${({ theme }) => theme.colors.danger};
-    background: rgba(201, 74, 70, 0.07);
-    color: ${({ theme }) => theme.colors.danger};
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.focus};
-    outline-offset: 2px;
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: default;
-    pointer-events: none;
-  }
-`
+ `

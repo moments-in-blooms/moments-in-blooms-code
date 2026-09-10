@@ -145,12 +145,6 @@ export function itemThumbnail(item) {
   return undefined
 }
 
-export function parentLabel(category, subcategory) {
-  if (category && subcategory) return `${category.title ?? 'Untitled'} › ${subcategory.title ?? 'Untitled'}`
-  if (category) return `${category.title ?? 'Untitled'} › Top level`
-  return 'Unassigned'
-}
-
 // Local marker check (mirrors isStorageUrl in src/services/storage.js without
 // pulling the Supabase client into this pure store module).
 const isStorageUrlLike = (url) =>

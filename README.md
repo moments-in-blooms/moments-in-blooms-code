@@ -79,8 +79,6 @@ npm run lint
 npm run build
 ```
 
-SVG assets can be imported as React components with the Vite SVGR plugin and the `?react` suffix, for example `import Mark from './mark.svg?react'`.
-
 ```
 moments-in-bloom
 ├─ .kombai

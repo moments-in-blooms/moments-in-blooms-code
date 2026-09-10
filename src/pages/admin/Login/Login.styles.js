@@ -106,26 +106,6 @@ export const LoginError = styled.p`
   line-height: 1.6;
 `
 
-export const LoginDemoNote = styled.p`
-  display: flex;
-  align-items: flex-start;
-  gap: ${({ theme }) => theme.spacing.sm};
-  margin: 0;
-  padding: 0.85rem 1rem;
-  border-radius: ${({ theme }) => theme.radii.md};
-  background: ${({ theme }) => theme.colors.secondary};
-  color: ${({ theme }) => theme.colors.textSecondary};
-  font-family: ${({ theme }) => theme.typography.uiFont};
-  font-size: 0.74rem;
-  line-height: 1.6;
-
-  svg {
-    flex: 0 0 auto;
-    margin-top: 0.15rem;
-    color: ${({ theme }) => theme.colors.gold};
-  }
-`
-
 export const LoginBackLink = styled(Link)`
   display: inline-flex;
   align-items: center;

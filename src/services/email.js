@@ -10,8 +10,6 @@ if (isConfigured) {
   emailjs.init({ publicKey })
 }
 
-export const isEmailConfigured = () => isConfigured
-
 const present = (value) => {
   if (value === null || value === undefined) return 'Not stated'
   const text = String(value).trim()

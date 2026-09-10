@@ -5,14 +5,12 @@ import { useGallery } from './hooks/index.js'
 import { useLightbox } from './hooks/index.js'
 
 import {
-  CategoryNavigation,
   EditorialGallery,
   FeaturedStory,
   GalleryCTA,
   GalleryHero,
   GalleryLightbox,
   InstagramPreview,
-  Introduction,
 } from './components/index.js'
 
 import * as S from './Gallery.styles.js'
@@ -22,17 +20,15 @@ function Gallery() {
   const { values: seoValues } = useContent('seo')
   const seo = seoValues.gallery ?? seoValues.site ?? {}
 
-  const categories = values.categories ?? []
   const items = values.items ?? []
   const hero = values.hero ?? {}
-  const introduction = values.introduction ?? {}
   const instagramContent = values.instagram ?? {}
   const instagramPosts = values.instagramPosts ?? []
   const cta = values.cta ?? {}
   const featuredStories = values.featuredStories ?? []
   const featuredStoriesSection = values.featuredStoriesSection ?? {}
 
-  const { visibleItems, hasMore, loadMore, activeCategory, setActiveCategory } = useGallery(items, categories)
+  const { visibleItems, hasMore, loadMore } = useGallery(items)
 
   const {
     isOpen,
@@ -66,16 +62,6 @@ function Gallery() {
       />
 
       <GalleryHero content={hero} />
-
-      <Introduction content={introduction} />
-
-      {categories.length > 0 ? (
-        <CategoryNavigation
-          categories={[{ id: 'all', label: 'All' }, ...categories]}
-          activeCategory={activeCategory}
-          onCategoryChange={setActiveCategory}
-        />
-      ) : null}
 
       <EditorialGallery
         items={visibleItems}

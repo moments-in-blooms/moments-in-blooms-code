@@ -31,7 +31,7 @@ const StringsRepeater = ({ label, items, onChange, addLabel, placeholder }) => (
   />
 )
 
-// Aligned to public website order: Hero → Introduction → Gallery (categories + items) → Featured Stories (heading + stories) → Instagram (heading + posts) → CTA
+// Aligned to public website order: Hero → Gallery (items) → Featured Stories (heading + stories) → Instagram (heading + posts) → CTA
 export const gallerySections = [
   {
     key: 'hero',
@@ -41,16 +41,9 @@ export const gallerySections = [
     form: HeroForm,
   },
   {
-    key: 'introduction',
-    title: 'Introduction section',
-    description: 'The philosophy text shown below the hero.',
-    type: 'object',
-    form: IntroductionForm,
-  },
-  {
     key: 'categories',
     title: 'Gallery categories',
-    description: 'The filters visitors use to browse the gallery.',
+    description: 'Organise gallery images; every image requires a category.',
     type: 'list',
     itemLabel: 'category',
     createInitial: () => ({ id: createCategoryId(), label: 'New category' }),
@@ -360,29 +353,6 @@ function HeroForm({ value, onChange }) {
         label="Background image"
         value={value?.backgroundImage ?? ''}
         onChange={(backgroundImage) => patch({ backgroundImage })}
-      />
-    </>
-  )
-}
-
-function IntroductionForm({ value, onChange }) {
-  const patch = (next) => onChange((prev) => ({ ...prev, ...(typeof next === 'function' ? next(prev) : next) }))
-  return (
-    <>
-      <TextField
-        label="Eyebrow"
-        value={value?.eyebrow ?? ''}
-        onChange={(event) => patch({ eyebrow: event.target.value })}
-      />
-      <TextField
-        label="Title"
-        value={value?.title ?? ''}
-        onChange={(event) => patch({ title: event.target.value })}
-      />
-      <TextAreaField
-        label="Intro text"
-        value={value?.text ?? ''}
-        onChange={(event) => patch({ text: event.target.value })}
       />
     </>
   )

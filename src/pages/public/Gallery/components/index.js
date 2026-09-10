@@ -1,6 +1,4 @@
 export { default as GalleryHero } from './GalleryHero/GalleryHero.jsx'
-export { default as Introduction } from './Introduction/Introduction.jsx'
-export { default as CategoryNavigation } from './CategoryNavigation/CategoryNavigation.jsx'
 export { default as EditorialGallery } from './EditorialGallery/EditorialGallery.jsx'
 export { default as GalleryCard } from './GalleryCard/GalleryCard.jsx'
 export { default as FeaturedStory } from './FeaturedStory/FeaturedStory.jsx'

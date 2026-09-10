@@ -121,10 +121,6 @@ export async function createEnquiry(values) {
   return result
 }
 
-export function listDemoEnquiries() {
-  return readDemoQueue()
-}
-
 export async function listEnquiries(limit = 200) {
   if (!supabase) {
     const queue = readDemoQueue()

@@ -66,7 +66,6 @@ import {
   HERO_CONTENT,
   INSTAGRAM_CONTENT,
   INSTAGRAM_POSTS,
-  INTRODUCTION_CONTENT,
 } from '../pages/public/Gallery/constants/galleryData.js'
 
 const STORAGE_KEY = 'mib_admin_content_v1'
@@ -724,7 +723,6 @@ export const contentSeeds = Object.freeze({
     featuredStories: FEATURED_STORIES,
     instagramPosts: INSTAGRAM_POSTS,
     hero: HERO_CONTENT,
-    introduction: INTRODUCTION_CONTENT,
     cta: CTA_CONTENT,
     instagram: INSTAGRAM_CONTENT,
     featuredStoriesSection: FEATURED_STORIES_SECTION_CONTENT,
@@ -796,8 +794,6 @@ function writeStored(state) {
 }
 
 export const getStoredContent = () => readStored()
-
-export const getPageSavedAt = (pageKey) => readStored()[pageKey]?.savedAt ?? null
 
 export function savePageContent(pageKey, values) {
   const normalized = normalizeContent(pageKey, clone(values))

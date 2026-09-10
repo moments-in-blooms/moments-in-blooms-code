@@ -196,12 +196,6 @@ export const NavForward = styled.div`
   }
 `
 
-export const SubmitRow = styled.div`
-  display: grid;
-  gap: ${({ theme }) => theme.spacing.md};
-  margin-top: ${({ theme }) => theme.spacing.xl};
-`
-
 export const SubmitNote = styled.p`
   margin: ${({ theme }) => theme.spacing.md} 0 0;
   padding-top: ${({ theme }) => theme.spacing.md};

@@ -8,7 +8,7 @@ import * as S from './EditorialGallery.styles.js'
 function EditorialGallery({ items, hasMore, onLoadMore, onImageClick }) {
   if (items.length === 0) {
     return (
-      <S.GallerySection id="gallery-panel" role="tabpanel">
+      <S.GallerySection>
         <S.GalleryContainer>
           <S.EmptyState>
             <S.EmptyStateIcon aria-hidden="true">
@@ -16,8 +16,7 @@ function EditorialGallery({ items, hasMore, onLoadMore, onImageClick }) {
             </S.EmptyStateIcon>
             <S.EmptyStateTitle>This collection is resting</S.EmptyStateTitle>
             <S.EmptyStateText>
-              New pieces for this category are being curated. Explore another collection in the
-              meantime.
+              New pieces are being curated. Please check back soon to see our latest work.
             </S.EmptyStateText>
           </S.EmptyState>
         </S.GalleryContainer>
@@ -26,7 +25,7 @@ function EditorialGallery({ items, hasMore, onLoadMore, onImageClick }) {
   }
 
   return (
-    <S.GallerySection id="gallery-panel" role="tabpanel">
+    <S.GallerySection>
       <S.GalleryContainer>
         <motion.div layout>
           <S.EditorialGrid>

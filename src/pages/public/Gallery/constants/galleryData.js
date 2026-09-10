@@ -276,13 +276,6 @@ export const HERO_CONTENT = {
   backgroundImage: imageUrl(GALLERY_IMAGE_IDS.WEDDING_AISLE, 1920),
 }
 
-// Introduction section content
-export const INTRODUCTION_CONTENT = {
-  eyebrow: 'Our Philosophy',
-  title: 'Creating Unforgettable Celebrations',
-  text: 'At Moments in Blooms, we believe every celebration tells a story. Our approach combines artistic vision with meticulous attention to detail, transforming spaces into immersive experiences that captivate hearts and create lasting memories. From intimate gatherings to grand affairs, each element is carefully curated to reflect your unique narrative.',
-}
-
 // CTA section content
 export const CTA_CONTENT = {
   eyebrow: 'Begin Your Story',

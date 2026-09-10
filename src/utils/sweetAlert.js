@@ -33,26 +33,4 @@ export const showError = (title = 'Error', text) =>
     confirmButtonText: 'OK',
   })
 
-export const showInfo = (title, text) =>
-  Swal.fire({
-    ...baseConfig,
-    icon: 'info',
-    title,
-    text,
-    timer: 2200,
-    showConfirmButton: false,
-    timerProgressBar: true,
-  })
-
-export const showConfirm = (title, text, confirmText = 'Confirm', cancelText = 'Cancel') =>
-  Swal.fire({
-    ...baseConfig,
-    icon: 'warning',
-    title,
-    text,
-    showCancelButton: true,
-    confirmButtonText: confirmText,
-    cancelButtonText: cancelText,
-  })
-
 export default Swal
