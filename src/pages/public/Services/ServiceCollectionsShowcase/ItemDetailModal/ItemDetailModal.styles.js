@@ -8,7 +8,32 @@ export const ItemOverlay = styled.div`
   place-items: center;
   padding: ${({ theme }) => theme.spacing.lg};
   overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(165, 137, 116, 0.5) transparent;
   background: rgba(26, 26, 26, 0.55);
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(165, 137, 116, 0.5);
+    border: 0;
+    border-radius: 999px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(165, 137, 116, 0.7);
+  }
+
+  &::-webkit-scrollbar-corner {
+    background: transparent;
+  }
 `
 
 export const ItemPanel = styled.div`
@@ -17,6 +42,10 @@ export const ItemPanel = styled.div`
   width: min(100%, 56rem);
   max-height: calc(100svh - 4rem);
   overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(165, 137, 116, 0.5) transparent;
+  scrollbar-gutter: stable;
   background: ${({ theme }) => theme.colors.surface};
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.radii.xl};
@@ -24,6 +53,28 @@ export const ItemPanel = styled.div`
 
   &:focus {
     outline: none;
+  }
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(165, 137, 116, 0.5);
+    border: 0;
+    border-radius: 999px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(165, 137, 116, 0.7);
+  }
+
+  &::-webkit-scrollbar-corner {
+    background: transparent;
   }
 `
 

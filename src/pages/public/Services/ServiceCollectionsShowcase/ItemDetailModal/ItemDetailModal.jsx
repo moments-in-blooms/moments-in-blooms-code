@@ -1,5 +1,6 @@
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { FiArrowRight, FiGift, FiX } from 'react-icons/fi'
 import { EASE_LUXE } from '../../../../../styles/animations.js'
 import Button from '../../../../../components/Button/index.js'
@@ -53,12 +54,17 @@ function ItemDetailModal({ item, contextLabel, onClose }) {
     ;(focusable[0] || container).focus()
     document.addEventListener('keydown', handleKeyDown)
 
-    const previousOverflow = document.body.style.overflow
+    // Lock both scrolling roots: body overflow alone is unreliable on some
+    // mobile browsers, and the overlay now covers the whole viewport.
+    const previousBodyOverflow = document.body.style.overflow
+    const previousRootOverflow = document.documentElement.style.overflow
     document.body.style.overflow = 'hidden'
+    document.documentElement.style.overflow = 'hidden'
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
-      document.body.style.overflow = previousOverflow
+      document.body.style.overflow = previousBodyOverflow
+      document.documentElement.style.overflow = previousRootOverflow
       previouslyFocused?.focus?.()
     }
   }, [item, onClose])
@@ -71,7 +77,10 @@ function ItemDetailModal({ item, contextLabel, onClose }) {
         exit: { opacity: 0, y: 48, scale: 0.985 },
       }
 
-  return (
+  // Portal to document.body so position: fixed resolves against the
+  // viewport instead of a transformed catalogue ancestor (which would break
+  // centering and backdrop coverage).
+  return createPortal(
     <AnimatePresence>
       {item && (
         <S.ItemOverlay
@@ -138,7 +147,8 @@ function ItemDetailModal({ item, contextLabel, onClose }) {
           </S.ItemPanel>
         </S.ItemOverlay>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   )
 }
 

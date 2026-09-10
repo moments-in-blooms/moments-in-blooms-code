@@ -28,7 +28,7 @@ export const CollectionBlock = styled.div`
     }
     to {
       opacity: 1;
-      transform: translateY(0);
+      transform: none;
     }
   }
 
