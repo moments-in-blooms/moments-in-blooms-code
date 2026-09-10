@@ -75,7 +75,7 @@ function ImageField({
 
       {onAltChange ? (
         <TextField
-          label="Alt text"
+          label="Image Title"
           value={alt ?? ''}
           onChange={(event) => onAltChange(event)}
           hint="Describes the image for accessibility and SEO."
