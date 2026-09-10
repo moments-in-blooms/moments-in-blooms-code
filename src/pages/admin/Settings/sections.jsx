@@ -107,12 +107,21 @@ function FooterGroupsForm({ value, onChange }) {
             addLabel="Add link"
             itemTitle={(link) => link.label || 'Unnamed link'}
             renderItem={(link, linkIndex, { update: patchLink }) => (
-              <TextField
-                label="Label"
-                value={link.label ?? ''}
-                onChange={(event) => patchLink({ label: event.target.value })}
-                placeholder="e.g. About us"
-              />
+              <FieldRow>
+                <TextField
+                  label="Label"
+                  value={link.label ?? ''}
+                  onChange={(event) => patchLink({ label: event.target.value })}
+                  placeholder="e.g. About us"
+                />
+                <TextField
+                  label="Path"
+                  value={link.path ?? ''}
+                  onChange={(event) => patchLink({ path: event.target.value })}
+                  placeholder="e.g. /services?collection=decor-hire"
+                  hint={linkIndex === 0 ? 'Site-relative path; query strings are supported.' : undefined}
+                />
+              </FieldRow>
             )}
           />
         </>

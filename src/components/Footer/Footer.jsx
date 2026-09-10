@@ -2,7 +2,6 @@ import { FiArrowRight, FiFacebook, FiGlobe, FiInstagram } from 'react-icons/fi'
 import { NavLink } from 'react-router-dom'
 import logoWhite from '../../assets/images/logo-old-white.png'
 import { routeMetadata } from '../../constants/navigation.js'
-import { useContent } from '../../hooks/useContent.js'
 import useSiteSettings from '../../hooks/useSiteSettings.js'
 import Button from '../Button/index.js'
 import * as S from './Footer.styles.js'
@@ -13,28 +12,7 @@ const socialIcons = {
 }
 
 function Footer() {
-  const { values: settingsValues } = useContent('settings')
-  const { contact: footerContact, socialLinks: footerSocialLinks } = useSiteSettings()
-  const footerNavigationGroups = settingsValues.footerGroups ?? [
-    {
-      title: 'Explore',
-      links: [
-        { label: 'About us', path: '/about' },
-        { label: 'Our services', path: '/services' },
-        { label: 'View gallery', path: '/gallery' },
-        { label: 'Contact us', path: '/contact' },
-      ],
-    },
-    {
-      title: 'Services',
-      links: [
-        { label: 'Event styling', path: '/services' },
-        { label: 'Floral design', path: '/services' },
-        { label: 'Tablescapes', path: '/services' },
-        { label: 'Private celebrations', path: '/services' },
-      ],
-    },
-  ]
+  const { contact: footerContact, socialLinks: footerSocialLinks, footerGroups: footerNavigationGroups } = useSiteSettings()
   return (
     <S.FooterShell>
       <S.FooterContainer>

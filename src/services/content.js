@@ -217,6 +217,39 @@ const rewriteLegacyCopy = (value) => {
   return value
 }
 
+// Legacy footer links retired in favour of the three real service
+// collections. Applies only while a stored `Services` group still holds the
+// legacy generic links — once the client re-saves Settings, stored content
+// carries the new links and this becomes a no-op.
+const LEGACY_FOOTER_SERVICE_LABELS = new Set([
+  'Event styling',
+  'Floral design',
+  'Tablescapes',
+  'Private celebrations',
+])
+
+const normalizeFooterGroups = (groups) => {
+  if (!Array.isArray(groups)) return groups
+  const canonical = footerNavigationGroups.find((group) => group.title === 'Services')
+  return groups.map((group) => {
+    if (!group || group.title !== 'Services' || !Array.isArray(group.links)) return group
+    // Legacy while none of the links point at a collection yet: either the
+    // exact legacy set, or any leftover legacy label among generic
+    // `/services` links (partial CMS edits). A Services group that already
+    // carries `?collection=` links was migrated or customized — leave it.
+    const hasCanonicalLink = group.links.some(
+      (link) => typeof link?.path === 'string' && link.path.includes('?collection='),
+    )
+    if (hasCanonicalLink || !canonical) return group
+    const isUntouchedLegacy =
+      group.links.length > 0 &&
+      group.links.every((link) => link?.path === '/services') &&
+      group.links.some((link) => LEGACY_FOOTER_SERVICE_LABELS.has(link?.label))
+    if (!isUntouchedLegacy) return group
+    return { ...group, links: canonical.links.map((link) => ({ ...link })) }
+  })
+}
+
 const normalizeContent = (pageKey, values) => {
   if (!values || typeof values !== 'object') return values
   const next = { ...values }
@@ -252,6 +285,9 @@ const normalizeContent = (pageKey, values) => {
       }
       return item
     })
+  }
+  if (pageKey === 'settings' && Array.isArray(next.footerGroups)) {
+    next.footerGroups = normalizeFooterGroups(next.footerGroups)
   }
   // sections inside gallery/ services still handled per above
   return next

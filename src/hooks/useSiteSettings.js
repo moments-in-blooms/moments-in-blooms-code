@@ -1,5 +1,6 @@
 import {
   footerContact as defaultContact,
+  footerNavigationGroups as defaultFooterGroups,
   footerSocialLinks as defaultSocialLinks,
 } from '../constants/navigation.js'
 import { useContent } from './useContent.js'
@@ -18,8 +19,12 @@ function useSiteSettings() {
     (values.footerSocialLinks ?? []).length > 0
       ? values.footerSocialLinks
       : defaultSocialLinks
+  const footerGroups =
+    (values.footerGroups ?? []).length > 0
+      ? values.footerGroups
+      : defaultFooterGroups
 
-  return { contact, socialLinks }
+  return { contact, socialLinks, footerGroups }
 }
 
 export default useSiteSettings

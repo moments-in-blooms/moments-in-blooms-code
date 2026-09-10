@@ -78,12 +78,22 @@ function ServiceCollectionsShowcase({
     : collections?.[0]?.id || "";
 
   // Deep-link landing: scroll to the showcase after ScrollToTop has forced
-  // top-of-page. Runs once per mount so in-page tab clicks stay put.
-  const didDeepLinkScrollRef = useRef(false);
+  // top-of-page. Also fires when the ?collection= param changes via external
+  // navigation (a footer/home link clicked while already on /services) but
+  // never for in-page tab clicks — those only switch content in place.
+  // ScrollToTop ignores search-only changes, so an in-page footer click never
+  // gets yanked to the page top either.
+  const isLocalSelectionRef = useRef(false);
+  const scrolledForRef = useRef(null);
   useEffect(() => {
-    if (didDeepLinkScrollRef.current || !isValidRequest || !id) return;
-    if (!collections?.length) return;
-    didDeepLinkScrollRef.current = true;
+    if (!isValidRequest || !id || !collections?.length) return;
+    if (isLocalSelectionRef.current) {
+      isLocalSelectionRef.current = false;
+      scrolledForRef.current = requestedCollectionId;
+      return;
+    }
+    if (scrolledForRef.current === requestedCollectionId) return;
+    scrolledForRef.current = requestedCollectionId;
     const reduceMotion = window.matchMedia?.(
       "(prefers-reduced-motion: reduce)",
     )?.matches;
@@ -94,11 +104,12 @@ function ServiceCollectionsShowcase({
           ?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
       }, 0);
     });
-  }, [isValidRequest, id, collections]);
+  }, [isValidRequest, requestedCollectionId, id, collections]);
 
   const handleSelectCollection = useCallback(
     (nextId) => {
       if (!collectionIds.has(nextId)) return;
+      isLocalSelectionRef.current = true;
       const params = new URLSearchParams(searchParams);
       params.set("collection", nextId);
       setSearchParams(params, { replace: true });

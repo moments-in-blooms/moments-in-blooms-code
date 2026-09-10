@@ -1,3 +1,4 @@
+import { serviceCollections } from './services.js'
 import { NAVBAR_THEMES } from './ui.js'
 
 export const publicNavigation = Object.freeze([
@@ -42,6 +43,17 @@ export const adminNavigationGroups = Object.freeze([
   },
 ])
 
+// Footer Services links are derived from the same service collections the
+// homepage service cards link to, so the two can never drift apart.
+const footerServiceLinks = Object.freeze(
+  serviceCollections.map((collection) =>
+    Object.freeze({
+      label: collection.title,
+      path: `/services?collection=${collection.id}`,
+    }),
+  ),
+)
+
 export const footerNavigationGroups = Object.freeze([
   {
     title: 'Explore',
@@ -54,12 +66,7 @@ export const footerNavigationGroups = Object.freeze([
   },
   {
     title: 'Services',
-    links: [
-      { label: 'Event styling', path: '/services' },
-      { label: 'Floral design', path: '/services' },
-      { label: 'Tablescapes', path: '/services' },
-      { label: 'Private celebrations', path: '/services' },
-    ],
+    links: footerServiceLinks,
   },
 ])
 
