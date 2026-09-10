@@ -104,9 +104,10 @@ function ItemDetailPage({ pageKey, basePath, pageTitle, sections }) {
     return { ok: result?.ok ?? true, message: result?.message }
   }
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     setConfirmDelete(false)
-    removeItem()
+    const result = await removeItem()
+    if (result?.error) return
     showSuccess('Deleted', `${section.itemLabel} deleted.`)
     navigate(`${basePath}/${sectionKey}`)
   }

@@ -78,10 +78,15 @@ export async function getSupabaseSession() {
 async function checkIsActive(userId) {
   if (!userId || !supabase) return true
   try {
-    const { data } = await supabase.from('admin_profiles').select('is_active').eq('id', userId).maybeSingle()
+    const { data, error } = await supabase.from('admin_profiles').select('is_active').eq('id', userId).maybeSingle()
+    if (error) {
+      console.warn('[auth] checkIsActive query failed, failing open', error)
+      return true
+    }
     if (data && data.is_active === false) return false
     return true
-  } catch {
+  } catch (error) {
+    console.warn('[auth] checkIsActive failed, failing open', error)
     return true
   }
 }
@@ -278,7 +283,7 @@ export async function updateProfile({ displayName, email, currentPassword }) {
   return { error: null }
 }
 
-export async function signUpStaff({ email, password, displayName, role = 'staff' }) {
+export async function signUpStaff({ email, password, displayName }) {
   if (!supabase) {
     return { error: { message: 'Staff creation requires Supabase to be configured.' } }
   }
@@ -303,11 +308,12 @@ export async function signUpStaff({ email, password, displayName, role = 'staff'
     return { error: { message: error.message || PASSWORD_UPDATE_ERROR } }
   }
 
-  // Upsert profile role if provided (trigger creates row as staff by default; owner can be promoted)
+  // Upsert profile display name only — role elevation to owner must go
+  // through updateAdminProfile which is protected by owner-only RLS.
   try {
     const newUserId = data.user?.id
-    if (newUserId && role !== 'staff') {
-      await supabase.from('admin_profiles').update({ role, display_name: String(displayName ?? '').trim() || null, email: normalizedEmail }).eq('id', newUserId)
+    if (newUserId) {
+      await supabase.from('admin_profiles').update({ display_name: String(displayName ?? '').trim() || null, email: normalizedEmail }).eq('id', newUserId)
     }
   } catch (profileError) {
     console.warn('[auth] staff role sync failed', profileError)

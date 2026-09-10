@@ -9,8 +9,7 @@ import Button from '../../../components/Button/index.js'
 import { showError, showSuccess } from '../../../utils/sweetAlert.js'
 import { adminPageMeta } from '../../../constants/admin.js'
 import {
-  deleteFaq,
-  deleteFaqs,
+  archiveFaq,
   fetchFaqsAdmin,
   restoreFaq,
   setFaqOrder,
@@ -159,11 +158,11 @@ function FaqItems() {
   const handleDeleteFaq = async () => {
     if (!deleteTarget) return
     setBusy(true)
-    const result = await deleteFaq(deleteTarget.id)
+    const result = await archiveFaq(deleteTarget.id)
     setBusy(false)
     setDeleteTarget(null)
     if (result.error) {
-      showError('Delete failed', result.error.message)
+      showError('Archive failed', result.error.message)
       return
     }
     await loadData()
@@ -172,23 +171,24 @@ function FaqItems() {
       next.delete(deleteTarget.id)
       return next
     })
-    showSuccess('Deleted', 'FAQ deleted permanently.')
+    showSuccess('Archived', 'FAQ archived. Restore it from the detail page if needed.')
   }
 
   const handleBulkDelete = async () => {
     if (selectedIds.size === 0) return
     setBusy(true)
     const ids = [...selectedIds]
-    const result = await deleteFaqs(ids)
+    const results = await Promise.all(ids.map((id) => archiveFaq(id)))
     setBusy(false)
     setBulkConfirm(false)
-    if (result.error) {
-      showError('Delete failed', result.error.message)
+    const failed = results.find((result) => result.error)
+    if (failed) {
+      showError('Archive failed', failed.error.message)
       return
     }
     await loadData()
     setSelectedIds(new Set())
-    showSuccess('Deleted', `${ids.length} FAQs deleted permanently.`)
+    showSuccess('Archived', `${ids.length} FAQs archived.`)
   }
 
   const handleRestoreFaq = async (faq) => {

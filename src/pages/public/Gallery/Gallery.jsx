@@ -5,6 +5,7 @@ import { useGallery } from './hooks/index.js'
 import { useLightbox } from './hooks/index.js'
 
 import {
+  CategoryNavigation,
   EditorialGallery,
   FeaturedStory,
   GalleryCTA,
@@ -31,7 +32,7 @@ function Gallery() {
   const featuredStories = values.featuredStories ?? []
   const featuredStoriesSection = values.featuredStoriesSection ?? {}
 
-  const { visibleItems, hasMore, loadMore } = useGallery(items, categories)
+  const { visibleItems, hasMore, loadMore, activeCategory, setActiveCategory } = useGallery(items, categories)
 
   const {
     isOpen,
@@ -67,6 +68,14 @@ function Gallery() {
       <GalleryHero content={hero} />
 
       <Introduction content={introduction} />
+
+      {categories.length > 0 ? (
+        <CategoryNavigation
+          categories={[{ id: 'all', label: 'All' }, ...categories]}
+          activeCategory={activeCategory}
+          onCategoryChange={setActiveCategory}
+        />
+      ) : null}
 
       <EditorialGallery
         items={visibleItems}

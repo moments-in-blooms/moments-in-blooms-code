@@ -94,6 +94,12 @@ export const gallerySections = [
       if (!draft?.title?.trim()) {
         errors.title = 'A title is required.'
       }
+      if (!draft?.src?.trim()) {
+        errors.src = 'An image is required.'
+      }
+      if (!draft?.category?.trim()) {
+        errors.category = 'A category is required.'
+      }
       return errors
     },
     itemForm: GalleryItemForm,
@@ -219,7 +225,7 @@ function GalleryCategoryForm({ value, onChange, errors }) {
         label="Category id"
         value={value?.id ?? ''}
         onChange={(event) => onChange({ ...value, id: event.target.value })}
-        hint="Used to link gallery items to this category."
+        hint="Changing the id orphans linked images. Leave unchanged unless you reassign items first."
       />
     </>
   )

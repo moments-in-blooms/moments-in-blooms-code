@@ -134,6 +134,13 @@ function Enquiries() {
 
   const handleStatusChange = async (id, status) => {
     setStatusError(null)
+    const current = enquiries.find((enquiry) => enquiry.id === id)
+    if (current && current.status === 'closed' && status !== 'closed') {
+      const msg = 'Closed enquiries cannot be reopened. Delete it or leave it closed.'
+      setStatusError(msg)
+      showError('Update blocked', msg)
+      return
+    }
     const result = await updateEnquiryStatus(id, status)
     if (result.data) {
       setEnquiries((current) =>
@@ -167,7 +174,7 @@ function Enquiries() {
   }
 
   const handleExport = () => {
-    const csv = toCsv(enquiries)
+    const csv = toCsv(visible)
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')

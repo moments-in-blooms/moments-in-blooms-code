@@ -95,6 +95,37 @@ export const TopbarMenuButton = styled.button`
   }
 `
 
+export const TopbarCollapseButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radii.md};
+  background: ${({ theme }) => theme.colors.surface};
+  color: ${({ theme }) => theme.colors.textPrimary};
+  cursor: pointer;
+  transition: color ${({ theme }) => theme.transitions.fast},
+    border-color ${({ theme }) => theme.transitions.fast},
+    background ${({ theme }) => theme.transitions.fast};
+
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.taupe};
+    background: ${({ theme }) => theme.colors.secondary};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.focus};
+    outline-offset: 2px;
+  }
+
+  ${mobileBreak} {
+    display: none;
+  }
+`
+
 export const TopbarActions = styled.div`
   display: flex;
   align-items: center;

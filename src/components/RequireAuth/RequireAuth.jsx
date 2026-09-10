@@ -2,8 +2,10 @@ import { Navigate, useLocation } from 'react-router-dom'
 import useAuth from '../../hooks/useAuth.js'
 
 function RequireAuth({ children }) {
-  const { session } = useAuth()
+  const { session, initializing } = useAuth()
   const location = useLocation()
+
+  if (initializing) return null
 
   if (!session) {
     const from = location.pathname + location.search

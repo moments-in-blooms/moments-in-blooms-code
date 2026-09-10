@@ -20,15 +20,17 @@ import {
   ScrollCue,
 } from './Hero.styles.js'
 
-function Hero({ content, id = 'home-hero' }) {
+function Hero({ content = {}, id = 'home-hero' }) {
   const shouldReduceMotion = useReducedMotion()
   const { scrollY } = useScroll()
   const mediaY = useTransform(scrollY, [0, 800], [0, shouldReduceMotion ? 0 : 72])
+  const image = content.image ?? {}
+  const heroSrc = image.src ?? ''
 
   return (
     <HeroRoot id={id}>
       <HeroMedia
-        $src={content.image.src}
+        $src={heroSrc}
         style={{ y: mediaY }}
         initial={{ scale: 1.08 }}
         animate={{ scale: 1 }}
@@ -104,7 +106,7 @@ function Hero({ content, id = 'home-hero' }) {
         <span>Scroll to discover</span>
         <FiArrowDown aria-hidden="true" color="currentColor" size={14} />
       </ScrollCue>
-      <span className="sr-only">{content.image.credit}</span>
+      {image.credit ? <span className="sr-only">{image.credit}</span> : null}
     </HeroRoot>
   )
 }

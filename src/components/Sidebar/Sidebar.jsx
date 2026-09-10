@@ -1,8 +1,6 @@
 import {
   FiBriefcase,
   FiChevronDown,
-  FiChevronsLeft,
-  FiChevronsRight,
   FiFileText,
   FiFolder,
   FiHelpCircle,
@@ -29,7 +27,6 @@ import {
   SidebarBrandCaption,
   SidebarBrandLogo,
   SidebarBrandName,
-  SidebarCollapse,
   SidebarGroup,
   SidebarGroupItems,
   SidebarGroupLabel,
@@ -78,7 +75,7 @@ const collapsibleGroupIds = adminNavigationGroups
   .filter((group) => group.collapsible)
   .map((group) => group.id)
 
-function Sidebar({ open = false, onClose, collapsed = false, onToggleCollapse }) {
+function Sidebar({ open = false, onClose, collapsed = false }) {
   const { pathname } = useLocation()
   const activeGroupId = findActiveGroupId(pathname)
   // Accordion behaviour layered over the route-derived state: the group
@@ -199,22 +196,6 @@ function Sidebar({ open = false, onClose, collapsed = false, onToggleCollapse })
             )
           })}
         </SidebarNav>
-
-        {onToggleCollapse ? (
-          <SidebarCollapse
-            type="button"
-            onClick={onToggleCollapse}
-            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            aria-expanded={!collapsed}
-          >
-            {collapsed ? (
-              <FiChevronsRight aria-hidden="true" size={16} />
-            ) : (
-              <FiChevronsLeft aria-hidden="true" size={16} />
-            )}
-            {!collapsed ? <span>Collapse</span> : null}
-          </SidebarCollapse>
-        ) : null}
       </SidebarShell>
     </>
   )

@@ -11,8 +11,10 @@ import { EASE_LUXE } from '../../../../../styles/animations.js'
 
 import * as S from './GalleryHero.styles.js'
 
-function GalleryHero({ content }) {
+function GalleryHero({ content = {} }) {
   const shouldReduceMotion = useReducedMotion()
+  const hasPrimary = Boolean(content.primaryLink && content.primaryCTA)
+  const hasSecondary = Boolean(content.secondaryLink && content.secondaryCTA)
 
   return (
     <S.GalleryHero>
@@ -48,13 +50,17 @@ function GalleryHero({ content }) {
           transition={{ duration: 0.7, delay: 1, ease: EASE_LUXE }}
         >
           <S.HeroCTA>
-            <Button as={NavLink} to={content.primaryLink}>
-              {content.primaryCTA}
-              <FiArrowRight aria-hidden="true" size={18} />
-            </Button>
-            <Button as={NavLink} to={content.secondaryLink} variant={BUTTON_VARIANTS.OUTLINE_LIGHT}>
-              {content.secondaryCTA}
-            </Button>
+            {hasPrimary ? (
+              <Button as={NavLink} to={content.primaryLink}>
+                {content.primaryCTA}
+                <FiArrowRight aria-hidden="true" size={18} />
+              </Button>
+            ) : null}
+            {hasSecondary ? (
+              <Button as={NavLink} to={content.secondaryLink} variant={BUTTON_VARIANTS.OUTLINE_LIGHT}>
+                {content.secondaryCTA}
+              </Button>
+            ) : null}
           </S.HeroCTA>
         </motion.div>
       </S.HeroContent>

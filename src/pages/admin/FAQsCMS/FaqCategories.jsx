@@ -12,6 +12,7 @@ import {
   fetchFaqsAdmin,
   restoreCategory,
   setCategoryOrder,
+  updateFaq,
 } from '../../../services/faqs.js'
 import { showError, showSuccess } from '../../../utils/sweetAlert.js'
 import {
@@ -118,6 +119,22 @@ function FaqCategories() {
     }
     await loadData()
     showSuccess('Deleted', 'Category deleted permanently.')
+  }
+
+  const handleMoveFaqs = async () => {
+    if (!categoryDelete || !moveTarget) return
+    setBusy(true)
+    const toMove = faqs.filter((faq) => faq.category_id === categoryDelete.id && isActive(faq))
+    const results = await Promise.all(toMove.map((faq) => updateFaq(faq.id, { category_id: moveTarget })))
+    setBusy(false)
+    const failed = results.find((result) => result.error)
+    if (failed) {
+      showError('Move failed', failed.error.message)
+      return
+    }
+    setMoveTarget('')
+    await loadData()
+    showSuccess('Moved', `${toMove.length} FAQs moved.`)
   }
 
   const handleRestoreCategory = async (category) => {
@@ -234,14 +251,24 @@ function FaqCategories() {
         }
       >
         {pendingCategoryFaqs > 0 ? (
-          <SelectField
-            label={`Move ${pendingCategoryFaqs} FAQ${pendingCategoryFaqs === 1 ? '' : 's'} to`}
-            value={moveTarget}
-            onChange={(event) => setMoveTarget(event.target.value)}
-            options={moveOptions}
-            placeholder="Choose a category…"
-            hint="You must move FAQs before deleting. This is blocked until empty."
-          />
+          <>
+            <SelectField
+              label={`Move ${pendingCategoryFaqs} FAQ${pendingCategoryFaqs === 1 ? '' : 's'} to`}
+              value={moveTarget}
+              onChange={(event) => setMoveTarget(event.target.value)}
+              options={moveOptions}
+              placeholder="Choose a category…"
+              hint="Move FAQs to another category, then delete will unlock."
+            />
+            <Button
+              type="button"
+              variant="outline"
+              disabled={busy || !moveTarget}
+              onClick={handleMoveFaqs}
+            >
+              {busy ? 'Moving…' : `Move ${pendingCategoryFaqs} FAQs`}
+            </Button>
+          </>
         ) : (
           <FaqModalHint>This will permanently delete the category.</FaqModalHint>
         )}

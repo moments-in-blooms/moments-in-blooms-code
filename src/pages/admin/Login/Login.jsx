@@ -1,7 +1,7 @@
 import { useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { FiArrowLeft, FiEye, FiEyeOff } from 'react-icons/fi'
-import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import logoPrimary from '../../../assets/images/logo-old-primary.png'
 import Button from '../../../components/Button/index.js'
 import {
@@ -15,6 +15,8 @@ import { adminLogin } from '../../../constants/admin.js'
 import useAuth from '../../../hooks/useAuth.js'
 import { EMAIL_PATTERN } from '../../../utils/validation.js'
 import {
+  ForgotPasswordLink,
+  ForgotPasswordWrap,
   LoginBackLink,
   LoginBrand,
   LoginBrandLogo,
@@ -143,18 +145,13 @@ function Login() {
             {isSubmitting ? adminLogin.loadingLabel : adminLogin.submitLabel}
           </Button>
 
-          <div style={{ textAlign: 'right', marginTop: '0.75rem' }}>
-            <Link
+          <ForgotPasswordWrap>
+            <ForgotPasswordLink
               to="/admin/forgot-password"
-              style={{
-                fontSize: '0.82rem',
-                color: 'var(--color-primary, #8b6f47)',
-                textDecoration: 'underline',
-              }}
             >
               {adminLogin.forgotPasswordLabel}
-            </Link>
-          </div>
+            </ForgotPasswordLink>
+          </ForgotPasswordWrap>
         </LoginForm>
 
         <LoginBackLink to="/">

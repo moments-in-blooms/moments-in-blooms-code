@@ -11,13 +11,17 @@ import { AuthContext } from './AuthContext.jsx'
 
 function AuthProvider({ children }) {
   const [session, setSession] = useState(() => getSession())
+  const [initializing, setInitializing] = useState(() => isSupabaseConfigured())
 
   useEffect(() => {
     if (!isSupabaseConfigured()) return undefined
 
     let mounted = true
     getSupabaseSession().then(({ session: nextSession }) => {
-      if (mounted) setSession(nextSession)
+      if (mounted) {
+        setSession(nextSession)
+        setInitializing(false)
+      }
     })
 
     const unsubscribe = subscribeToAuthChanges((nextSession) => {
@@ -47,8 +51,8 @@ function AuthProvider({ children }) {
   }, [])
 
   const value = useMemo(
-    () => ({ session, signIn, signOut }),
-    [session, signIn, signOut],
+    () => ({ session, initializing, signIn, signOut }),
+    [session, initializing, signIn, signOut],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

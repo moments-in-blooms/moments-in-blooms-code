@@ -10,7 +10,9 @@ import { fadeUp, softReveal, staggerContainer, VIEWPORT_DEFAULT } from '../../..
 
 import * as S from './GalleryCTA.styles.js'
 
-function GalleryCTA({ content }) {
+function GalleryCTA({ content = {} }) {
+  const hasPrimary = Boolean(content.primaryLink && content.primaryCTA)
+  const hasSecondary = Boolean(content.secondaryLink && content.secondaryCTA)
   return (
     <S.CTASection>
       <S.CTABackground $src={content.backgroundImage} aria-hidden="true" />
@@ -32,13 +34,17 @@ function GalleryCTA({ content }) {
           </motion.div>
           <motion.div variants={fadeUp}>
             <S.CTAButtons>
-              <Button as={NavLink} to={content.primaryLink}>
-                {content.primaryCTA}
-                <FiArrowRight aria-hidden="true" size={18} />
-              </Button>
-              <Button as={NavLink} to={content.secondaryLink} variant={BUTTON_VARIANTS.OUTLINE}>
-                {content.secondaryCTA}
-              </Button>
+              {hasPrimary ? (
+                <Button as={NavLink} to={content.primaryLink}>
+                  {content.primaryCTA}
+                  <FiArrowRight aria-hidden="true" size={18} />
+                </Button>
+              ) : null}
+              {hasSecondary ? (
+                <Button as={NavLink} to={content.secondaryLink} variant={BUTTON_VARIANTS.OUTLINE}>
+                  {content.secondaryCTA}
+                </Button>
+              ) : null}
             </S.CTAButtons>
           </motion.div>
         </motion.div>

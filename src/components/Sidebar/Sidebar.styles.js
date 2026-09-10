@@ -253,38 +253,3 @@ export const SidebarLink = styled.span`
     }
   }
 `
-
-export const SidebarCollapse = styled.button`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.sm};
-  min-height: 2.6rem;
-  margin-top: auto;
-  padding: 0 ${({ theme }) => theme.spacing.md};
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.radii.md};
-  background: transparent;
-  color: ${({ theme }) => theme.colors.textSecondary};
-  font-family: ${({ theme }) => theme.typography.uiFont};
-  font-size: 0.78rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: color ${({ theme }) => theme.transitions.fast},
-    border-color ${({ theme }) => theme.transitions.fast},
-    background ${({ theme }) => theme.transitions.fast};
-
-  &:hover {
-    border-color: ${({ theme }) => theme.colors.taupe};
-    background: ${({ theme }) => theme.colors.secondary};
-    color: ${({ theme }) => theme.colors.primaryHover};
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.focus};
-    outline-offset: 2px;
-  }
-
-  ${mobileBreak} {
-    display: none;
-  }
-`

@@ -8,6 +8,7 @@ import { adminNavigationGroups, routeMetadata } from '../../constants/navigation
 import useAuth from '../../hooks/useAuth.js'
 import {
   TopbarActions,
+  TopbarCollapseButton,
   TopbarContainer,
   TopbarContext,
   TopbarMenuButton,
@@ -23,7 +24,7 @@ import {
   TopbarViewSite,
 } from './Topbar.styles.js'
 
-function Topbar({ onMenuClick, menuOpen = false }) {
+function Topbar({ onMenuClick, menuOpen = false, collapsed = false, onToggleCollapse }) {
   const { session, signOut } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
@@ -112,6 +113,18 @@ function Topbar({ onMenuClick, menuOpen = false }) {
     <TopbarShell>
       <TopbarContainer>
         <TopbarContext>
+          {onToggleCollapse ? (
+            <TopbarCollapseButton
+              type="button"
+              onClick={onToggleCollapse}
+              aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              aria-expanded={!collapsed}
+              aria-controls="admin-sidebar"
+              title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            >
+              <FiMenu aria-hidden="true" size={18} />
+            </TopbarCollapseButton>
+          ) : null}
           {onMenuClick ? (
             <TopbarMenuButton
               type="button"

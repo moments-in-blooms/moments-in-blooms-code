@@ -38,7 +38,7 @@ const DEFAULT_VALUES = {
   message: '',
 }
 
-function EnquiryForm({ content, id, eventTypeOptions, serviceInterestOptions, guestCountOptions, setupRequirementOptions }) {
+function EnquiryForm({ content = {}, id, eventTypeOptions = [], serviceInterestOptions = [], guestCountOptions = [], setupRequirementOptions = [] }) {
   const { contact } = useSiteSettings()
   const [step, setStep] = useState(0)
   const [status, setStatus] = useState('idle')
@@ -47,6 +47,8 @@ function EnquiryForm({ content, id, eventTypeOptions, serviceInterestOptions, gu
   const errorRef = useRef(null)
   const activeStep = useRef(0)
   const submittingRef = useRef(false)
+  const lastSubmitAt = useRef(0)
+  const railSteps = Array.isArray(content.steps) ? content.steps : []
 
   const {
     register,
@@ -107,13 +109,23 @@ function EnquiryForm({ content, id, eventTypeOptions, serviceInterestOptions, gu
   }
 
   const onSubmit = async (values) => {
+    if (values.website) return
+    const now = Date.now()
+    if (now - lastSubmitAt.current < 30000 && lastSubmitAt.current !== 0) {
+      setSubmitError('Please wait a moment before sending another enquiry.')
+      setStatus('idle')
+      submittingRef.current = false
+      return
+    }
+    lastSubmitAt.current = now
     submittingRef.current = true
     setStatus('submitting')
     setSubmitError(null)
 
+    const safeInterestOptions = Array.isArray(serviceInterestOptions) ? serviceInterestOptions : []
     const serviceLabels = values.services.map(
       (value) =>
-        serviceInterestOptions.find((option) => option.value === value)?.label ??
+        safeInterestOptions.find((option) => option.value === value)?.label ??
         value,
     )
 
@@ -169,7 +181,7 @@ function EnquiryForm({ content, id, eventTypeOptions, serviceInterestOptions, gu
                 <TitleReveal>{content.title}</TitleReveal>
               </S.RailTitle>
               <S.RailSteps>
-                {content.steps.map((step, index) => (
+                {railSteps.map((step, index) => (
                   <S.RailStep key={index}>
                     <S.RailStepNumber>{String(index + 1).padStart(2, '0')}</S.RailStepNumber>
                     <div>
@@ -216,6 +228,15 @@ function EnquiryForm({ content, id, eventTypeOptions, serviceInterestOptions, gu
                   onSubmit={handleFormSubmit}
                   onKeyDown={handleFormKeyDown}
                 >
+                  <input
+                    type="text"
+                    name="website"
+                    autoComplete="off"
+                    tabIndex={-1}
+                    aria-hidden="true"
+                    style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0 }}
+                    {...register('website')}
+                  />
                   <StepIndicator currentIndex={step} />
 
                   <S.StepPanel hidden={step !== 0} aria-labelledby="enquiry-step-heading-0">

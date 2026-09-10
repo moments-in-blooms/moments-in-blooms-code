@@ -125,7 +125,7 @@ export function listDemoEnquiries() {
   return readDemoQueue()
 }
 
-export async function listEnquiries(limit) {
+export async function listEnquiries(limit = 200) {
   if (!supabase) {
     const queue = readDemoQueue()
     const sorted = [...queue].sort(
@@ -168,7 +168,16 @@ export async function getEnquiry(id) {
 }
 
 export async function updateEnquiryStatus(id, status) {
+  const allowed = ['new', 'contacted', 'quoted', 'closed']
+  if (!allowed.includes(status)) {
+    return { data: null, error: { message: 'Invalid enquiry status.' }, demo: false }
+  }
   if (!supabase) {
+    const existing = readDemoQueue()
+    const target = existing.find((record) => record.id === id)
+    if (target && target.status === 'closed' && status !== 'closed') {
+      return { data: null, error: { message: 'Closed enquiries cannot be reopened.' }, demo: true }
+    }
     const queue = readDemoQueue()
     const next = queue.map((record) =>
       record.id === id

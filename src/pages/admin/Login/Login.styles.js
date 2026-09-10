@@ -142,3 +142,14 @@ export const LoginBackLink = styled(Link)`
     color: ${({ theme }) => theme.colors.primaryHover};
   }
 `
+
+export const ForgotPasswordWrap = styled.div`
+  text-align: right;
+  margin-top: 0.75rem;
+`
+
+export const ForgotPasswordLink = styled(Link)`
+  font-size: 0.82rem;
+  color: var(--color-primary, #8b6f47);
+  text-decoration: underline;
+`

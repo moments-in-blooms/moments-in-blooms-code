@@ -69,8 +69,8 @@ function GalleryItemsPage() {
     setBusy(false)
     setBulkConfirm(false)
     if (result?.error) {
+      update((current) => ({ ...current, items }))
       showError('Delete failed', result.error.message || "We couldn't delete the images.")
-      // Revert by reloading? For simplicity, keep as is and let user refresh; or we could refetch
       return
     }
     // Delete storage files for deleted items (best-effort, after Save)

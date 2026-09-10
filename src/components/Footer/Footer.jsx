@@ -48,6 +48,7 @@ function Footer() {
     settingsValues.footerGroups,
     servicesValues.catalog?.categories,
   )
+  const phoneHref = footerContact.phone?.replaceAll?.(' ', '') ?? ''
   const groups = footerNavigationGroups.map((group) =>
     group?.title === 'Services' ? { ...group, links: servicesLinks } : group,
   )
@@ -94,7 +95,7 @@ function Footer() {
               <S.FooterContact>
                 <span>{footerContact.location}</span>
                 <a href={`mailto:${footerContact.email}`}>{footerContact.email}</a>
-                <a href={`tel:${footerContact.phone.replaceAll(' ', '')}`}>{footerContact.phone}</a>
+                {footerContact.phone ? <a href={`tel:${phoneHref}`}>{footerContact.phone}</a> : null}
                 <S.FooterSocials aria-label="Social links">
                   {footerSocialLinks.map((social) => {
                     const Icon = socialIcons[social.label] ?? FiGlobe

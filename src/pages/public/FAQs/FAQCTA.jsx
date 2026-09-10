@@ -17,7 +17,10 @@ import {
   CtaTitle,
 } from './FAQCTA.styles.js'
 
-function FAQCTA({ cta }) {
+function FAQCTA({ cta = {} }) {
+  const hasPrimary = Boolean(cta.primaryUrl && cta.primaryLabel)
+  const hasSecondary = Boolean(cta.secondaryUrl && cta.secondaryLabel)
+  if (!hasPrimary && !hasSecondary) return null
   return (
     <CtaRoot>
       <Container>
@@ -38,7 +41,7 @@ function FAQCTA({ cta }) {
           </SafeReveal>
           <SafeReveal from={{ y: 24 }} duration={0.6} delay={0.15}>
             <CtaActions>
-              {cta.primaryUrl ? (
+              {hasPrimary ? (
                 <Button
                   as={NavLink}
                   to={cta.primaryUrl}
@@ -51,12 +54,8 @@ function FAQCTA({ cta }) {
                     size={17}
                   />
                 </Button>
-              ) : (
-                <Button type="button" variant={BUTTON_VARIANTS.LIGHT}>
-                  {cta.primaryLabel}
-                </Button>
-              )}
-              {cta.secondaryUrl ? (
+              ) : null}
+              {hasSecondary ? (
                 <Button
                   as={NavLink}
                   to={cta.secondaryUrl}
@@ -64,11 +63,7 @@ function FAQCTA({ cta }) {
                 >
                   {cta.secondaryLabel}
                 </Button>
-              ) : (
-                <Button type="button" variant={BUTTON_VARIANTS.OUTLINE_LIGHT}>
-                  {cta.secondaryLabel}
-                </Button>
-              )}
+              ) : null}
             </CtaActions>
           </SafeReveal>
         </CtaContent>

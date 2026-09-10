@@ -10,6 +10,13 @@ export const settingsSections = [
     type: 'object',
     sectionMeta: (values) =>
       [values.footerContact?.email, values.footerContact?.phone].filter(Boolean),
+    validate: (draft) => {
+      const errors = {}
+      if (draft?.email?.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(draft.email.trim())) {
+        errors.email = 'Please enter a valid email address.'
+      }
+      return errors
+    },
     form: FooterContactForm,
   },
   {

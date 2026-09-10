@@ -2,7 +2,9 @@ import { Helmet } from 'react-helmet-async'
 import { useLocation } from 'react-router-dom'
 import { routeMetadata } from '../../constants/navigation.js'
 
-const SITE_URL = 'https://momentsinblooms.vercel.app'
+const SITE_URL = import.meta.env.VITE_SITE_URL || 'https://momentsinblooms.vercel.app'
+
+const DEFAULT_OG_IMAGE = `${SITE_URL}/pwa-512x512.png`
 
 function SEO({
   title,
@@ -23,6 +25,7 @@ function SEO({
     ? canonical
     : `${SITE_URL}${canonical || location.pathname}`
   const resolvedUrl = url || canonicalPath
+  const resolvedImage = image || DEFAULT_OG_IMAGE
 
   return (
     <Helmet>
@@ -37,13 +40,13 @@ function SEO({
       <meta property="og:site_name" content={siteName} />
       <meta property="og:locale" content="en_AU" />
       <meta property="og:url" content={resolvedUrl} />
-      {image ? <meta property="og:image" content={image} /> : null}
-      {image ? <meta property="og:image:width" content="1200" /> : null}
-      {image ? <meta property="og:image:height" content="630" /> : null}
-      <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
+      {resolvedImage ? <meta property="og:image" content={resolvedImage} /> : null}
+      {resolvedImage ? <meta property="og:image:width" content="1200" /> : null}
+      {resolvedImage ? <meta property="og:image:height" content="630" /> : null}
+      <meta name="twitter:card" content={resolvedImage ? 'summary_large_image' : 'summary'} />
       <meta name="twitter:title" content={resolvedTitle} />
       <meta name="twitter:description" content={resolvedDescription} />
-      {image ? <meta name="twitter:image" content={image} /> : null}
+      {resolvedImage ? <meta name="twitter:image" content={resolvedImage} /> : null}
       {jsonLd ? (Array.isArray(jsonLd) ? jsonLd.map((item, i) => (
         <script key={item['@type'] || i} type="application/ld+json">{JSON.stringify(item)}</script>
       )) : (

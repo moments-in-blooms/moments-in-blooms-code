@@ -2,7 +2,6 @@ import { FiArrowUpRight } from 'react-icons/fi'
 import { NavLink } from 'react-router-dom'
 import Button from '../../../../components/Button/index.js'
 import { ImageReveal, SafeReveal, TitleReveal } from '../../../../components/Reveal/index.js'
-import { serviceCollections } from '../../../../constants/services.js'
 import { BUTTON_VARIANTS } from '../../../../constants/ui.js'
 import {
   ServiceBody,
@@ -23,18 +22,12 @@ import {
   ServiceTitle,
 } from './Services.styles.js'
 
-const KNOWN_COLLECTION_IDS = new Set(
-  Array.isArray(serviceCollections)
-    ? serviceCollections.map((collection) => collection?.id)
-    : [],
-)
-
 function getServiceLink(service) {
   // Prefer the explicit CMS field; fall back to the card id, which survives
-  // CMS text edits and matches a collection for cards saved before
-  // `collectionId` existed.
+  // CMS text edits. Any CMS category id deep-links; the Services page falls
+  // back to the first category for unknown ids.
   const target = service?.collectionId || service?.id
-  if (target && KNOWN_COLLECTION_IDS.has(target)) {
+  if (target) {
     return `/services?collection=${encodeURIComponent(target)}`
   }
   return service?.path ?? '/services'

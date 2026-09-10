@@ -7,7 +7,6 @@ const ALLOWED_TYPES = new Set([
   'image/png',
   'image/webp',
   'image/gif',
-  'image/svg+xml',
 ])
 
 const UPLOAD_ERROR_MESSAGE = "We couldn't upload the image. Please try again."
@@ -51,7 +50,10 @@ export async function uploadImage(file, { prefix = 'cms' } = {}) {
   const type = file.type || 'image/jpeg'
 
   if (!ALLOWED_TYPES.has(type) && !type.startsWith('image/')) {
-    return { data: null, error: { message: 'Only JPG, PNG, WEBP, GIF or SVG images are allowed.' } }
+    return { data: null, error: { message: 'Only JPG, PNG, WEBP or GIF images are allowed.' } }
+  }
+  if (type === 'image/svg+xml') {
+    return { data: null, error: { message: 'SVG images are not allowed for security reasons.' } }
   }
 
   if (file.size > MAX_SIZE_MB * 1024 * 1024) {
