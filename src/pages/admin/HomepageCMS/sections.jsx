@@ -3,14 +3,10 @@ import { FieldRow, SelectField, TextAreaField, TextField } from '../../../compon
 import ImageField from '../../../components/admin/ImageField/index.js'
 import Repeater from '../../../components/admin/Repeater/index.js'
 import ToggleSwitch from '../../../components/admin/ToggleSwitch/index.js'
+import { useContent } from '../../../hooks/useContent.js'
+import { listCategories } from '../ServicesCMS/catalog.js'
 
 const GALLERY_VARIANTS = ['feature', 'portrait', 'detail']
-
-const SERVICE_COLLECTION_OPTIONS = [
-  { value: 'decor-hire', label: 'Decor Hire' },
-  { value: 'luxe-photobooth', label: 'Luxe Photobooth' },
-  { value: 'blissful-nest', label: 'Blissful Nest' },
-]
 
 const createServiceId = () => `service-${Date.now()}`
 const createGalleryId = () => `gallery-${Date.now()}`
@@ -53,7 +49,8 @@ export const homepageSections = [
   {
     key: 'services',
     title: 'Services',
-    description: 'The three service cards that link to your services page.',
+    description:
+      'Homepage service cards. Each card linked to a live category shows that category’s content; copy, image and layout set here override it. Unlinked cards show exactly as written.',
     type: 'list',
     itemLabel: 'service',
     sectionMeta: (values) => [`${(values.services ?? []).length} services`],
@@ -216,8 +213,21 @@ function TrustMarksForm({ value, onChange }) {
 
 function ServiceItemForm({ value, onChange, errors }) {
   const patch = (next) => onChange((prev) => ({ ...prev, ...(typeof next === 'function' ? next(prev) : next) }))
+  const { values: servicesValues } = useContent('services')
+  const categoryOptions = listCategories(servicesValues).map((entry) => ({
+    value: String(entry.id),
+    label: entry.title || 'Untitled category',
+  }))
   return (
     <>
+      <SelectField
+        label="Linked service category"
+        hint="Link this card to a live category — the card shows the category’s title, description and cover image unless overridden below. Leave empty for a fully custom card."
+        value={value?.collectionId ?? ''}
+        onChange={(event) => patch({ collectionId: event.target.value })}
+        options={categoryOptions}
+        placeholder="Custom card (no service link)"
+      />
       <TextField
         label="Eyebrow"
         value={value?.eyebrow ?? ''}
@@ -293,19 +303,12 @@ function ReasonsForm({ value, onChange }) {
             value={item.title ?? ''}
             onChange={(event) => patch({ title: event.target.value })}
           />
-      <TextAreaField
-        label="Description"
-        value={value?.description ?? ''}
-        onChange={(event) => patch({ description: event.target.value })}
-      />
-      <SelectField
-        label="Linked service category"
-        hint="Which category is pre-selected when visitors click this card on the homepage."
-        value={value?.collectionId ?? ''}
-        onChange={(event) => patch({ collectionId: event.target.value })}
-        options={SERVICE_COLLECTION_OPTIONS}
-        placeholder="Same as card (no pre-selection)"
-      />
+          <TextAreaField
+            label="Description"
+            rows={3}
+            value={item.description ?? ''}
+            onChange={(event) => patch({ description: event.target.value })}
+          />
         </>
       )}
     />

@@ -51,6 +51,28 @@ export const CollectionHeader = styled.div`
   padding-bottom: 1.25rem;
 `;
 
+export const CollectionImage = styled.div`
+  overflow: hidden;
+  border-radius: ${({ theme }) => theme.radii.lg};
+  margin-bottom: 0.9rem;
+
+  img {
+    display: block;
+    width: 100%;
+    height: clamp(180px, 24vw, 300px);
+    object-fit: cover;
+  }
+`;
+
+export const CollectionPrice = styled.span`
+  color: ${({ theme }) => theme.colors.primary};
+  font-family: ${({ theme }) => theme.typography.uiFont};
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+`;
+
 export const CollectionTitle = styled.h4`
   margin: 0;
   color: ${({ theme }) => theme.colors.textPrimary};

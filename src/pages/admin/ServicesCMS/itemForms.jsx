@@ -67,20 +67,6 @@ export function PhotoboothPackageForm({ value, onChange }) {
         checked={Boolean(value?.popular)}
         onChange={(checked) => patch({ popular: checked })}
       />
-      <StringsRepeater
-        label="Inclusion"
-        items={value?.inclusions ?? []}
-        onChange={(inclusions) => patch({ inclusions })}
-        addLabel="Add inclusion"
-        placeholder="Unlimited photo prints"
-      />
-      <StringsRepeater
-        label="Add-on"
-        items={value?.addOns ?? []}
-        onChange={(addOns) => patch({ addOns })}
-        addLabel="Add add-on"
-        placeholder="Additional hour $150"
-      />
       <TextAreaField
         label="Travel notes"
         rows={3}

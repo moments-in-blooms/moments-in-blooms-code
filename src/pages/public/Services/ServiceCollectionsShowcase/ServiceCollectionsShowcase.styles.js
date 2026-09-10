@@ -86,6 +86,16 @@ export const CollectionHeroDesc = styled.p`
   line-height: 1.75;
 `;
 
+export const CollectionHeroPrice = styled.span`
+  margin-top: ${({ theme }) => theme.spacing.sm};
+  color: ${({ theme }) => theme.colors.primary};
+  font-family: ${({ theme }) => theme.typography.uiFont};
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+`;
+
 export const CollectionHeroImageWrapper = styled.div`
   position: relative;
   width: 100%;

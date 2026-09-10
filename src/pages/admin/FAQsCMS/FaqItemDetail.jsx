@@ -103,35 +103,40 @@ function FaqItemDetail() {
 
   useEffect(() => {
     if (data === null) return undefined
-    const previous = syncedDataRef.current
-    if (
-      previous.data !== data ||
-      previous.creating !== creating ||
-      previous.existing !== existing
-    ) {
-      syncedDataRef.current = { data, creating, existing }
-      const nextDraft = creating
-        ? {
-            question: '',
-            answer: '',
-            category_id: data.categories.find(isActive)?.id ?? '',
-            display_order:
-              Math.max(0, ...data.faqs.map((faq) => faq.display_order ?? 0)) + 1,
-            is_published: true,
-          }
-        : existing
+    // Never clobber unsaved edits: an upstream data change (mount fetch
+    // settling, realtime event) while the form is dirty leaves the draft
+    // alone. It re-syncs on the next settled change after save/discard.
+    if (!dirty) {
+      const previous = syncedDataRef.current
+      if (
+        previous.data !== data ||
+        previous.creating !== creating ||
+        previous.existing !== existing
+      ) {
+        syncedDataRef.current = { data, creating, existing }
+        const nextDraft = creating
           ? {
-              question: existing.question,
-              answer: existing.answer,
-              category_id: existing.category_id,
-              display_order: existing.display_order,
-              is_published: existing.is_published,
+              question: '',
+              answer: '',
+              category_id: data.categories.find(isActive)?.id ?? '',
+              display_order:
+                Math.max(0, ...data.faqs.map((faq) => faq.display_order ?? 0)) + 1,
+              is_published: true,
             }
-          : null
-      setDraft(nextDraft)
-      setDirty(false)
+          : existing
+            ? {
+                question: existing.question,
+                answer: existing.answer,
+                category_id: existing.category_id,
+                display_order: existing.display_order,
+                is_published: existing.is_published,
+              }
+            : null
+        setDraft(nextDraft)
+        setDirty(false)
+      }
     }
-  }, [data, creating, existing, faqId])
+  }, [data, creating, existing, faqId, dirty])
 
   const patch = (updater) => {
     setDraft((current) =>

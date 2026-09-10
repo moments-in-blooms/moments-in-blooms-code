@@ -1,8 +1,14 @@
 import { FiArrowRight, FiFacebook, FiGlobe, FiInstagram } from 'react-icons/fi'
 import { NavLink } from 'react-router-dom'
 import logoWhite from '../../assets/images/logo-old-white.png'
-import { routeMetadata } from '../../constants/navigation.js'
+import { footerNavigationGroups, routeMetadata } from '../../constants/navigation.js'
+import { useContent } from '../../hooks/useContent.js'
 import useSiteSettings from '../../hooks/useSiteSettings.js'
+import {
+  areFooterLinksEqual,
+  buildCatalogServiceLinks,
+  isLegacyFooterServicesGroup,
+} from '../../services/content.js'
 import Button from '../Button/index.js'
 import * as S from './Footer.styles.js'
 
@@ -11,8 +17,40 @@ const socialIcons = {
   Facebook: FiFacebook,
 }
 
+const seedServicesLinks =
+  footerNavigationGroups.find((group) => group.title === 'Services')?.links ?? []
+
+/**
+ * Footer `Services` links resolve to the live catalog (single source of
+ * truth) unless the client customized that group in Settings — stored
+ * custom links always win. Untouched (seed-equal) and legacy groups follow
+ * the catalog so new categories appear without a Settings re-save.
+ */
+function resolveServicesFooterLinks(footerGroups, categories) {
+  const storedGroup = (Array.isArray(footerGroups) ? footerGroups : []).find(
+    (group) => group?.title === 'Services',
+  )
+  if (
+    !storedGroup ||
+    isLegacyFooterServicesGroup(storedGroup) ||
+    areFooterLinksEqual(storedGroup.links, seedServicesLinks)
+  ) {
+    return buildCatalogServiceLinks(categories)
+  }
+  return storedGroup.links
+}
+
 function Footer() {
   const { contact: footerContact, socialLinks: footerSocialLinks, footerGroups: footerNavigationGroups } = useSiteSettings()
+  const { values: settingsValues } = useContent('settings')
+  const { values: servicesValues } = useContent('services')
+  const servicesLinks = resolveServicesFooterLinks(
+    settingsValues.footerGroups,
+    servicesValues.catalog?.categories,
+  )
+  const groups = footerNavigationGroups.map((group) =>
+    group?.title === 'Services' ? { ...group, links: servicesLinks } : group,
+  )
   return (
     <S.FooterShell>
       <S.FooterContainer>
@@ -37,7 +75,7 @@ function Footer() {
           </div>
 
           <S.FooterLinks>
-            {footerNavigationGroups.map((group) => (
+            {groups.map((group) => (
               <S.FooterLinkGroup key={group.title}>
                 <S.FooterLinkHeading>{group.title}</S.FooterLinkHeading>
                 <S.FooterLinkList>

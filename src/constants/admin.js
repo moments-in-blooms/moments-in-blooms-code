@@ -49,6 +49,30 @@ export const adminPageMeta = Object.freeze({
     description:
       'Add services by category and edit every section of your services page.',
   },
+  serviceCategories: {
+    eyebrow: 'Services',
+    title: 'Categories',
+    description:
+      'Manage the top-level service categories shown on your services page. Categories can hold sub-categories and items.',
+  },
+  serviceSubcategories: {
+    eyebrow: 'Services',
+    title: 'Sub-Categories',
+    description:
+      'Manage the sub-categories inside each service category. Every sub-category belongs to exactly one category.',
+  },
+  serviceItems: {
+    eyebrow: 'Services',
+    title: 'Items',
+    description:
+      'Manage individual services, packages and prize options, including pricing. Every item belongs to a category, optionally inside a sub-category.',
+  },
+  servicesPage: {
+    eyebrow: 'Website Pages',
+    title: 'Services Page',
+    description:
+      'Edit the copy blocks around the service catalog: hero, highlights, introduction, experience timeline and call-to-action.',
+  },
   gallery: {
     eyebrow: 'Content management',
     title: 'Gallery',

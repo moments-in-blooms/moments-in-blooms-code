@@ -4,13 +4,9 @@ import { FieldRow, TextAreaField, TextField } from '../../../components/FormFiel
 import ImageField from '../../../components/admin/ImageField/index.js'
 import Repeater from '../../../components/admin/Repeater/index.js'
 import {
-  BlissfulNestPackageForm,
-  PhotoboothPackageForm,
   ServicesGalleryItemForm,
   ServicesTestimonialForm,
 } from './itemForms.jsx'
-import CollectionDetailPage from './CollectionDetailPage.jsx'
-import CollectionSectionDetailPage from './CollectionSectionDetailPage.jsx'
 
 const HighlightBlock = styled.div`
   display: grid;
@@ -29,7 +25,9 @@ const HighlightBlock = styled.div`
   }
 `
 
-// Aligned to public Services page order: Hero → Collections Showcase (serviceCollections + photobooth/blissful sub-sections) → Experience → CTA → (legacy dormant at end)
+// Aligned to public Services page order: Hero → catalog (managed under the
+// Services group: Categories / Sub-Categories / Items) → Experience → CTA.
+// Package/prize lists moved into the catalog; legacy blocks stay hidden.
 export const servicesSections = [
   {
     key: 'hero',
@@ -37,83 +35,6 @@ export const servicesSections = [
     description: 'The opening of the services page.',
     type: 'object',
     form: HeroForm,
-  },
-  {
-    key: 'serviceCollections',
-    title: 'Categories',
-    description: 'Service categories (Decor Hire, Luxe Photobooth, Blissful Nest) and the services inside them.',
-    type: 'collections',
-    itemLabel: 'collection',
-    createInitial: () => ({
-      id: `collection-${Date.now()}`,
-      type: 'collection',
-      brand: 'Moments in Blooms',
-      order: 1,
-      featured: true,
-      title: 'New collection',
-      navSub: '',
-      navMeta: '',
-      description: '',
-      tagline: '',
-      coverImage: { src: '', alt: '' },
-      sections: [],
-    }),
-    itemTitle: (item) => item.title || 'Untitled collection',
-    itemDescription: (item) => item.description,
-    itemMeta: (item) => [
-      item.type === 'sub-brand' ? 'Sub-brand' : 'Collection',
-      item.navMeta,
-    ].filter(Boolean),
-    itemThumb: (item) =>
-      item.coverImage?.src ? { src: item.coverImage.src, alt: item.coverImage.alt } : undefined,
-    itemStatus: (item) => (item.featured ? 'featured' : undefined),
-    validate: (draft) => {
-      const errors = {}
-      if (!draft?.title?.trim()) {
-        errors.title = 'A collection title is required.'
-      }
-      return errors
-    },
-    get collectionDetail() {
-      return CollectionDetailPage
-    },
-    get collectionSectionDetail() {
-      return CollectionSectionDetailPage
-    },
-  },
-  {
-    key: 'photoboothPackages',
-    title: 'Luxe Photobooth packages',
-    description: 'Pricing, inclusions and add-ons for the photobooth. Prefer managing these as services in the catalog.',
-    type: 'list',
-    itemLabel: 'package',
-    sectionMeta: (values) => [`${(values.photoboothPackages ?? []).length} packages`],
-    createInitial: () => ({
-      id: `package-${Date.now()}`,
-      name: 'NEW PACKAGE',
-      tagline: '',
-      price: '',
-      hireDuration: '',
-      popular: false,
-      badge: '',
-      description: '',
-      inclusions: [],
-      addOns: [],
-      travelNotes: '',
-      ctaText: 'Reserve Your Date',
-    }),
-    itemTitle: (item) => `${item.name ?? ''} ${item.price ?? ''}`.trim() || 'New package',
-    itemDescription: (item) => item.tagline,
-    itemMeta: (item) => [item.hireDuration, item.badge].filter(Boolean),
-    itemStatus: (item) => (item.popular ? 'featured' : undefined),
-    validate: (draft) => {
-      const errors = {}
-      if (!draft?.name?.trim()) {
-        errors.name = 'A package name is required.'
-      }
-      return errors
-    },
-    itemForm: PhotoboothPackageForm,
   },
   {
     key: 'photoboothHighlights',
@@ -128,41 +49,6 @@ export const servicesSections = [
     description: 'The intro paragraph for the claw machine experience.',
     type: 'object',
     form: BlissfulNestIntroForm,
-  },
-  {
-    key: 'blissfulNestPackages',
-    title: 'Blissful Nest prize options',
-    description: 'The prize packages for the claw machines. Prefer managing these as services in the catalog.',
-    type: 'list',
-    itemLabel: 'prize option',
-    sectionMeta: (values) => [`${(values.blissfulNestPackages ?? []).length} options`],
-    createInitial: () => ({
-      id: `nest-${Date.now()}`,
-      name: 'New package',
-      tagline: '',
-      description: '',
-      badge: '',
-      items: [],
-      image: { src: '', alt: '' },
-      isFeatured: false,
-    }),
-    itemTitle: (item) => item.name || 'New package',
-    itemDescription: (item) => item.tagline,
-    itemMeta: (item) => [item.badge].filter(Boolean),
-    itemThumb: (item) => {
-      const src = typeof item.image === 'string' ? item.image : item.image?.src
-      const alt = typeof item.image === 'string' ? item.name : item.image?.alt ?? item.name
-      return src ? { src, alt } : undefined
-    },
-    itemStatus: (item) => (item.isFeatured ? 'featured' : undefined),
-    validate: (draft) => {
-      const errors = {}
-      if (!draft?.name?.trim()) {
-        errors.name = 'A prize option name is required.'
-      }
-      return errors
-    },
-    itemForm: BlissfulNestPackageForm,
   },
   {
     key: 'experienceTimeline',

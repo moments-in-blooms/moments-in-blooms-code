@@ -105,39 +105,44 @@ function FaqCategoryDetail() {
 
   useEffect(() => {
     if (data === null) return undefined
-    const previous = syncedDataRef.current
-    if (
-      previous.data !== data ||
-      previous.creating !== creating ||
-      previous.existing !== existing
-    ) {
-      syncedDataRef.current = { data, creating, existing }
-      const nextDraft = creating
-        ? {
-            name: '',
-            slug: '',
-            description: '',
-            display_order:
-              Math.max(
-                0,
-                ...data.categories.map((category) => category.display_order ?? 0),
-              ) + 1,
-            is_published: true,
-          }
-        : existing
+    // Never clobber unsaved edits: an upstream data change (mount fetch
+    // settling, realtime event) while the form is dirty leaves the draft
+    // alone. It re-syncs on the next settled change after save/discard.
+    if (!dirty) {
+      const previous = syncedDataRef.current
+      if (
+        previous.data !== data ||
+        previous.creating !== creating ||
+        previous.existing !== existing
+      ) {
+        syncedDataRef.current = { data, creating, existing }
+        const nextDraft = creating
           ? {
-              name: existing.name,
-              slug: existing.slug,
-              description: existing.description ?? '',
-              display_order: existing.display_order,
-              is_published: existing.is_published,
+              name: '',
+              slug: '',
+              description: '',
+              display_order:
+                Math.max(
+                  0,
+                  ...data.categories.map((category) => category.display_order ?? 0),
+                ) + 1,
+              is_published: true,
             }
-          : null
-      setDraft(nextDraft)
-      slugEdited.current = false
-      setDirty(false)
+          : existing
+            ? {
+                name: existing.name,
+                slug: existing.slug,
+                description: existing.description ?? '',
+                display_order: existing.display_order,
+                is_published: existing.is_published,
+              }
+            : null
+        setDraft(nextDraft)
+        slugEdited.current = false
+        setDirty(false)
+      }
     }
-  }, [data, creating, existing, categoryId])
+  }, [data, creating, existing, categoryId, dirty])
 
   const patch = (updater) => {
     setDraft((current) => {

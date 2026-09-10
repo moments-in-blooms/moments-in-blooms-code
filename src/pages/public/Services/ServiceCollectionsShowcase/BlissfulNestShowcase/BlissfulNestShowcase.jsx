@@ -13,8 +13,71 @@ import { toBlissfulPackageDetail } from "../itemDetail.js";
 
 import * as S from "./BlissfulNestShowcase.styles.js";
 
-function BlissfulNestShowcase({ collection, intro, packages = [] }) {
-  const productCategories = collection.productCategories || [];
+const getImageSrc = (image) => {
+  if (!image) return "";
+  if (typeof image === "string") return image;
+  return image.src ?? "";
+};
+
+const getImageAlt = (image, fallback = "") => {
+  if (!image) return fallback;
+  if (typeof image === "string") return fallback;
+  return image.alt || fallback;
+};
+
+function PackageCard({ pkg, contextLabel, onOpenDetail }) {
+  const imgSrc = getImageSrc(pkg.image);
+  const imgAlt = getImageAlt(pkg.image, pkg.name);
+  return (
+    <motion.div variants={rise}>
+      <S.PackageCardButton
+        type="button"
+        aria-haspopup="dialog"
+        aria-label={`View full details: ${pkg.name}`}
+        onClick={() => onOpenDetail(pkg, contextLabel)}
+      >
+        <S.PackageImageWrapper>
+          <img src={imgSrc} alt={imgAlt} loading="lazy" />
+        </S.PackageImageWrapper>
+        <S.PackageBody>
+          {pkg.isFeatured ? <S.PackageBadge>Featured</S.PackageBadge> : <S.PackageBadge>{pkg.badge}</S.PackageBadge>}
+          <S.PackageName>{pkg.name}</S.PackageName>
+          <S.PackageTagline>{pkg.tagline}</S.PackageTagline>
+          {pkg.price ? <S.PackagePrice>{pkg.price}</S.PackagePrice> : null}
+          <S.PackageDesc>{pkg.description}</S.PackageDesc>
+          <S.PackageItems>
+            {(pkg.items ?? []).map((item) => (
+              <li key={item}>
+                <FiGift />
+                <span>{item}</span>
+              </li>
+            ))}
+          </S.PackageItems>
+        </S.PackageBody>
+      </S.PackageCardButton>
+    </motion.div>
+  );
+}
+
+function SubcategoryHeaderMedia({ subcategory }) {
+  const imageSrc = getImageSrc(subcategory?.image);
+  if (!imageSrc) return null;
+  return (
+    <S.ProductCategoryImage>
+      <img
+        src={imageSrc}
+        alt={getImageAlt(subcategory?.image, subcategory?.title)}
+        loading="lazy"
+      />
+    </S.ProductCategoryImage>
+  );
+}
+
+function BlissfulNestShowcase({ collection, intro }) {
+  const subcategories = Array.isArray(collection?.subcategories)
+    ? collection.subcategories
+    : [];
+  const directItems = Array.isArray(collection?.items) ? collection.items : [];
   const introText = intro?.paragraph ?? "";
   const [detail, setDetail] = useState(null);
 
@@ -26,7 +89,7 @@ function BlissfulNestShowcase({ collection, intro, packages = [] }) {
     setDetail(null);
   }, []);
 
-  if (!productCategories.length) return null;
+  if (subcategories.length === 0 && directItems.length === 0) return null;
 
   return (
     <S.NestSection>
@@ -41,14 +104,18 @@ function BlissfulNestShowcase({ collection, intro, packages = [] }) {
         </div>
       </S.NestIntro>
 
-      {productCategories.map((category) => (
-        <S.ProductCategory key={category.id}>
+      {subcategories.map((subcategory) => (
+        <S.ProductCategory key={subcategory.id}>
           <S.ProductCategoryHeader>
+            <SubcategoryHeaderMedia subcategory={subcategory} />
             <S.ProductCategoryTag>Current Offering</S.ProductCategoryTag>
-            <S.ProductCategoryTitle>{category.name}</S.ProductCategoryTitle>
-            {category.description && (
-              <S.ProductCategoryDesc>{category.description}</S.ProductCategoryDesc>
+            <S.ProductCategoryTitle>{subcategory.title}</S.ProductCategoryTitle>
+            {subcategory.description && (
+              <S.ProductCategoryDesc>{subcategory.description}</S.ProductCategoryDesc>
             )}
+            {subcategory.priceFrom ? (
+              <S.ProductCategoryPrice>Price starts at {subcategory.priceFrom}</S.ProductCategoryPrice>
+            ) : null}
           </S.ProductCategoryHeader>
 
           <S.PackageGrid
@@ -57,41 +124,41 @@ function BlissfulNestShowcase({ collection, intro, packages = [] }) {
             whileInView="visible"
             viewport={VIEWPORT_DEFAULT}
           >
-            {packages.map((pkg) => {
-              const imgSrc = typeof pkg.image === 'string' ? pkg.image : pkg.image?.src ?? ''
-              const imgAlt = typeof pkg.image === 'string' ? pkg.name : pkg.image?.alt || pkg.name
-              return (
-                <motion.div key={pkg.id} variants={rise}>
-                  <S.PackageCardButton
-                    type="button"
-                    aria-haspopup="dialog"
-                    aria-label={`View full details: ${pkg.name}`}
-                    onClick={() => openDetail(pkg, `${collection.title} · ${category.name}`)}
-                  >
-                    <S.PackageImageWrapper>
-                      <img src={imgSrc} alt={imgAlt} loading="lazy" />
-                    </S.PackageImageWrapper>
-                    <S.PackageBody>
-                      {pkg.isFeatured ? <S.PackageBadge>Featured</S.PackageBadge> : <S.PackageBadge>{pkg.badge}</S.PackageBadge>}
-                      <S.PackageName>{pkg.name}</S.PackageName>
-                      <S.PackageTagline>{pkg.tagline}</S.PackageTagline>
-                      <S.PackageDesc>{pkg.description}</S.PackageDesc>
-                      <S.PackageItems>
-                        {(pkg.items ?? []).map((item) => (
-                          <li key={item}>
-                            <FiGift />
-                            <span>{item}</span>
-                          </li>
-                        ))}
-                      </S.PackageItems>
-                    </S.PackageBody>
-                  </S.PackageCardButton>
-                </motion.div>
-              )
-            })}
+            {(subcategory.items ?? []).map((pkg) => (
+              <PackageCard
+                key={pkg.id}
+                pkg={pkg}
+                contextLabel={`${collection.title} · ${subcategory.title}`}
+                onOpenDetail={openDetail}
+              />
+            ))}
           </S.PackageGrid>
         </S.ProductCategory>
       ))}
+      {directItems.length > 0 ? (
+        <S.ProductCategory>
+          <S.ProductCategoryHeader>
+            <S.ProductCategoryTag>More options</S.ProductCategoryTag>
+            <S.ProductCategoryTitle>{collection.title}</S.ProductCategoryTitle>
+          </S.ProductCategoryHeader>
+
+          <S.PackageGrid
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={VIEWPORT_DEFAULT}
+          >
+            {directItems.map((pkg) => (
+              <PackageCard
+                key={pkg.id}
+                pkg={pkg}
+                contextLabel={collection.title}
+                onOpenDetail={openDetail}
+              />
+            ))}
+          </S.PackageGrid>
+        </S.ProductCategory>
+      ) : null}
       <ItemDetailModal
         item={detail?.item}
         contextLabel={detail?.contextLabel}

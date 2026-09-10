@@ -173,6 +173,14 @@ export const ItemTagline = styled.p`
   line-height: 1.5;
 `
 
+export const ItemPrice = styled.span`
+  display: inline-block;
+  color: ${({ theme }) => theme.colors.primary};
+  font-family: ${({ theme }) => theme.typography.headingFont};
+  font-size: 1.5rem;
+  font-weight: 600;
+`
+
 export const ItemSpecs = styled.span`
   display: inline-block;
   color: ${({ theme }) => theme.colors.primary};

@@ -110,6 +110,28 @@ export const ProductCategoryDesc = styled.p`
   line-height: 1.7;
 `;
 
+export const ProductCategoryImage = styled.div`
+  overflow: hidden;
+  border-radius: ${({ theme }) => theme.radii.lg};
+  margin-bottom: 0.9rem;
+
+  img {
+    display: block;
+    width: 100%;
+    height: clamp(180px, 24vw, 300px);
+    object-fit: cover;
+  }
+`;
+
+export const ProductCategoryPrice = styled.span`
+  color: ${({ theme }) => theme.colors.primary};
+  font-family: ${({ theme }) => theme.typography.uiFont};
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+`;
+
 export const PackageGrid = styled(motion.div)`
   display: grid;
   grid-template-columns: 1fr;
@@ -217,6 +239,13 @@ export const PackageDesc = styled.p`
   color: ${({ theme }) => theme.colors.textSecondary};
   font-size: 0.875rem;
   line-height: 1.65;
+`;
+
+export const PackagePrice = styled.span`
+  color: ${({ theme }) => theme.colors.primary};
+  font-family: ${({ theme }) => theme.typography.uiFont};
+  font-size: 1rem;
+  font-weight: 700;
 `;
 
 export const PackageItems = styled.ul`

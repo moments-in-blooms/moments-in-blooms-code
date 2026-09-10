@@ -46,6 +46,10 @@ function FeaturedItemBlock({ item, contextLabel, onOpenDetail }) {
       contextLabel,
     );
 
+  const priceNode = item.price ? (
+    <S.CollectionPrice>{item.price}</S.CollectionPrice>
+  ) : null;
+
   // Generic layout: if has options -> option grid, if has gallery -> gallery grid, else split feature
   if (hasOptions) {
     return (
@@ -63,6 +67,7 @@ function FeaturedItemBlock({ item, contextLabel, onOpenDetail }) {
             <S.SplitContent>
               <S.FeaturedTag>Featured Collection</S.FeaturedTag>
               <S.FeaturedName>{item.name}</S.FeaturedName>
+              {priceNode}
               {item.tagline ? <S.CollectionSubtitle>{item.tagline}</S.CollectionSubtitle> : null}
               {item.description ? <S.CollectionSubtitle>{item.description}</S.CollectionSubtitle> : null}
               {item.dimensions ? <S.OptionSpecs>{item.dimensions}</S.OptionSpecs> : null}
@@ -82,6 +87,7 @@ function FeaturedItemBlock({ item, contextLabel, onOpenDetail }) {
           <div>
             <S.FeaturedTag>Featured Collection</S.FeaturedTag>
             <S.FeaturedName>{item.name}</S.FeaturedName>
+            {priceNode}
             {item.tagline ? <S.CollectionSubtitle>{item.tagline}</S.CollectionSubtitle> : null}
             {item.description ? <S.CollectionSubtitle>{item.description}</S.CollectionSubtitle> : null}
             {item.dimensions ? <S.OptionSpecs>{item.dimensions}</S.OptionSpecs> : null}
@@ -138,6 +144,7 @@ function FeaturedItemBlock({ item, contextLabel, onOpenDetail }) {
             </S.SplitImageButton>
             <S.SplitContent>
               <S.FeaturedName>{item.name}</S.FeaturedName>
+              {priceNode}
               {item.tagline ? <S.CollectionSubtitle>{item.tagline}</S.CollectionSubtitle> : null}
               {item.description ? <S.CollectionSubtitle>{item.description}</S.CollectionSubtitle> : null}
               <S.SplitActions>
@@ -155,6 +162,7 @@ function FeaturedItemBlock({ item, contextLabel, onOpenDetail }) {
         ) : (
           <S.FeaturedIntro>
             <S.FeaturedName>{item.name}</S.FeaturedName>
+            {priceNode}
             {item.tagline ? <S.CollectionSubtitle>{item.tagline}</S.CollectionSubtitle> : null}
             {item.description ? <S.CollectionSubtitle>{item.description}</S.CollectionSubtitle> : null}
           </S.FeaturedIntro>
@@ -191,6 +199,7 @@ function FeaturedItemBlock({ item, contextLabel, onOpenDetail }) {
         <S.SplitContent>
           {item.dimensions ? <S.OptionSpecs>Dimensions: {item.dimensions}</S.OptionSpecs> : <S.OptionSpecs>Catalogue Showcase</S.OptionSpecs>}
           <S.FeaturedName>{item.name}</S.FeaturedName>
+          {priceNode}
           {item.tagline ? <S.CollectionSubtitle>{item.tagline}</S.CollectionSubtitle> : null}
           {item.description ? <S.CollectionSubtitle>{item.description}</S.CollectionSubtitle> : null}
           <S.SplitActions>
@@ -216,13 +225,27 @@ function FeaturedItemBlock({ item, contextLabel, onOpenDetail }) {
   return (
     <S.FeaturedFeature>
       <S.FeaturedName>{item.name}</S.FeaturedName>
+      {priceNode}
       {item.description ? <S.CollectionSubtitle>{item.description}</S.CollectionSubtitle> : null}
     </S.FeaturedFeature>
   );
 }
 
-function DecorHireCatalogue({ collection }) {
-  const [activeSubcategory, setActiveSubcategory] = useState("all");
+function SubcategoryHeaderMedia({ section }) {
+  const imageSrc = getImageSrc(section?.image);
+  if (!imageSrc) return null;
+  return (
+    <S.CollectionImage>
+      <img
+        src={imageSrc}
+        alt={getImageAlt(section?.image, section?.title)}
+        loading="lazy"
+      />
+    </S.CollectionImage>
+  );
+}
+
+function DecorHireCatalogue({ collection }) {  const [activeSubcategory, setActiveSubcategory] = useState("all");
   const [detail, setDetail] = useState(null);
 
   const openDetail = useCallback((item, contextLabel) => {
@@ -254,9 +277,13 @@ function DecorHireCatalogue({ collection }) {
           hidden={activeSubcategory !== "all" && activeSubcategory !== section.id}
         >
           <S.CollectionHeader>
+            <SubcategoryHeaderMedia section={section} />
             <S.CollectionTitle>{section.title}</S.CollectionTitle>
             {section.subtitle ? <S.CollectionSubtitle>{section.subtitle}</S.CollectionSubtitle> : null}
             {section.description ? <S.CollectionSubtitle>{section.description}</S.CollectionSubtitle> : null}
+            {section.priceFrom ? (
+              <S.CollectionPrice>Price starts at {section.priceFrom}</S.CollectionPrice>
+            ) : null}
           </S.CollectionHeader>
 
           {(() => {

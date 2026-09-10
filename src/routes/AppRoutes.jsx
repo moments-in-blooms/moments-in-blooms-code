@@ -24,17 +24,19 @@ const AboutSectionDetail = lazy(() =>
   import('../pages/admin/AboutCMS/DetailPages.jsx').then((m) => ({ default: m.AboutSectionDetail })))
 const AboutItemDetail = lazy(() =>
   import('../pages/admin/AboutCMS/DetailPages.jsx').then((m) => ({ default: m.AboutItemDetail })))
-const ServicesCMS = lazy(() => import('../pages/admin/ServicesCMS/ServicesCMS.jsx'))
-const ServicesSectionDetail = lazy(() =>
-  import('../pages/admin/ServicesCMS/DetailPages.jsx').then((m) => ({ default: m.ServicesSectionDetail })))
-const ServicesItemDetail = lazy(() =>
-  import('../pages/admin/ServicesCMS/DetailPages.jsx').then((m) => ({ default: m.ServicesItemDetail })))
-const CollectionDetailPage = lazy(() =>
-  import('../pages/admin/ServicesCMS/DetailPages.jsx').then((m) => ({ default: m.CollectionDetailPage })))
-const CollectionSectionDetailPage = lazy(() =>
-  import('../pages/admin/ServicesCMS/DetailPages.jsx').then((m) => ({ default: m.CollectionSectionDetailPage })))
-const ServiceCatalogPage = lazy(() =>
-  import('../pages/admin/ServicesCMS/ServiceCatalogPage.jsx'))
+const CategoriesPage = lazy(() => import('../pages/admin/ServicesCMS/CategoriesPage.jsx'))
+const CategoryDetailPage = lazy(() => import('../pages/admin/ServicesCMS/CategoryDetailPage.jsx'))
+const SubcategoriesPage = lazy(() => import('../pages/admin/ServicesCMS/SubcategoriesPage.jsx'))
+const SubcategoryDetailPage = lazy(() =>
+  import('../pages/admin/ServicesCMS/SubcategoryDetailPage.jsx'))
+const ItemsPage = lazy(() => import('../pages/admin/ServicesCMS/ItemsPage.jsx'))
+const ServiceItemDetail = lazy(() => import('../pages/admin/ServicesCMS/ServiceItemDetail.jsx'))
+const ServicesPageSections = lazy(() =>
+  import('../pages/admin/ServicesCMS/ServicesPageSections.jsx'))
+const ServicesPageSectionDetail = lazy(() =>
+  import('../pages/admin/ServicesCMS/DetailPages.jsx').then((m) => ({ default: m.ServicesPageSectionDetail })))
+const ServicesLegacyRedirect = lazy(() =>
+  import('../pages/admin/ServicesCMS/ServicesLegacyRedirect.jsx'))
 const GalleryCMS = lazy(() => import('../pages/admin/GalleryCMS/GalleryCMS.jsx'))
 const GalleryItemsPage = lazy(() => import('../pages/admin/GalleryCMS/GalleryItemsPage.jsx'))
 const GallerySectionDetail = lazy(() =>
@@ -116,19 +118,41 @@ const router = createBrowserRouter([
           { path: 'about', element: <AboutCMS /> },
           { path: 'about/:sectionKey', element: <AboutSectionDetail /> },
           { path: 'about/:sectionKey/:itemId', element: <AboutItemDetail /> },
-          { path: 'services', element: <ServicesCMS /> },
+          { path: 'services', element: <Navigate replace to="/admin/services/categories" /> },
+          { path: 'services/categories', element: <CategoriesPage /> },
+          { path: 'services/categories/new', element: <CategoryDetailPage /> },
+          { path: 'services/categories/:categoryId', element: <CategoryDetailPage /> },
+          { path: 'services/subcategories', element: <SubcategoriesPage /> },
+          { path: 'services/subcategories/new', element: <SubcategoryDetailPage /> },
+          { path: 'services/subcategories/:subcategoryId', element: <SubcategoryDetailPage /> },
+          { path: 'services/items', element: <ItemsPage /> },
+          { path: 'services/items/new', element: <ServiceItemDetail /> },
+          { path: 'services/items/:itemId', element: <ServiceItemDetail /> },
+          { path: 'services/page', element: <ServicesPageSections /> },
+          { path: 'services/page/:sectionKey', element: <ServicesPageSectionDetail /> },
+          // Retired editors resolve to their canonical replacements so old
+          // bookmarks and in-flight links keep working.
           {
             path: 'services/serviceCollections/:collectionId',
-            element: <CollectionDetailPage />,
+            element: <ServicesLegacyRedirect mode="category" />,
           },
           {
             path: 'services/serviceCollections/:collectionId/sections/:sectionId',
-            element: <CollectionSectionDetailPage />,
+            element: <ServicesLegacyRedirect mode="subcategory" />,
           },
-          { path: 'services/catalog/:categoryId/new', element: <ServiceCatalogPage /> },
-          { path: 'services/catalog/:categoryId/:serviceId', element: <ServiceCatalogPage /> },
-          { path: 'services/:sectionKey', element: <ServicesSectionDetail /> },
-          { path: 'services/:sectionKey/:itemId', element: <ServicesItemDetail /> },
+          {
+            path: 'services/catalog/:categoryId/new',
+            element: <ServicesLegacyRedirect mode="newItem" />,
+          },
+          {
+            path: 'services/catalog/:categoryId/:serviceId',
+            element: <ServicesLegacyRedirect mode="item" />,
+          },
+          { path: 'services/:sectionKey', element: <ServicesLegacyRedirect mode="section" /> },
+          {
+            path: 'services/:sectionKey/:itemId',
+            element: <ServicesLegacyRedirect mode="sectionItem" />,
+          },
           { path: 'gallery', element: <GalleryCMS /> },
           { path: 'gallery/items', element: <GalleryItemsPage /> },
           { path: 'gallery/:sectionKey', element: <GallerySectionDetail /> },

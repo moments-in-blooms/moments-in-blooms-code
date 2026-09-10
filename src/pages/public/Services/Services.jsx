@@ -1,6 +1,7 @@
 import { useContent } from '../../../hooks/useContent.js'
 import SEO from '../../../components/SEO/index.js'
 import { SERVICES_SECTION_IDS } from '../../../constants/services.js'
+import { buildServicesCatalog } from '../../../services/content.js'
 import { buildBreadcrumbJsonLd } from '../../../utils/seo.js'
 import FaqSection from './FaqSection/index.js'
 import ServiceCollectionsShowcase from './ServiceCollectionsShowcase/index.js'
@@ -13,6 +14,10 @@ function Services() {
   const { values, loading } = useContent('services')
   const { values: seoValues } = useContent('seo')
   const seo = seoValues.services ?? seoValues.site ?? {}
+
+  // The canonical catalog is the single source of truth; legacy-only blobs
+  // (e.g. mid-migration saves) are converted on the fly.
+  const catalog = values.catalog ?? buildServicesCatalog(values)
 
   return (
     <ServicesPage aria-busy={loading ? 'true' : undefined}>
@@ -27,11 +32,9 @@ function Services() {
       />
       <ServicesHero content={values.hero} id={SERVICES_SECTION_IDS.HERO} />
       <ServiceCollectionsShowcase
-        collections={values.serviceCollections}
-        photoboothPackages={values.photoboothPackages}
+        catalog={catalog}
         photoboothHighlights={values.photoboothHighlights}
         blissfulNestIntro={values.blissfulNestIntro}
-        blissfulNestPackages={values.blissfulNestPackages}
         id={SERVICES_SECTION_IDS.FEATURED}
       />
       <ServicesExperience

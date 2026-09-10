@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useContent } from '../../../hooks/useContent.js'
 import SEO from '../../../components/SEO/index.js'
 import { HOME_SECTION_IDS } from '../../../constants/homepage.js'
@@ -33,10 +34,63 @@ const localBusinessJsonLd = Object.freeze({
   ],
 })
 
+/**
+ * Build homepage service cards from the live catalog. Each category becomes
+ * a card; a Homepage CMS entry with a matching `collectionId` (or `id`)
+ * overrides the display copy, image, link and layout. Overrides without a
+ * matching category (custom cards) are appended unchanged.
+ */
+function buildServiceCards(categories, overrides) {
+  const list = Array.isArray(categories) ? categories : []
+  const byCollection = new Map()
+  const unmatched = []
+  for (const override of Array.isArray(overrides) ? overrides : []) {
+    if (!override || typeof override !== 'object') continue
+    const key = override.collectionId || override.id
+    if (key && list.some((category) => String(category?.id) === String(key))) {
+      byCollection.set(String(key), override)
+    } else {
+      unmatched.push(override)
+    }
+  }
+  const cards = list.map((category, index) => {
+    const override = byCollection.get(String(category.id))
+    const image =
+      override?.image?.src
+        ? override.image
+        : category.coverImage?.src
+          ? {
+              src: category.coverImage.src,
+              alt: category.coverImage.alt || category.title,
+            }
+          : { src: '', alt: '' }
+    return {
+      id: category.id,
+      collectionId: category.id,
+      eyebrow: override?.eyebrow ?? '',
+      title: override?.title || category.title || '',
+      description: override?.description || category.description || category.tagline || '',
+      path: override?.path || `/services?collection=${encodeURIComponent(category.id)}`,
+      offset: override?.offset ?? index % 2 === 1,
+      image,
+    }
+  })
+  return [...cards, ...unmatched]
+}
+
 function Home() {
   const { values, loading } = useContent('homepage')
   const { values: seoValues } = useContent('seo')
+  const { values: servicesValues } = useContent('services')
   const seo = seoValues.home ?? seoValues.site ?? {}
+
+  // Homepage service cards are driven by the live catalog (single source of
+  // truth). Homepage CMS entries act as per-card display overrides matched by
+  // category id; unlinked custom cards are appended unchanged.
+  const serviceCards = useMemo(
+    () => buildServiceCards(servicesValues.catalog?.categories, values.services),
+    [servicesValues.catalog, values.services],
+  )
 
   const jsonLdArray = [localBusinessJsonLd, buildBreadcrumbJsonLd('/')]
 
@@ -53,7 +107,7 @@ function Home() {
       />
       <Hero content={values.hero} id={HOME_SECTION_IDS.HERO} />
       <TrustedBy marks={values.trustMarks} id={HOME_SECTION_IDS.TRUST} />
-      <Services items={values.services} id={HOME_SECTION_IDS.SERVICES} />
+      <Services items={serviceCards} id={HOME_SECTION_IDS.SERVICES} />
       <GalleryPreview items={values.galleryItems} id={HOME_SECTION_IDS.GALLERY} />
       <WhyChooseUs reasons={values.reasons} id={HOME_SECTION_IDS.WHY_US} />
       <Testimonials items={values.testimonials} id={HOME_SECTION_IDS.TESTIMONIALS} />

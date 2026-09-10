@@ -20,8 +20,23 @@ export const SidebarShell = styled.aside`
   background: ${({ theme }) => theme.colors.surface};
   overflow-y: auto;
   overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(165, 137, 116, 0.55) transparent;
   transition: transform ${({ theme }) => theme.transitions.standard},
     width ${({ theme }) => theme.transitions.standard};
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: ${({ theme }) => theme.radii.pill};
+    background: rgba(165, 137, 116, 0.55);
+  }
 
   ${mobileBreak} {
     z-index: ${({ theme }) => theme.layers.menu};
@@ -130,6 +145,62 @@ export const SidebarGroupLabel = styled.span`
   font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
+`
+
+export const SidebarGroupToggle = styled.button`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.sm};
+  width: 100%;
+  min-height: 2.6rem;
+  padding: 0 ${({ theme }) => theme.spacing.md};
+  border: 0;
+  border-radius: ${({ theme }) => theme.radii.md};
+  background: transparent;
+  color: ${({ theme }) => theme.colors.textSecondary};
+  font-family: ${({ theme }) => theme.typography.uiFont};
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background ${({ theme }) => theme.transitions.fast},
+    color ${({ theme }) => theme.transitions.fast};
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.secondary};
+    color: ${({ theme }) => theme.colors.primaryHover};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.focus};
+    outline-offset: 2px;
+  }
+
+  svg {
+    flex: 0 0 auto;
+  }
+
+  svg:last-child {
+    margin-left: auto;
+    transition: transform ${({ theme }) => theme.transitions.fast};
+
+    ${({ $expanded }) =>
+      $expanded &&
+      css`
+        transform: rotate(180deg);
+      `}
+  }
+
+  ${({ $active, theme }) =>
+    $active &&
+    css`
+      color: ${theme.colors.primary};
+    `}
+`
+
+export const SidebarGroupItems = styled.div`
+  display: grid;
+  gap: ${({ theme }) => theme.spacing.xxs};
+  padding-left: ${({ theme }) => theme.spacing.sm};
 `
 
 export const SidebarLink = styled.span`

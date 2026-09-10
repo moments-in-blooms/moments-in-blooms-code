@@ -10,6 +10,10 @@ export const publicNavigation = Object.freeze([
   { label: 'Contact', path: '/contact', navbarTheme: NAVBAR_THEMES.DARK },
 ])
 
+// Groups flagged `collapsible` render as a dropdown section in the admin
+// sidebar (see Sidebar.jsx): the header toggles the child links, and the
+// group auto-expands when the active route lives inside it. In collapsed
+// (icon-only) sidebar mode children render flat with tooltips.
 export const adminNavigationGroups = Object.freeze([
   {
     id: 'overview',
@@ -18,14 +22,28 @@ export const adminNavigationGroups = Object.freeze([
   },
   {
     id: 'content',
-    label: 'Content',
+    label: 'Website Pages',
+    icon: 'websitePages',
+    collapsible: true,
     items: [
       { label: 'Homepage', path: '/admin/homepage', icon: 'homepage' },
       { label: 'About', path: '/admin/about', icon: 'about' },
-      { label: 'Services', path: '/admin/services', icon: 'services' },
+      { label: 'Services', path: '/admin/services/page', icon: 'pageSections' },
       { label: 'Gallery', path: '/admin/gallery', icon: 'gallery' },
       { label: 'FAQs', path: '/admin/faqs', icon: 'faqs' },
       { label: 'Contact', path: '/admin/contact', icon: 'contact' },
+    ],
+  },
+  {
+    id: 'services',
+    label: 'Services',
+    icon: 'services',
+    collapsible: true,
+    matchPrefix: '/admin/services',
+    items: [
+      { label: 'Categories', path: '/admin/services/categories', icon: 'categories' },
+      { label: 'Sub-Categories', path: '/admin/services/subcategories', icon: 'subcategories' },
+      { label: 'Items', path: '/admin/services/items', icon: 'items' },
     ],
   },
   {

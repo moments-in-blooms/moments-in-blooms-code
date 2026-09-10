@@ -6,6 +6,10 @@ import Container from "../../../../components/Container/index.js";
 import Section from "../../../../components/Section/index.js";
 import { serviceCollectionsShowcase } from "../../../../constants/services.js";
 import { SECTION_TONES } from "../../../../constants/ui.js";
+import {
+  buildServicesCatalog,
+  inferCatalogKind,
+} from "../../../../services/content.js";
 
 import BlissfulNestShowcase from "./BlissfulNestShowcase/BlissfulNestShowcase.jsx";
 import DecorHireCatalogue from "./DecorHireCatalogue/DecorHireCatalogue.jsx";
@@ -13,53 +17,78 @@ import LuxePhotoboothShowcase from "./LuxePhotoboothShowcase/LuxePhotoboothShowc
 
 import * as S from "./ServiceCollectionsShowcase.styles.js";
 
+// The catalogue renderers predate the canonical tree, so each category is
+// adapted to the shape its renderer reads. Field names are identical — this
+// only selects which slice of the canonical category each renderer gets.
+const flattenPackages = (category) => [
+  ...(Array.isArray(category?.items) ? category.items : []),
+  ...(Array.isArray(category?.subcategories) ? category.subcategories : []).flatMap(
+    (subcategory) => (Array.isArray(subcategory?.items) ? subcategory.items : []),
+  ),
+];
+
+const toDecorSections = (category) => {
+  const sections = (
+    Array.isArray(category?.subcategories) ? category.subcategories : []
+  ).map((subcategory) => ({
+    ...subcategory,
+    featuredItems: Array.isArray(subcategory?.items) ? subcategory.items : [],
+  }));
+  const direct = Array.isArray(category?.items) ? category.items : [];
+  if (direct.length > 0) {
+    sections.push({
+      id: `${category.id}-services`,
+      title: category.title,
+      subtitle: "",
+      description: "",
+      featuredItems: direct,
+    });
+  }
+  return sections;
+};
+
 function CollectionContent({
-  collection,
-  photoboothPackages,
+  category,
   photoboothHighlights,
   blissfulNestIntro,
-  blissfulNestPackages,
 }) {
-  // Generic: any collection with sections uses data-driven catalogue
-  if (Array.isArray(collection.sections) && collection.sections.length > 0) {
-    return <DecorHireCatalogue collection={collection} />;
-  }
+  const kind = inferCatalogKind(category);
 
-  if (collection.id === "decor-hire") {
-    return <DecorHireCatalogue collection={collection} />;
-  }
-
-  if (collection.id === "luxe-photobooth") {
+  if (kind === "package") {
     return (
       <LuxePhotoboothShowcase
         highlights={photoboothHighlights}
-        packages={photoboothPackages}
+        packages={flattenPackages(category)}
       />
     );
   }
 
-  if (collection.type === "sub-brand") {
-    return (
-      <BlissfulNestShowcase
-        collection={collection}
-        intro={blissfulNestIntro}
-        packages={blissfulNestPackages}
-      />
-    );
+  if (kind === "prize") {
+    return <BlissfulNestShowcase collection={category} intro={blissfulNestIntro} />;
   }
 
-  // New generic collections without sections — hero already rendered, no extra
-  return null;
+  // Generic: any other collection renders its sub-categories as the
+  // data-driven catalogue (plus a section for direct items, if any).
+  return (
+    <DecorHireCatalogue
+      collection={{ ...category, sections: toDecorSections(category) }}
+    />
+  );
 }
 
 function ServiceCollectionsShowcase({
-  collections = [],
-  photoboothPackages = [],
+  catalog,
   photoboothHighlights = null,
   blissfulNestIntro = null,
-  blissfulNestPackages = [],
   id,
 }) {
+  // The canonical tree is the single source of truth; legacy-only blobs
+  // (e.g. mid-migration saves) are converted on the fly.
+  const categories = useMemo(() => {
+    if (catalog && Array.isArray(catalog.categories)) return catalog.categories;
+    return buildServicesCatalog({}).categories;
+  }, [catalog]);
+
   // The URL is the single source of truth for the active collection:
   // router-aware reads/writes only (no native history.replaceState, which
   // React Router cannot observe and which used to fight manual selection).
@@ -67,15 +96,15 @@ function ServiceCollectionsShowcase({
   const requestedCollectionId = searchParams.get("collection");
 
   const collectionIds = useMemo(
-    () => new Set((collections ?? []).map((collection) => collection.id)),
-    [collections],
+    () => new Set((categories ?? []).map((collection) => collection.id)),
+    [categories],
   );
   const isValidRequest =
     Boolean(requestedCollectionId) && collectionIds.has(requestedCollectionId);
 
   const activeCollectionId = isValidRequest
     ? requestedCollectionId
-    : collections?.[0]?.id || "";
+    : categories?.[0]?.id || "";
 
   // Deep-link landing: scroll to the showcase after ScrollToTop has forced
   // top-of-page. Also fires when the ?collection= param changes via external
@@ -86,7 +115,7 @@ function ServiceCollectionsShowcase({
   const isLocalSelectionRef = useRef(false);
   const scrolledForRef = useRef(null);
   useEffect(() => {
-    if (!isValidRequest || !id || !collections?.length) return;
+    if (!isValidRequest || !id || !categories?.length) return;
     if (isLocalSelectionRef.current) {
       isLocalSelectionRef.current = false;
       scrolledForRef.current = requestedCollectionId;
@@ -104,7 +133,7 @@ function ServiceCollectionsShowcase({
           ?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
       }, 0);
     });
-  }, [isValidRequest, requestedCollectionId, id, collections]);
+  }, [isValidRequest, requestedCollectionId, id, categories]);
 
   const handleSelectCollection = useCallback(
     (nextId) => {
@@ -117,11 +146,11 @@ function ServiceCollectionsShowcase({
     [collectionIds, searchParams, setSearchParams],
   );
 
-  if (!collections || !collections.length) return null;
+  if (!categories || !categories.length) return null;
 
   const activeCollection =
-    collections.find((collection) => collection.id === activeCollectionId) ||
-    collections[0];
+    categories.find((collection) => collection.id === activeCollectionId) ||
+    categories[0];
 
   return (
     <Section
@@ -134,14 +163,14 @@ function ServiceCollectionsShowcase({
       <Container>
         <S.ShowcaseSection>
           <CollectionSelector
-            categories={collections}
+            categories={categories}
             activeId={activeCollection.id}
             ariaLabel="Main Service Collections"
             idPrefix="collection"
             onSelect={handleSelectCollection}
           />
 
-          {collections.map((collection) => (
+          {categories.map((collection) => (
             <S.CollectionPanel
               key={collection.id}
               id={`collection-panel-${collection.id}`}
@@ -160,6 +189,11 @@ function ServiceCollectionsShowcase({
                   <S.CollectionHeroDesc>
                     {collection.description}
                   </S.CollectionHeroDesc>
+                  {collection.priceFrom ? (
+                    <S.CollectionHeroPrice>
+                      Price starts at {collection.priceFrom}
+                    </S.CollectionHeroPrice>
+                  ) : null}
                 </S.CollectionHeroContent>
                 <S.CollectionHeroImageWrapper>
                   <img
@@ -173,11 +207,9 @@ function ServiceCollectionsShowcase({
               </S.ActiveCollectionHero>
 
               <CollectionContent
-                collection={collection}
-                photoboothPackages={photoboothPackages}
+                category={collection}
                 photoboothHighlights={photoboothHighlights}
                 blissfulNestIntro={blissfulNestIntro}
-                blissfulNestPackages={blissfulNestPackages}
               />
             </S.CollectionPanel>
           ))}

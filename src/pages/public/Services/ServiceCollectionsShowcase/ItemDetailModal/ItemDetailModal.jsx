@@ -79,7 +79,9 @@ function ItemDetailModal({ item, contextLabel, onClose }) {
 
   // Portal to document.body so position: fixed resolves against the
   // viewport instead of a transformed catalogue ancestor (which would break
-  // centering and backdrop coverage).
+  // centering and backdrop coverage). Skipped during server rendering, where
+  // there is no DOM (the dialog only ever opens from client interaction).
+  if (typeof document === 'undefined') return null
   return createPortal(
     <AnimatePresence>
       {item && (
@@ -123,6 +125,7 @@ function ItemDetailModal({ item, contextLabel, onClose }) {
               <S.ItemTitle>{item.name}</S.ItemTitle>
               {item.badge ? <S.ItemBadge>{item.badge}</S.ItemBadge> : null}
               {item.tagline ? <S.ItemTagline>{item.tagline}</S.ItemTagline> : null}
+              {item.price ? <S.ItemPrice>{item.price}</S.ItemPrice> : null}
               {item.specs ? <S.ItemSpecs>{item.specs}</S.ItemSpecs> : null}
               {item.description ? <S.ItemDescription>{item.description}</S.ItemDescription> : null}
 

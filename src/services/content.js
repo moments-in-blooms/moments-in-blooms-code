@@ -183,6 +183,343 @@ const normalizeGalleryPageItems = (items) =>
       })
     : items
 
+// -----------------------------------------------------------------------
+// Services catalog — canonical tree (Categories → Sub-Categories → Items)
+//
+// The services page historically stored three different shapes side by
+// side: `serviceCollections[].sections[].featuredItems[]` (decor),
+// top-level `photoboothPackages` (luxe) and top-level
+// `blissfulNestPackages` (blissful). `catalog` is the single canonical
+// tree everything converges on:
+//
+//   catalog.categories[]   → admin "Categories" / public "Collections"
+//     .subcategories[]     → admin "Sub-Categories" (optional level)
+//     .items[]             → admin "Items" attached directly to a category
+//
+// Sync rules — this module is the single sync point:
+//  - `buildServicesCatalog(values)` derives the tree from the legacy keys
+//    when `catalog` is absent (old stored blobs, legacy seeds).
+//  - When `catalog` is present it wins: the legacy keys are regenerated
+//    from it by `mirrorServicesLegacyFromCatalog`, so legacy readers (the
+//    public Services page, the current admin editors) keep working
+//    unchanged. There is no feedback loop: the mirror only runs when
+//    `catalog` exists, and the builder only runs when it does not.
+//  - The mirror preserves the public renderer's dispatch exactly — only
+//    decor-style categories get `sections`; luxe keeps top-level packages
+//    with no sections; blissful keeps `productCategories` + packages.
+//    (ServiceCollectionsShowcase renders DecorHireCatalogue for ANY
+//    collection with sections, so this placement must stay exact.)
+// -----------------------------------------------------------------------
+
+const slugifyCatalog = (value) =>
+  String(value ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+
+// Mirrors the public renderer dispatch (ServiceCollectionsShowcase) and the
+// admin kind mapping (ServicesCMS/catalog.js): only the fixed luxe id is
+// package-kind, blissful-nest / sub-brand is prize-kind, everything else is
+// decor. NOTE: ServicesCMS/catalog.js has its own copy — both will be
+// unified onto the canonical tree when the admin screens are rebuilt.
+const inferCatalogKind = (collection) => {
+  const id = String(collection?.id ?? '')
+  if (id === 'luxe-photobooth') return 'package'
+  if (id === 'blissful-nest' || collection?.type === 'sub-brand') return 'prize'
+  return 'decor'
+}
+
+const orderAt = (entry, index) => {
+  const order = Number(entry?.order)
+  return Number.isFinite(order) ? order : index + 1
+}
+
+const normalizeCatalogItem = (item, kind, index) => {
+  if (!item || typeof item !== 'object') return item
+  const next = kind === 'decor' ? normalizeFeaturedItem(item) : { ...item }
+  if (kind !== 'decor' && next.image != null) {
+    next.image = normalizeImage(next.image)
+  }
+  if (next.order == null) next.order = index + 1
+  return next
+}
+
+const toCanonicalSubcategory = (section, index) => {
+  const itemsSource = Array.isArray(section?.featuredItems)
+    ? section.featuredItems
+    : section?.featuredItem
+      ? [section.featuredItem]
+      : []
+  return {
+    id: String(section?.id ?? `subcategory-${Date.now()}-${index}`),
+    title: section?.title ?? '',
+    subtitle: section?.subtitle ?? '',
+    description: section?.description ?? '',
+    image: null,
+    order: orderAt(section, index),
+    priceFrom: section?.priceFrom ?? '',
+    items: itemsSource
+      .filter((item) => item && typeof item === 'object')
+      .map((item, itemIndex) => normalizeCatalogItem(item, 'decor', itemIndex)),
+  }
+}
+
+const toCanonicalCategory = (collection, index, packages) => {
+  if (!collection || typeof collection !== 'object') return null
+  const kind = inferCatalogKind(collection)
+  const id = String(collection.id ?? `category-${Date.now()}-${index}`)
+  const category = {
+    id,
+    slug: collection.slug ?? slugifyCatalog(collection.id ?? collection.title ?? ''),
+    title: collection.title ?? '',
+    type: collection.type ?? 'collection',
+    brand: collection.brand ?? 'Moments in Blooms',
+    order: orderAt(collection, index),
+    featured: collection.featured ?? false,
+    navSub: collection.navSub ?? '',
+    navMeta: collection.navMeta ?? '',
+    tagline: collection.tagline ?? '',
+    description: collection.description ?? '',
+    coverImage:
+      collection.coverImage != null
+        ? normalizeImage(collection.coverImage)
+        : { src: '', alt: '' },
+    priceFrom: collection.priceFrom ?? '',
+    subcategories: [],
+    items: [],
+  }
+  if (kind === 'package') {
+    category.items = (packages.photobooth ?? []).map((pkg, pkgIndex) =>
+      normalizeCatalogItem(pkg, 'package', pkgIndex),
+    )
+  } else if (kind === 'prize') {
+    const productCategories = Array.isArray(collection.productCategories)
+      ? collection.productCategories
+      : []
+    const subs =
+      productCategories.length > 0
+        ? productCategories
+        : [{ id: `${id}-offerings`, name: category.title, description: '' }]
+    category.subcategories = subs.map((entry, subIndex) => ({
+      id: String(entry?.id ?? `${id}-subcategory-${subIndex + 1}`),
+      title: entry?.name ?? entry?.title ?? '',
+      subtitle: '',
+      description: entry?.description ?? '',
+      image: null,
+      order: orderAt(entry, subIndex),
+      priceFrom: entry?.priceFrom ?? '',
+      items: [],
+    }))
+    // Legacy blissful packages are a flat global list rendered under every
+    // product-category block, so they attach to the first sub-category.
+    const items = (packages.blissful ?? []).map((pkg, pkgIndex) =>
+      normalizeCatalogItem(pkg, 'prize', pkgIndex),
+    )
+    if (category.subcategories.length > 0) {
+      category.subcategories[0].items = items
+    } else {
+      category.items = items
+    }
+  } else {
+    const sections = Array.isArray(collection.sections) ? collection.sections : []
+    category.subcategories = sections.map((section, sectionIndex) =>
+      toCanonicalSubcategory(section, sectionIndex),
+    )
+  }
+  return category
+}
+
+/**
+ * Derive the canonical catalog tree from the legacy services keys.
+ * Never mutates its input.
+ */
+export function buildServicesCatalog(values) {
+  const source = values && typeof values === 'object' ? values : {}
+  const packages = {
+    photobooth: Array.isArray(source.photoboothPackages) ? source.photoboothPackages : [],
+    blissful: Array.isArray(source.blissfulNestPackages) ? source.blissfulNestPackages : [],
+  }
+  const collections = Array.isArray(source.serviceCollections) ? source.serviceCollections : []
+  const categories = collections
+    .map((collection, index) => toCanonicalCategory(collection, index, packages))
+    .filter(Boolean)
+
+  // Orphan safety (mirrors the admin catalog's unassigned groups): packages
+  // whose category row was deleted stay reachable instead of invisible.
+  const hasLuxe = categories.some((entry) => entry.id === 'luxe-photobooth')
+  const hasBlissful = categories.some(
+    (entry) => entry.id === 'blissful-nest' || entry.type === 'sub-brand',
+  )
+  if (!hasLuxe && packages.photobooth.length > 0) {
+    const orphan = toCanonicalCategory(
+      { id: 'luxe-photobooth', type: 'collection', title: 'Luxe Photobooth (unassigned)' },
+      categories.length,
+      packages,
+    )
+    if (orphan) categories.push(orphan)
+  }
+  if (!hasBlissful && packages.blissful.length > 0) {
+    const orphan = toCanonicalCategory(
+      { id: 'blissful-nest', type: 'sub-brand', title: 'Blissful Nest (unassigned)' },
+      categories.length,
+      packages,
+    )
+    if (orphan) categories.push(orphan)
+  }
+  return { categories }
+}
+
+const normalizeCatalogSubcategory = (subcategory, index, kind) => {
+  if (!subcategory || typeof subcategory !== 'object') return subcategory
+  const next = { ...subcategory }
+  if (next.order == null) next.order = index + 1
+  if (next.priceFrom == null) next.priceFrom = ''
+  if (next.image !== undefined && next.image !== null) {
+    next.image = normalizeImage(next.image)
+  }
+  const items = Array.isArray(next.items) ? next.items : []
+  next.items = items.map((item, itemIndex) => normalizeCatalogItem(item, kind, itemIndex))
+  return next
+}
+
+/** Normalize an existing canonical tree (images, ordering defaults). */
+export function normalizeServicesCatalog(catalog) {
+  if (!catalog || typeof catalog !== 'object') return { categories: [] }
+  const categories = Array.isArray(catalog.categories) ? catalog.categories : []
+  return {
+    ...catalog,
+    categories: categories.map((category, index) => {
+      if (!category || typeof category !== 'object') return category
+      const kind = inferCatalogKind(category)
+      const next = { ...category }
+      if (next.slug == null || next.slug === '') {
+        next.slug = slugifyCatalog(next.id ?? next.title ?? '')
+      }
+      if (next.order == null) next.order = index + 1
+      if (next.priceFrom == null) next.priceFrom = ''
+      if (next.coverImage != null) next.coverImage = normalizeImage(next.coverImage)
+      const subcategories = Array.isArray(next.subcategories) ? next.subcategories : []
+      next.subcategories = subcategories.map((sub, subIndex) => {
+        const normalized = normalizeCatalogSubcategory(sub, subIndex, kind)
+        if (!normalized || typeof normalized !== 'object') return normalized
+        // Legacy items predate ids — assign stable positional fallbacks so
+        // every item is addressable (editor URLs, list keys, moves).
+        const scope = normalized.id ?? `${next.id}-subcategory-${subIndex + 1}`
+        normalized.items = (Array.isArray(normalized.items) ? normalized.items : []).map(
+          (item, itemIndex) =>
+            item && typeof item === 'object' && item.id == null
+              ? { ...item, id: `${scope}-item-${itemIndex + 1}` }
+              : item,
+        )
+        return normalized
+      })
+      const items = Array.isArray(next.items) ? next.items : []
+      next.items = items.map((item, itemIndex) =>
+        item && typeof item === 'object' && item.id == null
+          ? normalizeCatalogItem({ ...item, id: `${next.id}-item-${itemIndex + 1}` }, kind, itemIndex)
+          : normalizeCatalogItem(item, kind, itemIndex),
+      )
+      return next
+    }),
+  }
+}
+
+const toLegacySection = (subcategory) => {
+  const items = Array.isArray(subcategory?.items) ? subcategory.items.map((item) => ({ ...item })) : []
+  const section = {
+    id: subcategory?.id,
+    title: subcategory?.title ?? '',
+    subtitle: subcategory?.subtitle ?? '',
+    description: subcategory?.description ?? '',
+    featuredItems: items,
+  }
+  if (items.length > 0) section.featuredItem = items[0]
+  return section
+}
+
+const toLegacyProductCategory = (subcategory) => ({
+  id: subcategory?.id,
+  type: 'product-category',
+  name: subcategory?.title ?? '',
+  description: subcategory?.description ?? '',
+})
+
+const legacyCollectionCore = (category) => ({
+  id: category?.id,
+  type: category?.type ?? 'collection',
+  brand: category?.brand ?? 'Moments in Blooms',
+  order: category?.order ?? 1,
+  featured: category?.featured ?? false,
+  title: category?.title ?? '',
+  slug: category?.slug ?? slugifyCatalog(category?.id ?? category?.title ?? ''),
+  navSub: category?.navSub ?? '',
+  navMeta: category?.navMeta ?? '',
+  description: category?.description ?? '',
+  tagline: category?.tagline ?? '',
+  coverImage: category?.coverImage ?? { src: '', alt: '' },
+})
+
+/**
+ * Regenerate the legacy services keys from the canonical tree. Used when
+ * `catalog` is present so legacy readers keep working unchanged. Placement
+ * preserves the public dispatch: only decor-style categories get
+ * `sections`, luxe keeps top-level packages with no sections, blissful
+ * keeps `productCategories` + packages with no sections.
+ *
+ * Known interim limitation: a sub-brand category with several
+ * sub-categories flattens all their items into one legacy package list,
+ * which the OLD blissful renderer shows under every product-category
+ * block. The canonical tree itself keeps the true grouping, and the new
+ * public renderer will read it directly.
+ */
+export function mirrorServicesLegacyFromCatalog(catalog) {
+  const categories = Array.isArray(catalog?.categories) ? catalog.categories : []
+  const serviceCollections = []
+  let photoboothPackages = []
+  let blissfulNestPackages = []
+  categories.forEach((category) => {
+    if (!category || typeof category !== 'object') return
+    const kind = inferCatalogKind(category)
+    if (kind === 'package') {
+      serviceCollections.push(legacyCollectionCore(category))
+      const direct = Array.isArray(category.items) ? category.items : []
+      const fromSubs = (Array.isArray(category.subcategories) ? category.subcategories : []).flatMap(
+        (sub) => (Array.isArray(sub?.items) ? sub.items : []),
+      )
+      photoboothPackages = [...direct, ...fromSubs].map((item) => ({ ...item }))
+    } else if (kind === 'prize') {
+      const subcategories = Array.isArray(category.subcategories) ? category.subcategories : []
+      serviceCollections.push({
+        ...legacyCollectionCore(category),
+        productCategories: subcategories.map(toLegacyProductCategory),
+      })
+      const direct = Array.isArray(category.items) ? category.items : []
+      const fromSubs = subcategories.flatMap((sub) =>
+        Array.isArray(sub?.items) ? sub.items : [],
+      )
+      blissfulNestPackages = [...direct, ...fromSubs].map((item) => ({ ...item }))
+    } else {
+      const subcategories = Array.isArray(category.subcategories) ? category.subcategories : []
+      const sections = subcategories.map(toLegacySection)
+      const direct = Array.isArray(category.items) ? category.items : []
+      if (direct.length > 0) {
+        const clones = direct.map((item) => ({ ...item }))
+        sections.push({
+          id: `${category.id}-services`,
+          title: category.title ?? '',
+          subtitle: '',
+          description: '',
+          featuredItems: clones,
+          featuredItem: clones[0],
+        })
+      }
+      serviceCollections.push({ ...legacyCollectionCore(category), sections })
+    }
+  })
+  return { serviceCollections, photoboothPackages, blissfulNestPackages }
+}
+
 // Legacy copy rewrites — exact-phrase only, so deliberate "prints" wording
 // elsewhere (instant prints, 4x6 prints, high-quality prints) is untouched.
 const LEGACY_COPY_REWRITES = [
@@ -217,10 +554,9 @@ const rewriteLegacyCopy = (value) => {
   return value
 }
 
-// Legacy footer links retired in favour of the three real service
-// collections. Applies only while a stored `Services` group still holds the
-// legacy generic links — once the client re-saves Settings, stored content
-// carries the new links and this becomes a no-op.
+// Retired footer link labels from before the footer pointed at real service
+// collections. A stored `Services` group is "legacy" while none of its links
+// point at a collection yet.
 const LEGACY_FOOTER_SERVICE_LABELS = new Set([
   'Event styling',
   'Floral design',
@@ -228,26 +564,36 @@ const LEGACY_FOOTER_SERVICE_LABELS = new Set([
   'Private celebrations',
 ])
 
-const normalizeFooterGroups = (groups) => {
-  if (!Array.isArray(groups)) return groups
-  const canonical = footerNavigationGroups.find((group) => group.title === 'Services')
-  return groups.map((group) => {
-    if (!group || group.title !== 'Services' || !Array.isArray(group.links)) return group
-    // Legacy while none of the links point at a collection yet: either the
-    // exact legacy set, or any leftover legacy label among generic
-    // `/services` links (partial CMS edits). A Services group that already
-    // carries `?collection=` links was migrated or customized — leave it.
-    const hasCanonicalLink = group.links.some(
-      (link) => typeof link?.path === 'string' && link.path.includes('?collection='),
-    )
-    if (hasCanonicalLink || !canonical) return group
-    const isUntouchedLegacy =
-      group.links.length > 0 &&
-      group.links.every((link) => link?.path === '/services') &&
-      group.links.some((link) => LEGACY_FOOTER_SERVICE_LABELS.has(link?.label))
-    if (!isUntouchedLegacy) return group
-    return { ...group, links: canonical.links.map((link) => ({ ...link })) }
-  })
+/**
+ * Whether a stored footer `Services` group predates collection links and
+ * should resolve to the live catalog instead (see Footer.jsx).
+ */
+export function isLegacyFooterServicesGroup(group) {
+  if (!group || group.title !== 'Services' || !Array.isArray(group.links)) return false
+  const hasCollectionLink = group.links.some(
+    (link) => typeof link?.path === 'string' && link.path.includes('?collection='),
+  )
+  if (hasCollectionLink) return false
+  return (
+    group.links.length > 0 &&
+    group.links.every((link) => link?.path === '/services') &&
+    group.links.some((link) => LEGACY_FOOTER_SERVICE_LABELS.has(link?.label))
+  )
+}
+
+export function areFooterLinksEqual(a, b) {
+  if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false
+  return a.every(
+    (link, index) => link?.label === b[index]?.label && link?.path === b[index]?.path,
+  )
+}
+
+/** Footer `Services` links derived from the live catalog (single source). */
+export function buildCatalogServiceLinks(categories) {
+  return (Array.isArray(categories) ? categories : []).map((category) => ({
+    label: category?.title || 'Untitled',
+    path: `/services?collection=${encodeURIComponent(category?.id ?? '')}`,
+  }))
 }
 
 const normalizeContent = (pageKey, values) => {
@@ -259,6 +605,17 @@ const normalizeContent = (pageKey, values) => {
     // photoboothPackages keep popular as is, ensure isFeatured alias not needed
     if (Array.isArray(next.photoboothPackages)) {
       next.photoboothPackages = next.photoboothPackages.map((p) => ({ ...p }))
+    }
+    // Canonical catalog: the tree wins when present and the legacy keys are
+    // regenerated from it; otherwise the tree is derived from the legacy keys.
+    if (next.catalog && Array.isArray(next.catalog.categories)) {
+      next.catalog = normalizeServicesCatalog(next.catalog)
+      const legacy = mirrorServicesLegacyFromCatalog(next.catalog)
+      next.serviceCollections = legacy.serviceCollections
+      next.photoboothPackages = legacy.photoboothPackages
+      next.blissfulNestPackages = legacy.blissfulNestPackages
+    } else {
+      next.catalog = normalizeServicesCatalog(buildServicesCatalog(next))
     }
     // Retired "unlimited prints" copy in content saved before the rewording
     // (Supabase page_content / localStorage) so it reads correctly on every
@@ -286,9 +643,9 @@ const normalizeContent = (pageKey, values) => {
       return item
     })
   }
-  if (pageKey === 'settings' && Array.isArray(next.footerGroups)) {
-    next.footerGroups = normalizeFooterGroups(next.footerGroups)
-  }
+  // Footer `Services` links resolve to the live catalog at render time
+  // (see Footer.jsx) — stored groups are left untouched here so client
+  // customizations survive.
   // sections inside gallery/ services still handled per above
   return next
 }
@@ -351,6 +708,11 @@ export const contentSeeds = Object.freeze({
     blissfulNestIntro,
     blissfulNestPackages,
     serviceCollections,
+    catalog: buildServicesCatalog({
+      serviceCollections,
+      photoboothPackages,
+      blissfulNestPackages,
+    }),
     experienceTimeline: servicesExperienceTimeline,
     gallery: servicesGallery,
     testimonials: servicesTestimonials,
@@ -403,7 +765,7 @@ export const contentSeeds = Object.freeze({
 
 export const CONTENT_PAGE_KEYS = Object.freeze(Object.keys(contentSeeds))
 
-export { normalizeContent, normalizeImage }
+export { inferCatalogKind, normalizeContent, normalizeImage }
 
 function readStored() {
   try {

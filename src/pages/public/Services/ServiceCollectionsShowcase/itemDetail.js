@@ -1,7 +1,7 @@
 /**
  * Normalizers mapping clickable Services collection items to the shared
  * detail model consumed by ItemDetailModal:
- * { imageSrc, imageAlt, badge, name, tagline, specs, description, items[], ctaLabel }
+ * { imageSrc, imageAlt, badge, name, tagline, price, specs, description, items[], ctaLabel }
  */
 
 const getImageSrc = (image) => {
@@ -22,6 +22,7 @@ export const toDecorOptionDetail = (option) => ({
   badge: null,
   name: option?.name ?? '',
   tagline: null,
+  price: null,
   specs: option?.specs ?? null,
   description: option?.desc ?? null,
   items: [],
@@ -34,6 +35,7 @@ export const toDecorGalleryDetail = (galleryItem) => ({
   badge: null,
   name: galleryItem?.title ?? '',
   tagline: null,
+  price: null,
   specs: null,
   description: galleryItem?.alt ?? null,
   items: [],
@@ -51,6 +53,7 @@ export const toDecorFeatureDetail = (item, mainImage) => ({
   badge: null,
   name: item?.name ?? '',
   tagline: item?.tagline ?? null,
+  price: item?.price ?? null,
   specs: item?.dimensions ?? null,
   description: item?.description ?? null,
   items: [],
@@ -63,6 +66,7 @@ export const toBlissfulPackageDetail = (pkg) => ({
   badge: pkg?.badge ?? (pkg?.isFeatured ? 'Featured' : null),
   name: pkg?.name ?? '',
   tagline: pkg?.tagline ?? null,
+  price: pkg?.price ?? null,
   specs: null,
   description: pkg?.description ?? null,
   items: Array.isArray(pkg?.items) ? pkg.items : [],
