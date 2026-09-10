@@ -31,17 +31,62 @@ function FeaturedItemBlock({ item, contextLabel, onOpenDetail }) {
   const hasGallery = Array.isArray(item.gallery) && item.gallery.length > 0;
   const hasImage = Boolean(imageSrc);
 
+  // Main photo: the CMS "Featured image" wins; for option-based items fall
+  // back to the first option's image so a main photo always appears.
+  const optionMainSrc =
+    imageSrc || (hasOptions ? getImageSrc(item.options[0]?.image) : "");
+  const optionMainAlt = imageSrc
+    ? getImageAlt(item.image, item.name)
+    : getImageAlt(item.options?.[0]?.image, item.name);
+  const hasOptionMain = Boolean(optionMainSrc);
+
+  const openFeatureDetail = () =>
+    onOpenDetail(
+      toDecorFeatureDetail(item, { src: optionMainSrc, alt: optionMainAlt }),
+      contextLabel,
+    );
+
   // Generic layout: if has options -> option grid, if has gallery -> gallery grid, else split feature
   if (hasOptions) {
     return (
       <S.FeaturedFeature>
-        <div>
-          <S.FeaturedTag>Featured Collection</S.FeaturedTag>
-          <S.FeaturedName>{item.name}</S.FeaturedName>
-          {item.tagline ? <S.CollectionSubtitle>{item.tagline}</S.CollectionSubtitle> : null}
-          {item.description ? <S.CollectionSubtitle>{item.description}</S.CollectionSubtitle> : null}
-          {item.dimensions ? <S.OptionSpecs>{item.dimensions}</S.OptionSpecs> : null}
-        </div>
+        {hasOptionMain ? (
+          <S.SplitFeature>
+            <S.SplitImageButton
+              type="button"
+              aria-haspopup="dialog"
+              aria-label={`View full preview: ${item.name}`}
+              onClick={openFeatureDetail}
+            >
+              <img src={optionMainSrc} alt={optionMainAlt} loading="lazy" />
+            </S.SplitImageButton>
+            <S.SplitContent>
+              <S.FeaturedTag>Featured Collection</S.FeaturedTag>
+              <S.FeaturedName>{item.name}</S.FeaturedName>
+              {item.tagline ? <S.CollectionSubtitle>{item.tagline}</S.CollectionSubtitle> : null}
+              {item.description ? <S.CollectionSubtitle>{item.description}</S.CollectionSubtitle> : null}
+              {item.dimensions ? <S.OptionSpecs>{item.dimensions}</S.OptionSpecs> : null}
+              <S.SplitActions>
+                <Button
+                  type="button"
+                  variant={BUTTON_VARIANTS.GHOST}
+                  size="medium"
+                  onClick={openFeatureDetail}
+                >
+                  <span>View full details</span>
+                </Button>
+              </S.SplitActions>
+            </S.SplitContent>
+          </S.SplitFeature>
+        ) : (
+          <div>
+            <S.FeaturedTag>Featured Collection</S.FeaturedTag>
+            <S.FeaturedName>{item.name}</S.FeaturedName>
+            {item.tagline ? <S.CollectionSubtitle>{item.tagline}</S.CollectionSubtitle> : null}
+            {item.description ? <S.CollectionSubtitle>{item.description}</S.CollectionSubtitle> : null}
+            {item.dimensions ? <S.OptionSpecs>{item.dimensions}</S.OptionSpecs> : null}
+          </div>
+        )}
         <S.OptionGrid>
           {item.options.map((option, index) => {
             const optSrc = getImageSrc(option.image);
@@ -81,11 +126,39 @@ function FeaturedItemBlock({ item, contextLabel, onOpenDetail }) {
   if (hasGallery) {
     return (
       <div>
-        <S.FeaturedIntro>
-          <S.FeaturedName>{item.name}</S.FeaturedName>
-          {item.tagline ? <S.CollectionSubtitle>{item.tagline}</S.CollectionSubtitle> : null}
-          {item.description ? <S.CollectionSubtitle>{item.description}</S.CollectionSubtitle> : null}
-        </S.FeaturedIntro>
+        {hasImage ? (
+          <S.SplitFeature>
+            <S.SplitImageButton
+              type="button"
+              aria-haspopup="dialog"
+              aria-label={`View full preview: ${item.name}`}
+              onClick={() => onOpenDetail(toDecorFeatureDetail(item), contextLabel)}
+            >
+              <img src={imageSrc} alt={getImageAlt(item.image, item.name)} loading="lazy" />
+            </S.SplitImageButton>
+            <S.SplitContent>
+              <S.FeaturedName>{item.name}</S.FeaturedName>
+              {item.tagline ? <S.CollectionSubtitle>{item.tagline}</S.CollectionSubtitle> : null}
+              {item.description ? <S.CollectionSubtitle>{item.description}</S.CollectionSubtitle> : null}
+              <S.SplitActions>
+                <Button
+                  type="button"
+                  variant={BUTTON_VARIANTS.GHOST}
+                  size="medium"
+                  onClick={() => onOpenDetail(toDecorFeatureDetail(item), contextLabel)}
+                >
+                  <span>View full details</span>
+                </Button>
+              </S.SplitActions>
+            </S.SplitContent>
+          </S.SplitFeature>
+        ) : (
+          <S.FeaturedIntro>
+            <S.FeaturedName>{item.name}</S.FeaturedName>
+            {item.tagline ? <S.CollectionSubtitle>{item.tagline}</S.CollectionSubtitle> : null}
+            {item.description ? <S.CollectionSubtitle>{item.description}</S.CollectionSubtitle> : null}
+          </S.FeaturedIntro>
+        )}
         <S.GalleryGrid>
           {item.gallery.map((gItem, index) => (
             <S.GalleryItemButton

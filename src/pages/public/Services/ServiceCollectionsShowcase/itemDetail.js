@@ -40,9 +40,14 @@ export const toDecorGalleryDetail = (galleryItem) => ({
   ctaLabel: 'Request a Quote',
 })
 
-export const toDecorFeatureDetail = (item) => ({
-  imageSrc: getImageSrc(item?.image),
-  imageAlt: getImageAlt(item?.image, item?.name),
+/**
+ * Detail model for a featured item itself. `mainImage` ({src, alt}) is an
+ * optional override for the modal image — used when the visible main photo
+ * falls back to the first option's image.
+ */
+export const toDecorFeatureDetail = (item, mainImage) => ({
+  imageSrc: mainImage?.src ?? getImageSrc(item?.image),
+  imageAlt: mainImage?.alt ?? getImageAlt(item?.image, item?.name),
   badge: null,
   name: item?.name ?? '',
   tagline: item?.tagline ?? null,
