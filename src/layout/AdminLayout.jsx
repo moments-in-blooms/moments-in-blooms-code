@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { Outlet } from 'react-router-dom'
 import Sidebar from '../components/Sidebar/index.js'
+import ScrollRestore from '../components/admin/ScrollRestore/index.js'
 import Topbar from '../components/Topbar/index.js'
 import { AdminMain, AdminShell, AdminSkipLink, AdminWorkspace } from './AdminLayout.styles.js'
 
@@ -36,6 +37,7 @@ function AdminLayout() {
 
   return (
     <AdminShell $collapsed={collapsed}>
+      <ScrollRestore />
       <Helmet>
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>

@@ -5,7 +5,6 @@ import AdminLayout from '../layout/AdminLayout.jsx'
 import PublicLayout from '../layout/PublicLayout.jsx'
 import { LoadingScreen } from '../components/Loading/index.js'
 import RequireAuth from '../components/RequireAuth/index.js'
-import ScrollToTop from '../components/ScrollToTop/index.js'
 
 const Home = lazy(() => import('../pages/public/Home/Home.jsx'))
 const About = lazy(() => import('../pages/public/About/About.jsx'))
@@ -80,7 +79,6 @@ function AppShell() {
   return (
     <AnimatePresence>
       <Suspense fallback={<LoadingScreen />}>
-        <ScrollToTop />
         <Outlet />
       </Suspense>
     </AnimatePresence>

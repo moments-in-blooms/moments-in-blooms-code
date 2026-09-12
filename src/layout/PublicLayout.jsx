@@ -2,6 +2,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import BackToTop from '../components/BackToTop/index.js'
 import Footer from '../components/Footer/index.js'
 import Navbar from '../components/Navbar/index.js'
+import ScrollToTop from '../components/ScrollToTop/index.js'
 import SocialContact from '../components/SocialContact/index.js'
 import { publicNavigation } from '../constants/navigation.js'
 import { NAVBAR_THEMES } from '../constants/ui.js'
@@ -14,6 +15,7 @@ function PublicLayout() {
 
   return (
     <PublicShell>
+      <ScrollToTop />
       <Navbar variant={navbarTheme} />
       <PublicMain id="main-content">
         <Outlet />
