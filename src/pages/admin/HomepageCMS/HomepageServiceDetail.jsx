@@ -10,6 +10,7 @@ import SaveActions from '../../../components/admin/SaveActions/index.js'
 import ToggleSwitch from '../../../components/admin/ToggleSwitch/index.js'
 import Button from '../../../components/Button/index.js'
 import { SelectField, TextAreaField, TextField } from '../../../components/FormField/index.js'
+import { CATALOG_TERMS, FIELD_TERMS } from '../../../constants/adminTerms.js'
 import { useContent } from '../../../hooks/useContent.js'
 import { useUnsavedGuard } from '../../../hooks/useUnsavedGuard.jsx'
 import { findServiceOverride } from '../../../services/homepageCards.js'
@@ -146,7 +147,7 @@ function HomepageServiceDetail() {
   const otherCategories = categories.filter((entry) => String(entry?.id) !== String(category.id))
 
   const itemTargetOptions = otherCategories.flatMap((entry) => [
-    { value: String(entry.id), label: `${entry.title || 'Untitled'} › Top level` },
+    { value: String(entry.id), label: `${entry.title || 'Untitled'} › ${CATALOG_TERMS.noSubcategory.label}` },
     ...(Array.isArray(entry.subcategories) ? entry.subcategories : []).map((sub) => ({
       value: `${entry.id}/${sub.id}`,
       label: `${entry.title || 'Untitled'} › ${sub.title || 'Untitled'}`,
@@ -285,13 +286,14 @@ function HomepageServiceDetail() {
         description="How this service appears as a card on the homepage. Blank fields fall back to the category’s own title, description and cover image."
       >
         <TextField
-          label="Linked category"
+          label={FIELD_TERMS.linkedCategory.label}
           value={category.title || 'Untitled category'}
           readOnly
-          hint="This card follows its category — manage the category itself under Services."
+          hint={FIELD_TERMS.linkedCategory.hint}
         />
         <TextField
-          label="Eyebrow"
+          label={FIELD_TERMS.eyebrow.label}
+          hint={FIELD_TERMS.eyebrow.hint}
           value={draft.eyebrow ?? ''}
           onChange={(event) => patch({ ...draft, eyebrow: event.target.value })}
           placeholder="01 · Atmosphere"
@@ -310,13 +312,13 @@ function HomepageServiceDetail() {
           placeholder={category.description ?? ''}
         />
         <ToggleSwitch
-          label="Offset layout"
-          hint="Alternates the card layout on the homepage. Leave off to follow the default staggered order."
+          label={FIELD_TERMS.offsetLayout.label}
+          hint={FIELD_TERMS.offsetLayout.hint}
           checked={Boolean(draft.offset)}
           onChange={(offset) => patch({ ...draft, offset })}
         />
         <ImageField
-          label="Card image"
+          label={FIELD_TERMS.cardImage.label}
           value={draft.image?.src ?? ''}
           onChange={(src) =>
             patch({ ...draft, image: { ...(draft.image ?? {}), src } })

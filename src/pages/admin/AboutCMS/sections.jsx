@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import styled from 'styled-components'
+import { FIELD_TERMS, SECTION_TERMS } from '../../../constants/adminTerms.js'
 import { FieldRow, SelectField, TextAreaField, TextField } from '../../../components/FormField/index.js'
 import ImageField from '../../../components/admin/ImageField/index.js'
 import Repeater from '../../../components/admin/Repeater/index.js'
@@ -27,7 +28,8 @@ const PanelFieldset = styled.fieldset`
 const SubtitleTitleFields = ({ value, onChange }) => (
   <>
     <TextField
-      label="Eyebrow"
+      label={FIELD_TERMS.eyebrow.label}
+      hint={FIELD_TERMS.eyebrow.hint}
       value={value?.subtitle ?? ''}
       onChange={(event) => onChange({ ...value, subtitle: event.target.value })}
     />
@@ -88,7 +90,7 @@ const TriFieldsRepeater = ({ items, onChange, createItem, addLabel, numberKey = 
 export const aboutSections = [
   {
     key: 'hero',
-    title: 'Hero',
+    title: SECTION_TERMS.hero.label,
     description: 'The opening of your About page.',
     type: 'object',
     form: HeroForm,
@@ -138,14 +140,14 @@ export const aboutSections = [
   },
   {
     key: 'testimonialHighlight',
-    title: 'Featured testimonial',
+    title: 'Featured review',
     description: 'The standout quote highlighted on the About page.',
     type: 'object',
     form: TestimonialHighlightForm,
   },
   {
     key: 'cta',
-    title: 'Call to action',
+    title: SECTION_TERMS.cta.label,
     description: 'The closing invitation on the About page.',
     type: 'object',
     form: CtaForm,
@@ -157,7 +159,8 @@ function HeroForm({ value, onChange }) {
   return (
     <>
       <TextField
-        label="Eyebrow"
+        label={FIELD_TERMS.eyebrow.label}
+        hint={FIELD_TERMS.eyebrow.hint}
         value={value?.eyebrow ?? ''}
         onChange={(event) => patch({ eyebrow: event.target.value })}
       />
@@ -173,18 +176,18 @@ function HeroForm({ value, onChange }) {
       />
       <FieldRow>
         <TextField
-          label="Primary button label"
+          label={FIELD_TERMS.primaryButtonLabel.label}
           value={value?.primaryCta?.label ?? ''}
           onChange={(event) => patch({ primaryCta: { ...value.primaryCta, label: event.target.value } })}
         />
         <TextField
-          label="Secondary button label"
+          label={FIELD_TERMS.secondaryButtonLabel.label}
           value={value?.secondaryCta?.label ?? ''}
           onChange={(event) => patch({ secondaryCta: { ...value.secondaryCta, label: event.target.value } })}
         />
       </FieldRow>
       <ImageField
-        label="Hero image"
+        label={FIELD_TERMS.heroImage.label}
         value={value?.image?.src ?? ''}
         onChange={(src) => onChange((prev) => ({ ...prev, image: { ...(prev.image ?? {}), src } }))}
         alt={value?.image?.alt ?? ''}
@@ -421,12 +424,12 @@ function CtaForm({ value, onChange }) {
       />
       <FieldRow>
         <TextField
-          label="Primary button label"
+          label={FIELD_TERMS.primaryButtonLabel.label}
           value={value?.primaryCta?.label ?? ''}
           onChange={(event) => patch({ primaryCta: { ...value.primaryCta, label: event.target.value } })}
         />
         <TextField
-          label="Secondary button label"
+          label={FIELD_TERMS.secondaryButtonLabel.label}
           value={value?.secondaryCta?.label ?? ''}
           onChange={(event) => patch({ secondaryCta: { ...value.secondaryCta, label: event.target.value } })}
         />

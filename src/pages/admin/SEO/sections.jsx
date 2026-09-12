@@ -9,14 +9,14 @@ function SeoForm({ value, onChange }) {
   return (
     <>
       <TextField
-        label="SEO title"
+        label="Search title"
         value={value?.title ?? ''}
         onChange={(event) => patch({ title: event.target.value })}
         hint={`50-60 chars ideal — ${titleLen}/60${titleLen > 60 ? ' (too long)' : ''}`}
         error={titleLen > 70 ? 'Title is too long for search results.' : undefined}
       />
       <TextAreaField
-        label="SEO description"
+        label="Search description"
         rows={4}
         value={value?.description ?? ''}
         onChange={(event) => patch({ description: event.target.value })}
@@ -49,7 +49,7 @@ function SeoForm({ value, onChange }) {
 export const seoSections = [
   {
     key: 'site',
-    title: 'Site-wide metadata',
+    title: 'Whole site (default)',
     description: 'The default title and description shown when no page metadata applies.',
     type: 'object',
     form: SeoForm,

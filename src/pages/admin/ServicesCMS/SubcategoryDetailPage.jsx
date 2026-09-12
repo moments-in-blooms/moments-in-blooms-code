@@ -10,6 +10,7 @@ import Modal from '../../../components/admin/Modal/index.js'
 import SaveActions from '../../../components/admin/SaveActions/index.js'
 import Button from '../../../components/Button/index.js'
 import { SelectField, TextAreaField, TextField } from '../../../components/FormField/index.js'
+import { CATALOG_TERMS } from '../../../constants/adminTerms.js'
 import { useContent } from '../../../hooks/useContent.js'
 import { useUnsavedGuard } from '../../../hooks/useUnsavedGuard.jsx'
 import { deleteImage } from '../../../services/storage.js'
@@ -146,7 +147,7 @@ function SubcategoryDetailPage() {
   const items = Array.isArray(draft.items) ? draft.items : []
   const otherCategories = categories.filter((entry) => String(entry.id) !== String(parentId))
   const itemTargetOptions = otherCategories.flatMap((category) => [
-    { value: String(category.id), label: `${category.title || 'Untitled'} › Top level` },
+    { value: String(category.id), label: `${category.title || 'Untitled'} › ${CATALOG_TERMS.noSubcategory.label}` },
     ...(Array.isArray(category.subcategories) ? category.subcategories : []).map((sub) => ({
       value: `${category.id}/${sub.id}`,
       label: `${category.title || 'Untitled'} › ${sub.title || 'Untitled'}`,
@@ -267,11 +268,11 @@ function SubcategoryDetailPage() {
           onChange={(event) => patch({ ...draft, description: event.target.value })}
         />
         <TextField
-          label="Starting price"
+          label={CATALOG_TERMS.startingPrice.label}
           value={draft.priceFrom ?? ''}
           onChange={(event) => patch({ ...draft, priceFrom: event.target.value })}
           placeholder="$450"
-          hint="Optional. Shown as “Price starts at …” on the public site."
+          hint={CATALOG_TERMS.startingPrice.hint}
         />
         <ImageField
           label="Image"

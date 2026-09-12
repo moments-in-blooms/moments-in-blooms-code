@@ -1,4 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
+import { FIELD_TERMS, SECTION_TERMS } from '../../../constants/adminTerms.js'
 import { TextAreaField, TextField } from '../../../components/FormField/index.js'
 import { HelpText } from '../../../components/FormField/FormField.styles.js'
 import ImageField from '../../../components/admin/ImageField/index.js'
@@ -7,7 +8,7 @@ import Repeater from '../../../components/admin/Repeater/index.js'
 export const contactSections = [
   {
     key: 'hero',
-    title: 'Hero',
+    title: SECTION_TERMS.hero.label,
     description: 'The opening of your Contact page.',
     type: 'object',
     form: HeroForm,
@@ -31,7 +32,7 @@ export const contactSections = [
   },
   {
     key: 'cta',
-    title: 'Call to action',
+    title: SECTION_TERMS.cta.label,
     description: 'The closing invitation at the bottom of the contact page.',
     type: 'object',
     form: CtaForm,
@@ -56,7 +57,7 @@ function HeroForm({ value, onChange }) {
   return (
     <>
       <TextField
-        label="Eyebrow"
+        label={FIELD_TERMS.eyebrow.label}
         hint="Small label above the title (e.g. 'Let's create something beautiful')."
         value={value?.eyebrow ?? ''}
         onChange={(event) => patch({ eyebrow: event.target.value })}
@@ -78,7 +79,7 @@ function HeroForm({ value, onChange }) {
         onChange={(event) => patch({ note: event.target.value })}
       />
       <ImageField
-        label="Hero image"
+        label={FIELD_TERMS.heroImage.label}
         value={value?.image?.src ?? ''}
         onChange={(src) => onChange((prev) => ({ ...prev, image: { ...(prev.image ?? {}), src } }))}
         alt={value?.image?.alt ?? ''}
@@ -98,7 +99,7 @@ function InformationForm({ value, onChange }) {
         so they stay in sync everywhere.
       </HelpText>
       <TextField
-        label="Eyebrow"
+        label={FIELD_TERMS.eyebrow.label}
         hint="Small label above the title (e.g. 'Prefer a conversation?')."
         value={value?.eyebrow ?? ''}
         onChange={(event) => patch({ eyebrow: event.target.value })}
@@ -128,7 +129,7 @@ function EnquiryFormRailForm({ value, onChange }) {
   return (
     <>
       <TextField
-        label="Eyebrow"
+        label={FIELD_TERMS.eyebrow.label}
         hint="Small label above the title (e.g. 'Your enquiry, in good hands')."
         value={value?.eyebrow ?? ''}
         onChange={(event) => patch({ eyebrow: event.target.value })}
@@ -181,7 +182,7 @@ function CtaForm({ value, onChange }) {
   return (
     <>
       <TextField
-        label="Eyebrow"
+        label={FIELD_TERMS.eyebrow.label}
         hint="Small label above the title (e.g. 'Feeling inspired?')."
         value={value?.eyebrow ?? ''}
         onChange={(event) => patch({ eyebrow: event.target.value })}
@@ -197,12 +198,14 @@ function CtaForm({ value, onChange }) {
         onChange={(event) => patch({ description: event.target.value })}
       />
       <TextField
-        label="Primary button"
+        label={FIELD_TERMS.primaryButton.label}
+        hint={FIELD_TERMS.primaryButton.hint}
         value={value?.primaryCta ?? ''}
         onChange={(event) => patch({ primaryCta: event.target.value })}
       />
       <TextField
-        label="Secondary button"
+        label={FIELD_TERMS.secondaryButton.label}
+        hint={FIELD_TERMS.secondaryButton.hint}
         value={value?.secondaryCta ?? ''}
         onChange={(event) => patch({ secondaryCta: event.target.value })}
       />

@@ -5,6 +5,7 @@ import ContentDetailHeader from '../../../components/admin/ContentDetailHeader/i
 import ContentFormSection from '../../../components/admin/ContentFormSection/index.js'
 import SaveActions from '../../../components/admin/SaveActions/index.js'
 import { TextField, TextAreaField, FieldRow } from '../../../components/FormField/index.js'
+import { FIELD_TERMS } from '../../../constants/adminTerms.js'
 import { useUnsavedGuard } from '../../../hooks/useUnsavedGuard.jsx'
 import { fetchFaqPageAdmin, saveFaqPage } from '../../../services/faqs.js'
 import {
@@ -142,20 +143,20 @@ function FaqPageDetail({ section }) {
         backLabel={section === 'heading' ? 'Back to FAQ Content' : 'Back to FAQs'}
         eyebrow={
           section === 'hero'
-            ? 'FAQs · Hero'
+            ? 'FAQs · Top banner'
             : section === 'heading'
               ? 'FAQs · Section heading'
               : section === 'cta'
-                ? 'FAQs · Call-to-action'
+                ? 'FAQs · Bottom banner'
                 : 'FAQs · Page content'
         }
         title={
           section === 'hero'
-            ? 'FAQ hero'
+            ? 'FAQ top banner'
             : section === 'heading'
               ? 'FAQ section heading'
               : section === 'cta'
-                ? 'FAQ call-to-action'
+                ? 'FAQ bottom banner'
                 : 'FAQ page content'
         }
         description={
@@ -164,8 +165,8 @@ function FaqPageDetail({ section }) {
             : section === 'heading'
               ? 'The intro copy shown above the category filter on the public FAQ page.'
               : section === 'cta'
-                ? 'The call-to-action section at the bottom of the public FAQ page.'
-                : 'The hero, section heading and call-to-action copy of the public FAQ page.'
+                ? 'The bottom banner section at the bottom of the public FAQ page.'
+                : 'The top banner, section heading and bottom banner copy of the public FAQ page.'
         }
       />
 
@@ -176,7 +177,8 @@ function FaqPageDetail({ section }) {
         >
           <FaqFormGrid>
             <TextField
-              label="Eyebrow"
+              label={FIELD_TERMS.eyebrow.label}
+              hint={FIELD_TERMS.eyebrow.hint}
               value={draft.section.eyebrow}
               onChange={patchSection('section', 'eyebrow')}
               placeholder="e.g. Browse by topic"
@@ -202,12 +204,13 @@ function FaqPageDetail({ section }) {
 
       {showHero ? (
         <ContentFormSection
-          title="Hero section"
+          title="Top banner"
           description="The dark welcome section at the top of the FAQ page."
         >
           <FaqFormGrid>
             <TextField
-              label="Eyebrow"
+              label={FIELD_TERMS.eyebrow.label}
+              hint={FIELD_TERMS.eyebrow.hint}
               value={draft.hero.eyebrow}
               onChange={patchSection('hero', 'eyebrow')}
               placeholder="e.g. Frequently Asked Questions"
@@ -233,12 +236,13 @@ function FaqPageDetail({ section }) {
 
       {showCta ? (
         <ContentFormSection
-          title="Call-to-action section"
+          title="Bottom banner"
           description="The taupe section at the bottom of the FAQ page."
         >
           <FaqFormGrid>
             <TextField
-              label="Eyebrow"
+              label={FIELD_TERMS.eyebrow.label}
+              hint={FIELD_TERMS.eyebrow.hint}
               value={draft.cta.eyebrow}
               onChange={patchSection('cta', 'eyebrow')}
               placeholder="e.g. Still have questions?"
@@ -259,14 +263,15 @@ function FaqPageDetail({ section }) {
             />
             <FieldRow>
               <TextField
-                label="Primary button label"
+                label={FIELD_TERMS.primaryButtonLabel.label}
                 value={draft.cta.primaryLabel}
                 onChange={patchSection('cta', 'primaryLabel')}
                 placeholder="e.g. Enquire Now"
                 error={errors.primaryLabel}
               />
               <TextField
-                label="Primary button link"
+                label={FIELD_TERMS.primaryButtonLink.label}
+                hint={FIELD_TERMS.primaryButtonLink.hint}
                 value={draft.cta.primaryUrl}
                 onChange={patchSection('cta', 'primaryUrl')}
                 placeholder="e.g. /contact"
@@ -275,14 +280,14 @@ function FaqPageDetail({ section }) {
             </FieldRow>
             <FieldRow>
               <TextField
-                label="Secondary button label"
+                label={FIELD_TERMS.secondaryButtonLabel.label}
                 value={draft.cta.secondaryLabel}
                 onChange={patchSection('cta', 'secondaryLabel')}
                 placeholder="e.g. Explore Services"
                 error={errors.secondaryLabel}
               />
               <TextField
-                label="Secondary button link"
+                label={FIELD_TERMS.secondaryButtonLink.label}
                 value={draft.cta.secondaryUrl}
                 onChange={patchSection('cta', 'secondaryUrl')}
                 placeholder="e.g. /services"

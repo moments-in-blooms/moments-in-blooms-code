@@ -35,7 +35,7 @@ export const adminPageMeta = Object.freeze({
     eyebrow: 'Content management',
     title: 'Homepage',
     description:
-      'Edit the hero, services, gallery preview, testimonials and call-to-action of your homepage.',
+      'Edit the top banner, services, gallery photos, client reviews and bottom banner of your homepage.',
   },
   about: {
     eyebrow: 'Content management',
@@ -71,7 +71,7 @@ export const adminPageMeta = Object.freeze({
     eyebrow: 'Website Pages',
     title: 'Services Page',
     description:
-      'Edit the copy blocks around the service catalog: hero, highlights, introduction, experience timeline and call-to-action.',
+      'Edit the copy blocks around the service catalog: top banner, highlights, introduction, experience timeline and bottom banner.',
   },
   gallery: {
     eyebrow: 'Content management',
@@ -89,13 +89,13 @@ export const adminPageMeta = Object.freeze({
     eyebrow: 'Content management',
     title: 'Contact',
     description:
-      'Edit the hero, enquiry form steps, contact information and call-to-action of your contact page.',
+      'Edit the top banner, enquiry form steps, contact information and bottom banner of your contact page.',
   },
   faqsHub: {
     eyebrow: 'Content management',
     title: 'FAQ Management',
     description:
-      'Manage the different sections of your public FAQ page — the hero, the questions and the call-to-action.',
+      'Manage the different sections of your public FAQ page — the top banner, the questions and the bottom banner.',
   },
   faqsContent: {
     eyebrow: 'FAQs · Content',

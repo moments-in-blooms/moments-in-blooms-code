@@ -12,6 +12,7 @@ import ToggleSwitch from '../../../components/admin/ToggleSwitch/index.js'
 import Button from '../../../components/Button/index.js'
 import { SelectField, TextAreaField, TextField } from '../../../components/FormField/index.js'
 import { ErrorText } from '../../../components/FormField/FormField.styles.js'
+import { CATALOG_TERMS } from '../../../constants/adminTerms.js'
 import { useContent } from '../../../hooks/useContent.js'
 import { useUnsavedGuard } from '../../../hooks/useUnsavedGuard.jsx'
 import { deleteImage } from '../../../services/storage.js'
@@ -267,8 +268,8 @@ function ServiceItemDetail() {
       />
 
       <ContentFormSection
-        title="Placement"
-        description="Which category — and optionally which sub-category — this item belongs to."
+        title={CATALOG_TERMS.placement.label}
+        description={CATALOG_TERMS.placement.hint}
       >
         <SelectField
           label="Category"
@@ -289,7 +290,7 @@ function ServiceItemDetail() {
             value: String(sub.id),
             label: sub.title || 'Untitled sub-category',
           }))}
-          placeholder="Top level (no sub-category)"
+          placeholder={CATALOG_TERMS.noSubcategory.label}
           error={errors.subcategoryId}
         />
       </ContentFormSection>
@@ -396,8 +397,8 @@ function DecorItemForm({ draft, patch, errors }) {
           hint="Optional. Shown on the public site when present."
         />
         <ToggleSwitch
-          label="Featured"
-          hint="Featured items are highlighted on the public site."
+          label={CATALOG_TERMS.featured.label}
+          hint="Highlighted items stand out on the public site."
           checked={Boolean(draft?.isFeatured ?? draft?.popular)}
           onChange={(checked) => patch({ ...draft, isFeatured: checked })}
         />

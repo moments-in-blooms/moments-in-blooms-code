@@ -84,7 +84,7 @@ function HomepageServicesPage() {
 
       <ContentList
         title="Homepage service cards"
-        description="Click a card to adjust its homepage headline, copy, image and layout."
+        description="Click a card to adjust its homepage heading, copy, image and layout."
         emptyState={
           <EmptyState
             title={categories.length === 0 ? 'No services yet' : 'No cards to show'}

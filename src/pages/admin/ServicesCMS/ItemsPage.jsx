@@ -6,6 +6,7 @@ import ContentList from '../../../components/admin/ContentList/index.js'
 import EmptyState from '../../../components/admin/EmptyState/index.js'
 import Button from '../../../components/Button/index.js'
 import { adminPageMeta } from '../../../constants/admin.js'
+import { CATALOG_TERMS } from '../../../constants/adminTerms.js'
 import { useContent } from '../../../hooks/useContent.js'
 import { showError, showSuccess } from '../../../utils/sweetAlert.js'
 import {
@@ -138,7 +139,7 @@ function ItemsPage() {
 
   const subTabs = [
     ...subcategories.map((sub) => ({ key: String(sub.id), label: sub.title || 'Untitled sub-category' })),
-    { key: SUB_TOP_LEVEL, label: 'Top level' },
+    { key: SUB_TOP_LEVEL, label: CATALOG_TERMS.noSubcategory.label },
   ]
 
   const subCount = (key) => {
@@ -270,7 +271,7 @@ function ItemsPage() {
               title={label}
               description={itemSubtitle(item) || itemDescription(item)}
               meta={[
-                sub ? sub.title || 'Untitled sub-category' : 'Top level',
+                sub ? sub.title || 'Untitled sub-category' : CATALOG_TERMS.noSubcategory.label,
                 itemPrice(item) || null,
               ].filter(Boolean)}
               status={itemIsFeatured(item) ? 'featured' : undefined}

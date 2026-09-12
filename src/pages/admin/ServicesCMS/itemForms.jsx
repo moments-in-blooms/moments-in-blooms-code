@@ -1,3 +1,4 @@
+import { CATALOG_TERMS, FIELD_TERMS } from '../../../constants/adminTerms.js'
 import { FieldRow, TextAreaField, TextField } from '../../../components/FormField/index.js'
 import ImageField from '../../../components/admin/ImageField/index.js'
 import Repeater from '../../../components/admin/Repeater/index.js'
@@ -74,7 +75,8 @@ export function PhotoboothPackageForm({ value, onChange }) {
         onChange={(event) => patch({ travelNotes: event.target.value })}
       />
       <TextField
-        label="Call to action text"
+        label={FIELD_TERMS.ctaText.label}
+        hint={FIELD_TERMS.ctaText.hint}
         value={value?.ctaText ?? ''}
         onChange={(event) => patch({ ctaText: event.target.value })}
       />
@@ -111,8 +113,8 @@ export function BlissfulNestPackageForm({ value, onChange }) {
         onChange={(event) => patch({ description: event.target.value })}
       />
       <ToggleSwitch
-        label="Featured"
-        hint="Featured prize options are highlighted on the public site. Multiple can be featured."
+        label={CATALOG_TERMS.featured.label}
+        hint="Highlighted prize options stand out on the public site. Multiple can be highlighted."
         checked={Boolean(value?.isFeatured)}
         onChange={(checked) => patch({ isFeatured: checked })}
       />

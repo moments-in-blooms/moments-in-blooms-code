@@ -11,6 +11,7 @@ import SaveActions from '../../../components/admin/SaveActions/index.js'
 import ToggleSwitch from '../../../components/admin/ToggleSwitch/index.js'
 import Button from '../../../components/Button/index.js'
 import { FieldRow, SelectField, TextAreaField, TextField } from '../../../components/FormField/index.js'
+import { CATALOG_TERMS } from '../../../constants/adminTerms.js'
 import { useContent } from '../../../hooks/useContent.js'
 import { useUnsavedGuard } from '../../../hooks/useUnsavedGuard.jsx'
 import { deleteImage, isStorageUrl } from '../../../services/storage.js'
@@ -110,7 +111,7 @@ function CategoryDetailPage() {
   const siblingIndex = categories.findIndex((entry) => String(entry?.id) === String(draft.id))
 
   const itemTargetOptions = otherCategories.flatMap((category) => [
-    { value: String(category.id), label: `${category.title || 'Untitled'} › Top level` },
+    { value: String(category.id), label: `${category.title || 'Untitled'} › ${CATALOG_TERMS.noSubcategory.label}` },
     ...(Array.isArray(category.subcategories) ? category.subcategories : []).map((sub) => ({
       value: `${category.id}/${sub.id}`,
       label: `${category.title || 'Untitled'} › ${sub.title || 'Untitled'}`,
@@ -287,28 +288,31 @@ function CategoryDetailPage() {
         />
         <FieldRow>
           <TextField
-            label="URL slug"
+            label={CATALOG_TERMS.urlSlug.label}
             value={draft.slug ?? ''}
             onChange={(event) => patch({ ...draft, slug: event.target.value })}
             error={errors.slug}
-            hint="Unique per category. Leave blank to generate it from the title."
+            hint={CATALOG_TERMS.urlSlug.hint}
           />
           <SelectField
-            label="Type"
+            label={CATALOG_TERMS.categoryType.label}
             value={draft.type ?? 'collection'}
             onChange={(event) => patch({ ...draft, type: event.target.value })}
-            options={['collection', 'sub-brand']}
-            hint="Sub-brand is e.g. Blissful Nest."
+            options={[
+              { value: 'collection', label: 'Standard group' },
+              { value: 'sub-brand', label: 'Named brand (e.g. Blissful Nest)' },
+            ]}
+            hint={CATALOG_TERMS.categoryType.hint}
           />
         </FieldRow>
         <FieldRow>
           <TextField
-            label="Navigation subtitle"
+            label={CATALOG_TERMS.navSubtitle.label}
             value={draft.navSub ?? ''}
             onChange={(event) => patch({ ...draft, navSub: event.target.value })}
           />
           <TextField
-            label="Navigation meta"
+            label={CATALOG_TERMS.navMeta.label}
             value={draft.navMeta ?? ''}
             onChange={(event) => patch({ ...draft, navMeta: event.target.value })}
             placeholder="4 Collections"
@@ -326,15 +330,15 @@ function CategoryDetailPage() {
           onChange={(event) => patch({ ...draft, description: event.target.value })}
         />
         <TextField
-          label="Starting price"
+          label={CATALOG_TERMS.startingPrice.label}
           value={draft.priceFrom ?? ''}
           onChange={(event) => patch({ ...draft, priceFrom: event.target.value })}
           placeholder="$450"
-          hint="Optional. Shown as “Price starts at …” on the public site."
+          hint={CATALOG_TERMS.startingPrice.hint}
         />
         <ToggleSwitch
-          label="Featured"
-          hint="Adds a Featured badge to this category inside the admin content lists."
+          label={CATALOG_TERMS.featured.label}
+          hint="Adds a Highlighted badge to this category inside the admin content lists."
           checked={Boolean(draft.featured)}
           onChange={(checked) => patch({ ...draft, featured: checked })}
         />

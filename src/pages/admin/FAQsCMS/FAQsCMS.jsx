@@ -60,10 +60,10 @@ function FAQsCMS() {
   const cards = [
     {
       to: '/admin/faqs/hero',
-      title: 'FAQ Hero',
+      title: 'FAQ top banner',
       description:
-        'Manage the hero section displayed at the top of the public FAQ page.',
-      action: 'Manage Hero',
+        'Manage the top banner displayed at the top of the public FAQ page.',
+      action: 'Manage top banner',
       summary: heroTitle ? `Currently: ${heroTitle}` : null,
     },
     {
@@ -76,10 +76,10 @@ function FAQsCMS() {
     },
     {
       to: '/admin/faqs/cta',
-      title: 'FAQ CTA',
+      title: 'FAQ bottom banner',
       description:
-        'Manage the call-to-action section displayed at the bottom of the FAQ page.',
-      action: 'Manage CTA',
+        'Manage the bottom banner displayed at the bottom of the FAQ page.',
+      action: 'Manage bottom banner',
       summary: ctaTitle ? `Currently: ${ctaTitle}` : null,
     },
   ]

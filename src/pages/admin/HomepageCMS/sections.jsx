@@ -1,4 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
+import { FIELD_TERMS, SECTION_TERMS } from '../../../constants/adminTerms.js'
 import { FieldRow, SelectField, TextAreaField, TextField } from '../../../components/FormField/index.js'
 import ImageField from '../../../components/admin/ImageField/index.js'
 import Repeater from '../../../components/admin/Repeater/index.js'
@@ -29,39 +30,39 @@ const StringsRepeater = ({ label, items, onChange, addLabel, placeholder }) => (
 export const homepageSections = [
   {
     key: 'hero',
-    title: 'Hero',
-    description: 'The very first words visitors see on your homepage.',
+    title: SECTION_TERMS.hero.label,
+    description: SECTION_TERMS.hero.hint,
     type: 'object',
     form: HeroForm,
   },
   {
     key: 'trustMarks',
-    title: 'Trusted-by marks',
-    description: "The short phrases shown near the hero, e.g. 'Weddings'.",
+    title: SECTION_TERMS.trustMarks.label,
+    description: SECTION_TERMS.trustMarks.hint,
     type: 'flatList',
-    sectionMeta: (values) => [`${(values.trustMarks ?? []).length} marks`],
+    sectionMeta: (values) => [`${(values.trustMarks ?? []).length} badges`],
     form: TrustMarksForm,
   },
   {
     key: 'servicesHeading',
-    title: 'Services heading',
-    description: 'The eyebrow, title and intro copy above the homepage service cards.',
+    title: SECTION_TERMS.servicesHeading.label,
+    description: SECTION_TERMS.servicesHeading.hint,
     type: 'object',
     sectionMeta: (values) => [values.servicesHeading?.title].filter(Boolean),
     form: SectionHeadingForm,
   },
   {
     key: 'galleryHeading',
-    title: 'Gallery preview heading',
-    description: 'The eyebrow, title and intro copy above the homepage gallery strip.',
+    title: SECTION_TERMS.galleryHeading.label,
+    description: SECTION_TERMS.galleryHeading.hint,
     type: 'object',
     sectionMeta: (values) => [values.galleryHeading?.title].filter(Boolean),
     form: SectionHeadingForm,
   },
   {
     key: 'galleryItems',
-    title: 'Gallery preview',
-    description: 'The three images shown in the homepage gallery strip.',
+    title: SECTION_TERMS.galleryItems.label,
+    description: SECTION_TERMS.galleryItems.hint,
     type: 'list',
     itemLabel: 'image',
     sectionMeta: (values) => [`${(values.galleryItems ?? []).length} images`],
@@ -71,7 +72,7 @@ export const homepageSections = [
       image: { src: '', alt: '' },
     }),
     itemTitle: (item) => item.image?.alt?.slice(0, 60) || 'Untitled image',
-    itemDescription: (item) => `Layout: ${item.variant ?? 'detail'}`,
+    itemDescription: (item) => `Photo arrangement: ${item.variant ?? 'detail'}`,
     itemMeta: (item) => [item.variant ?? 'detail'],
     itemThumb: (item) => ({ src: item.image?.src, alt: item.image?.alt }),
     validate: (draft) => {
@@ -85,19 +86,19 @@ export const homepageSections = [
   },
   {
     key: 'reasons',
-    title: 'Why choose us',
-    description: 'The numbered reasons your clients choose Moments in Blooms.',
+    title: SECTION_TERMS.reasons.label,
+    description: SECTION_TERMS.reasons.hint,
     type: 'flatList',
     sectionMeta: (values) => [`${(values.reasons ?? []).length} reasons`],
     form: ReasonsForm,
   },
   {
     key: 'testimonials',
-    title: 'Testimonials',
-    description: 'The client quotes shown on the homepage.',
+    title: SECTION_TERMS.testimonials.label,
+    description: SECTION_TERMS.testimonials.hint,
     type: 'list',
-    itemLabel: 'testimonial',
-    sectionMeta: (values) => [`${(values.testimonials ?? []).length} testimonials`],
+    itemLabel: 'review',
+    sectionMeta: (values) => [`${(values.testimonials ?? []).length} reviews`],
     createInitial: () => ({
       id: createTestimonialId(),
       quote: '',
@@ -106,7 +107,7 @@ export const homepageSections = [
       location: 'Melbourne, VIC',
       image: { src: '', alt: '' },
     }),
-    itemTitle: (item) => item.name || 'Untitled testimonial',
+    itemTitle: (item) => item.name || 'Untitled review',
     itemDescription: (item) => item.quote,
     itemMeta: (item) => [item.event, item.location].filter(Boolean),
     validate: (draft) => {
@@ -123,16 +124,16 @@ export const homepageSections = [
   },
   {
     key: 'instagramItems',
-    title: 'Instagram preview',
-    description: 'The six images in the follow-us strip.',
+    title: SECTION_TERMS.instagramItems.label,
+    description: SECTION_TERMS.instagramItems.hint,
     type: 'flatList',
     sectionMeta: (values) => [`${(values.instagramItems ?? []).length} images`],
     form: InstagramItemsForm,
   },
   {
     key: 'cta',
-    title: 'Call to action',
-    description: 'The closing invitation at the bottom of the homepage.',
+    title: SECTION_TERMS.cta.label,
+    description: SECTION_TERMS.cta.hint,
     type: 'object',
     form: CtaForm,
   },
@@ -143,12 +144,13 @@ function HeroForm({ value, onChange }) {
   return (
     <>
       <TextField
-        label="Eyebrow"
+        label={FIELD_TERMS.eyebrow.label}
+        hint={FIELD_TERMS.eyebrow.hint}
         value={value?.eyebrow ?? ''}
         onChange={(event) => patch({ eyebrow: event.target.value })}
       />
       <TextField
-        label="Headline"
+        label={FIELD_TERMS.headline.label}
         value={value?.title ?? ''}
         onChange={(event) => patch({ title: event.target.value })}
       />
@@ -158,26 +160,28 @@ function HeroForm({ value, onChange }) {
         onChange={(event) => patch({ description: event.target.value })}
       />
       <TextAreaField
-        label="Floating words"
+        label={FIELD_TERMS.floatingWords.label}
         rows={3}
         value={value?.sideNote ?? ''}
         onChange={(event) => patch({ sideNote: event.target.value })}
-        hint="One phrase per line — shown beside the hero. Clear it to hide the note."
+        hint={FIELD_TERMS.floatingWords.hint}
       />
       <FieldRow>
         <TextField
-          label="Primary button"
+          label={FIELD_TERMS.primaryButton.label}
+          hint={FIELD_TERMS.primaryButton.hint}
           value={value?.primaryCta ?? ''}
           onChange={(event) => patch({ primaryCta: event.target.value })}
         />
         <TextField
-          label="Secondary button"
+          label={FIELD_TERMS.secondaryButton.label}
+          hint={FIELD_TERMS.secondaryButton.hint}
           value={value?.secondaryCta ?? ''}
           onChange={(event) => patch({ secondaryCta: event.target.value })}
         />
       </FieldRow>
       <ImageField
-        label="Hero image"
+        label={FIELD_TERMS.heroImage.label}
         value={value?.image?.src ?? ''}
         onChange={(src) => onChange((prev) => ({ ...prev, image: { ...(prev.image ?? {}), src } }))}
         alt={value?.image?.alt ?? ''}
@@ -192,7 +196,8 @@ function SectionHeadingForm({ value, onChange }) {
   return (
     <>
       <TextField
-        label="Eyebrow"
+        label={FIELD_TERMS.eyebrow.label}
+        hint={FIELD_TERMS.eyebrow.hint}
         value={value?.eyebrow ?? ''}
         onChange={(event) => patch({ eyebrow: event.target.value })}
       />
@@ -214,10 +219,10 @@ function SectionHeadingForm({ value, onChange }) {
 function TrustMarksForm({ value, onChange }) {
   return (
     <StringsRepeater
-      label="Mark"
+      label={FIELD_TERMS.mark.label}
       items={value ?? []}
       onChange={onChange}
-      addLabel="Add mark"
+      addLabel="Add badge"
       placeholder="e.g. Weddings"
     />
   )
@@ -228,7 +233,8 @@ function GalleryPreviewItemForm({ value, onChange, errors }) {
   return (
     <>
       <SelectField
-        label="Layout variant"
+        label={FIELD_TERMS.layoutVariant.label}
+        hint={FIELD_TERMS.layoutVariant.hint}
         value={value?.variant ?? 'detail'}
         onChange={(event) => patch({ variant: event.target.value })}
         options={GALLERY_VARIANTS}
@@ -351,7 +357,8 @@ function CtaForm({ value, onChange }) {
   return (
     <>
       <TextField
-        label="Eyebrow"
+        label={FIELD_TERMS.eyebrow.label}
+        hint={FIELD_TERMS.eyebrow.hint}
         value={value?.eyebrow ?? ''}
         onChange={(event) => patch({ eyebrow: event.target.value })}
       />
@@ -367,12 +374,14 @@ function CtaForm({ value, onChange }) {
       />
       <FieldRow>
         <TextField
-          label="Primary button"
+          label={FIELD_TERMS.primaryButton.label}
+          hint={FIELD_TERMS.primaryButton.hint}
           value={value?.primaryCta ?? ''}
           onChange={(event) => patch({ primaryCta: event.target.value })}
         />
         <TextField
-          label="Secondary button"
+          label={FIELD_TERMS.secondaryButton.label}
+          hint={FIELD_TERMS.secondaryButton.hint}
           value={value?.secondaryCta ?? ''}
           onChange={(event) => patch({ secondaryCta: event.target.value })}
         />

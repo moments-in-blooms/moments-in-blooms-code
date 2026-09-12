@@ -1,4 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
+import { FIELD_TERMS, SECTION_TERMS } from '../../../constants/adminTerms.js'
 import { FieldRow, SelectField, TextAreaField, TextField } from '../../../components/FormField/index.js'
 import ImageField from '../../../components/admin/ImageField/index.js'
 import Repeater from '../../../components/admin/Repeater/index.js'
@@ -35,7 +36,7 @@ const StringsRepeater = ({ label, items, onChange, addLabel, placeholder }) => (
 export const gallerySections = [
   {
     key: 'hero',
-    title: 'Hero section',
+    title: SECTION_TERMS.hero.label,
     description: 'The opening of the gallery page.',
     type: 'object',
     form: HeroForm,
@@ -146,7 +147,7 @@ export const gallerySections = [
   },
   {
     key: 'instagramPosts',
-    title: 'Instagram preview',
+    title: 'Instagram photos',
     description: 'The square posts in the follow-us strip.',
     type: 'flatList',
     sectionMeta: (values) => [`${(values.instagramPosts ?? []).length} posts`],
@@ -154,7 +155,7 @@ export const gallerySections = [
   },
   {
     key: 'cta',
-    title: 'Call to action',
+    title: SECTION_TERMS.cta.label,
     description: 'The closing invitation on the gallery page.',
     type: 'object',
     form: CtaForm,
@@ -323,7 +324,8 @@ function HeroForm({ value, onChange }) {
   return (
     <>
       <TextField
-        label="Eyebrow"
+        label={FIELD_TERMS.eyebrow.label}
+        hint={FIELD_TERMS.eyebrow.hint}
         value={value?.eyebrow ?? ''}
         onChange={(event) => patch({ eyebrow: event.target.value })}
       />
@@ -339,18 +341,20 @@ function HeroForm({ value, onChange }) {
       />
       <FieldRow>
         <TextField
-          label="Primary button"
+          label={FIELD_TERMS.primaryButton.label}
+          hint={FIELD_TERMS.primaryButton.hint}
           value={value?.primaryCTA ?? ''}
           onChange={(event) => patch({ primaryCTA: event.target.value })}
         />
         <TextField
-          label="Secondary button"
+          label={FIELD_TERMS.secondaryButton.label}
+          hint={FIELD_TERMS.secondaryButton.hint}
           value={value?.secondaryCTA ?? ''}
           onChange={(event) => patch({ secondaryCTA: event.target.value })}
         />
       </FieldRow>
       <ImageField
-        label="Background image"
+        label={FIELD_TERMS.backgroundImage.label}
         value={value?.backgroundImage ?? ''}
         onChange={(backgroundImage) => patch({ backgroundImage })}
       />
@@ -363,7 +367,8 @@ function InstagramSectionForm({ value, onChange }) {
   return (
     <>
       <TextField
-        label="Eyebrow"
+        label={FIELD_TERMS.eyebrow.label}
+        hint={FIELD_TERMS.eyebrow.hint}
         value={value?.eyebrow ?? ''}
         onChange={(event) => patch({ eyebrow: event.target.value })}
       />
@@ -381,7 +386,8 @@ function CtaForm({ value, onChange }) {
   return (
     <>
       <TextField
-        label="Eyebrow"
+        label={FIELD_TERMS.eyebrow.label}
+        hint={FIELD_TERMS.eyebrow.hint}
         value={value?.eyebrow ?? ''}
         onChange={(event) => patch({ eyebrow: event.target.value })}
       />
@@ -397,18 +403,20 @@ function CtaForm({ value, onChange }) {
       />
       <FieldRow>
         <TextField
-          label="Primary button"
+          label={FIELD_TERMS.primaryButton.label}
+          hint={FIELD_TERMS.primaryButton.hint}
           value={value?.primaryCTA ?? ''}
           onChange={(event) => patch({ primaryCTA: event.target.value })}
         />
         <TextField
-          label="Secondary button"
+          label={FIELD_TERMS.secondaryButton.label}
+          hint={FIELD_TERMS.secondaryButton.hint}
           value={value?.secondaryCTA ?? ''}
           onChange={(event) => patch({ secondaryCTA: event.target.value })}
         />
       </FieldRow>
       <ImageField
-        label="Background image"
+        label={FIELD_TERMS.backgroundImage.label}
         value={value?.backgroundImage ?? ''}
         onChange={(backgroundImage) => patch({ backgroundImage })}
       />
@@ -421,7 +429,8 @@ function FeaturedStoriesSectionForm({ value, onChange }) {
   return (
     <>
       <TextField
-        label="Eyebrow"
+        label={FIELD_TERMS.eyebrow.label}
+        hint={FIELD_TERMS.eyebrow.hint}
         value={value?.eyebrow ?? ''}
         onChange={(event) => patch({ eyebrow: event.target.value })}
       />

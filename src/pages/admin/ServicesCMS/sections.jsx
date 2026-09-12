@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import styled from 'styled-components'
+import { FIELD_TERMS, SECTION_TERMS } from '../../../constants/adminTerms.js'
 import { FieldRow, TextAreaField, TextField } from '../../../components/FormField/index.js'
 import ImageField from '../../../components/admin/ImageField/index.js'
 import Repeater from '../../../components/admin/Repeater/index.js'
@@ -31,7 +32,7 @@ const HighlightBlock = styled.div`
 export const servicesSections = [
   {
     key: 'hero',
-    title: 'Hero',
+    title: SECTION_TERMS.hero.label,
     description: 'The opening of the services page.',
     type: 'object',
     form: HeroForm,
@@ -59,7 +60,7 @@ export const servicesSections = [
   },
   {
     key: 'cta',
-    title: 'Call to action',
+    title: SECTION_TERMS.cta.label,
     description: 'The closing invitation on the services page.',
     type: 'object',
     form: CtaForm,
@@ -107,12 +108,12 @@ export const servicesSections = [
   {
     key: 'testimonials',
     legacy: true,
-    title: 'Testimonials',
+    title: 'Client reviews',
     description:
       'Legacy CMS-managed client reviews — not currently rendered on the public services page.',
     type: 'list',
-    itemLabel: 'testimonial',
-    sectionMeta: (values) => [`${(values.testimonials ?? []).length} testimonials`],
+    itemLabel: 'review',
+    sectionMeta: (values) => [`${(values.testimonials ?? []).length} reviews`],
     createInitial: () => ({
       id: `testimonial-${Date.now()}`,
       quote: '',
@@ -121,7 +122,7 @@ export const servicesSections = [
       rating: 5,
       image: { src: '', alt: '' },
     }),
-    itemTitle: (item) => item.name || 'Untitled testimonial',
+    itemTitle: (item) => item.name || 'Untitled review',
     itemDescription: (item) => item.quote,
     itemMeta: (item) => [item.event].filter(Boolean),
     validate: (draft) => {
@@ -143,7 +144,8 @@ function HeroForm({ value, onChange }) {
   return (
     <>
       <TextField
-        label="Eyebrow"
+        label={FIELD_TERMS.eyebrow.label}
+        hint={FIELD_TERMS.eyebrow.hint}
         value={value?.eyebrow ?? ''}
         onChange={(event) => patch({ eyebrow: event.target.value })}
       />
@@ -159,12 +161,14 @@ function HeroForm({ value, onChange }) {
       />
       <FieldRow>
         <TextField
-          label="Primary button"
+          label={FIELD_TERMS.primaryButton.label}
+          hint={FIELD_TERMS.primaryButton.hint}
           value={value?.primaryCta?.label ?? ''}
           onChange={(event) => patch({ primaryCta: { ...value.primaryCta, label: event.target.value } })}
         />
         <TextField
-          label="Secondary button"
+          label={FIELD_TERMS.secondaryButton.label}
+          hint={FIELD_TERMS.secondaryButton.hint}
           value={value?.secondaryCta?.label ?? ''}
           onChange={(event) => patch({ secondaryCta: { ...value.secondaryCta, label: event.target.value } })}
         />
@@ -182,7 +186,7 @@ function HeroForm({ value, onChange }) {
         />
       </FieldRow>
       <ImageField
-        label="Hero image"
+        label={FIELD_TERMS.heroImage.label}
         value={value?.image?.src ?? ''}
         onChange={(src) => onChange((prev) => ({ ...prev, image: { ...(prev.image ?? {}), src } }))}
         alt={value?.image?.alt ?? ''}
@@ -197,7 +201,8 @@ function IntroForm({ value, onChange }) {
   return (
     <>
       <TextField
-        label="Eyebrow"
+        label={FIELD_TERMS.eyebrow.label}
+        hint={FIELD_TERMS.eyebrow.hint}
         value={value?.subtitle ?? ''}
         onChange={(event) => patch({ subtitle: event.target.value })}
       />
@@ -372,7 +377,8 @@ function ExperienceTimelineForm({ value, onChange }) {
   return (
     <>
       <TextField
-        label="Eyebrow"
+        label={FIELD_TERMS.eyebrow.label}
+        hint={FIELD_TERMS.eyebrow.hint}
         value={value?.subtitle ?? ''}
         onChange={(event) => patch({ subtitle: event.target.value })}
       />
@@ -421,7 +427,8 @@ function CtaForm({ value, onChange }) {
   return (
     <>
       <TextField
-        label="Eyebrow"
+        label={FIELD_TERMS.eyebrow.label}
+        hint={FIELD_TERMS.eyebrow.hint}
         value={value?.eyebrow ?? ''}
         onChange={(event) => patch({ eyebrow: event.target.value })}
       />
@@ -437,12 +444,14 @@ function CtaForm({ value, onChange }) {
       />
       <FieldRow>
         <TextField
-          label="Primary button"
+          label={FIELD_TERMS.primaryButton.label}
+          hint={FIELD_TERMS.primaryButton.hint}
           value={value?.primaryCta ?? ''}
           onChange={(event) => patch({ primaryCta: event.target.value })}
         />
         <TextField
-          label="Secondary button"
+          label={FIELD_TERMS.secondaryButton.label}
+          hint={FIELD_TERMS.secondaryButton.hint}
           value={value?.secondaryCta ?? ''}
           onChange={(event) => patch({ secondaryCta: event.target.value })}
         />
