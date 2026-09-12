@@ -19,6 +19,10 @@ const HomepageSectionDetail = lazy(() =>
   import('../pages/admin/HomepageCMS/DetailPages.jsx').then((m) => ({ default: m.HomepageSectionDetail })))
 const HomepageItemDetail = lazy(() =>
   import('../pages/admin/HomepageCMS/DetailPages.jsx').then((m) => ({ default: m.HomepageItemDetail })))
+const HomepageServicesPage = lazy(() =>
+  import('../pages/admin/HomepageCMS/HomepageServicesPage.jsx'))
+const HomepageServiceDetail = lazy(() =>
+  import('../pages/admin/HomepageCMS/HomepageServiceDetail.jsx'))
 const AboutCMS = lazy(() => import('../pages/admin/AboutCMS/AboutCMS.jsx'))
 const AboutSectionDetail = lazy(() =>
   import('../pages/admin/AboutCMS/DetailPages.jsx').then((m) => ({ default: m.AboutSectionDetail })))
@@ -113,6 +117,11 @@ const router = createBrowserRouter([
           { index: true, element: <Navigate replace to="dashboard" /> },
           { path: 'dashboard', element: <Dashboard /> },
           { path: 'homepage', element: <HomepageCMS /> },
+          // Homepage service cards are the live catalog categories, handled
+          // by dedicated pages. These static segments outrank the generic
+          // `homepage/:sectionKey` routes below.
+          { path: 'homepage/services', element: <HomepageServicesPage /> },
+          { path: 'homepage/services/:itemId', element: <HomepageServiceDetail /> },
           { path: 'homepage/:sectionKey', element: <HomepageSectionDetail /> },
           { path: 'homepage/:sectionKey/:itemId', element: <HomepageItemDetail /> },
           { path: 'about', element: <AboutCMS /> },

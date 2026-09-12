@@ -241,6 +241,8 @@ export const CollectionName = styled.span`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 100%;
+  min-width: 0;
   transition: color ${({ theme }) => theme.transitions.standard};
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
@@ -256,6 +258,8 @@ export const CollectionDesc = styled.span`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 100%;
+  min-width: 0;
   transition: color ${({ theme }) => theme.transitions.standard};
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
@@ -275,6 +279,10 @@ export const CollectionMeta = styled.span`
   text-transform: uppercase;
   color: ${({ $isActive, theme }) =>
     $isActive ? theme.colors.greige : theme.colors.primaryHover};
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
   transition: color ${({ theme }) => theme.transitions.standard};
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {

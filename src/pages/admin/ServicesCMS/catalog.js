@@ -173,8 +173,17 @@ export function collectStorageUrls(value, acc = new Set()) {
 
 export function validateCategory(draft, categories) {
   const errors = {}
-  if (!draft?.title?.trim()) {
+  const title = String(draft?.title ?? '').trim()
+  if (!title) {
     errors.title = 'A category title is required.'
+  } else if (
+    (Array.isArray(categories) ? categories : []).some(
+      (entry) =>
+        String(entry?.id) !== String(draft?.id) &&
+        String(entry?.title ?? '').trim().toLowerCase() === title.toLowerCase(),
+    )
+  ) {
+    errors.title = 'A category with this title already exists.'
   }
   const slug = String(draft?.slug ?? '').trim()
   if (!slug) {

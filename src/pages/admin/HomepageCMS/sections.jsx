@@ -2,13 +2,9 @@
 import { FieldRow, SelectField, TextAreaField, TextField } from '../../../components/FormField/index.js'
 import ImageField from '../../../components/admin/ImageField/index.js'
 import Repeater from '../../../components/admin/Repeater/index.js'
-import ToggleSwitch from '../../../components/admin/ToggleSwitch/index.js'
-import { useContent } from '../../../hooks/useContent.js'
-import { listCategories } from '../ServicesCMS/catalog.js'
 
 const GALLERY_VARIANTS = ['feature', 'portrait', 'detail']
 
-const createServiceId = () => `service-${Date.now()}`
 const createGalleryId = () => `gallery-${Date.now()}`
 const createTestimonialId = () => `testimonial-${Date.now()}`
 
@@ -47,35 +43,20 @@ export const homepageSections = [
     form: TrustMarksForm,
   },
   {
-    key: 'services',
-    title: 'Services',
-    description:
-      'Homepage service cards. Each card linked to a live category shows that category’s content; copy, image and layout set here override it. Unlinked cards show exactly as written.',
-    type: 'list',
-    itemLabel: 'service',
-    sectionMeta: (values) => [`${(values.services ?? []).length} services`],
-    createInitial: () => ({
-      id: createServiceId(),
-      collectionId: '',
-      eyebrow: 'New service',
-      title: 'New service',
-      description: '',
-      path: '/services',
-      offset: false,
-      image: { src: '', alt: '' },
-    }),
-    itemTitle: (item) => item.title || 'Untitled service',
-    itemDescription: (item) => item.description,
-    itemMeta: (item) => [item.eyebrow].filter(Boolean),
-    itemThumb: (item) => ({ src: item.image?.src, alt: item.image?.alt }),
-    validate: (draft) => {
-      const errors = {}
-      if (!draft?.title?.trim()) {
-        errors.title = 'A title is required.'
-      }
-      return errors
-    },
-    itemForm: ServiceItemForm,
+    key: 'servicesHeading',
+    title: 'Services heading',
+    description: 'The eyebrow, title and intro copy above the homepage service cards.',
+    type: 'object',
+    sectionMeta: (values) => [values.servicesHeading?.title].filter(Boolean),
+    form: SectionHeadingForm,
+  },
+  {
+    key: 'galleryHeading',
+    title: 'Gallery preview heading',
+    description: 'The eyebrow, title and intro copy above the homepage gallery strip.',
+    type: 'object',
+    sectionMeta: (values) => [values.galleryHeading?.title].filter(Boolean),
+    form: SectionHeadingForm,
   },
   {
     key: 'galleryItems',
@@ -176,6 +157,13 @@ function HeroForm({ value, onChange }) {
         value={value?.description ?? ''}
         onChange={(event) => patch({ description: event.target.value })}
       />
+      <TextAreaField
+        label="Floating words"
+        rows={3}
+        value={value?.sideNote ?? ''}
+        onChange={(event) => patch({ sideNote: event.target.value })}
+        hint="One phrase per line — shown beside the hero. Clear it to hide the note."
+      />
       <FieldRow>
         <TextField
           label="Primary button"
@@ -199,35 +187,10 @@ function HeroForm({ value, onChange }) {
   )
 }
 
-function TrustMarksForm({ value, onChange }) {
-  return (
-    <StringsRepeater
-      label="Mark"
-      items={value ?? []}
-      onChange={onChange}
-      addLabel="Add mark"
-      placeholder="e.g. Weddings"
-    />
-  )
-}
-
-function ServiceItemForm({ value, onChange, errors }) {
+function SectionHeadingForm({ value, onChange }) {
   const patch = (next) => onChange((prev) => ({ ...prev, ...(typeof next === 'function' ? next(prev) : next) }))
-  const { values: servicesValues } = useContent('services')
-  const categoryOptions = listCategories(servicesValues).map((entry) => ({
-    value: String(entry.id),
-    label: entry.title || 'Untitled category',
-  }))
   return (
     <>
-      <SelectField
-        label="Linked service category"
-        hint="Link this card to a live category — the card shows the category’s title, description and cover image unless overridden below. Leave empty for a fully custom card."
-        value={value?.collectionId ?? ''}
-        onChange={(event) => patch({ collectionId: event.target.value })}
-        options={categoryOptions}
-        placeholder="Custom card (no service link)"
-      />
       <TextField
         label="Eyebrow"
         value={value?.eyebrow ?? ''}
@@ -237,27 +200,26 @@ function ServiceItemForm({ value, onChange, errors }) {
         label="Title"
         value={value?.title ?? ''}
         onChange={(event) => patch({ title: event.target.value })}
-        error={errors.title}
       />
       <TextAreaField
         label="Description"
+        rows={3}
         value={value?.description ?? ''}
         onChange={(event) => patch({ description: event.target.value })}
       />
-      <ToggleSwitch
-        label="Offset layout"
-        hint="Alternates the card layout on the homepage."
-        checked={value?.offset}
-        onChange={(offset) => patch({ offset })}
-      />
-      <ImageField
-        label="Card image"
-        value={value?.image?.src ?? ''}
-        onChange={(src) => onChange((prev) => ({ ...prev, image: { ...(prev.image ?? {}), src } }))}
-        alt={value?.image?.alt ?? ''}
-        onAltChange={(event) => onChange((prev) => ({ ...prev, image: { ...(prev.image ?? {}), alt: event.target.value } }))}
-      />
     </>
+  )
+}
+
+function TrustMarksForm({ value, onChange }) {
+  return (
+    <StringsRepeater
+      label="Mark"
+      items={value ?? []}
+      onChange={onChange}
+      addLabel="Add mark"
+      placeholder="e.g. Weddings"
+    />
   )
 }
 

@@ -170,6 +170,12 @@ export const photoboothPackages = Object.freeze([
 ]);
 
 export const photoboothHighlights = Object.freeze({
+  pricing: {
+    tag: "WORTH EVERY MOMENT",
+    title: "Luxury Photobooth Packages",
+    description:
+      "All-inclusive packages tailored with zero hidden fees. Select the perfect suite for your event duration and guest experience.",
+  },
   framesFeature: {
     badge: "Exclusive Keepsake",
     title: "Australia's First Take-Home Photobooth Frames",

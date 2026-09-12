@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
+  dropStoredPages,
   getSeedContent,
   getStoredContent,
   resetPageContent,
@@ -20,7 +21,15 @@ import { ContentContext } from './ContentContext.jsx'
 const cloneValues = (value) => JSON.parse(JSON.stringify(value))
 
 function ContentProvider({ children }) {
-  const [stored, setStored] = useState(() => getStoredContent())
+  const [stored, setStored] = useState(() => {
+    if (isSupabaseConfigured()) {
+      // Remote-backed pages are authoritative from Supabase. Drop any
+      // demo-mode leftovers in localStorage so a stale entry can never
+      // shadow the seed/remote value before the first fetch settles.
+      dropStoredPages(SUPABASE_CONTENT_PAGES)
+    }
+    return getStoredContent()
+  })
   const [dirtyPages, setDirtyPages] = useState(() => new Set())
   const [loadingPages, setLoadingPages] = useState(() => {
     if (!isSupabaseConfigured()) return new Set()
@@ -34,6 +43,9 @@ function ContentProvider({ children }) {
   const storedRef = useRef(stored)
   const dirtyPagesRef = useRef(dirtyPages)
   const loadingPagesRef = useRef(loadingPages)
+  // Pages saved locally since mount. A slow initial fetch must never commit
+  // pre-save remote content over them, or the editor would revert.
+  const savedSinceMountRef = useRef(new Set())
 
   const commit = useCallback((nextStored) => {
     storedRef.current = nextStored
@@ -82,7 +94,7 @@ function ContentProvider({ children }) {
           markLoading(pageKey, false)
           return
         }
-        if (dirtyPagesRef.current.has(pageKey)) {
+        if (dirtyPagesRef.current.has(pageKey) || savedSinceMountRef.current.has(pageKey)) {
           markLoading(pageKey, false)
           return
         }
@@ -150,6 +162,7 @@ function ContentProvider({ children }) {
         entry = savePageContent(pageKey, values)
       }
 
+      savedSinceMountRef.current.add(pageKey)
       commit({ ...storedRef.current, [pageKey]: entry })
       markDirty(pageKey, false)
       return { error: null }

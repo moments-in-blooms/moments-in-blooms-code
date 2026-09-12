@@ -33,22 +33,23 @@ function getServiceLink(service) {
   return service?.path ?? '/services'
 }
 
-function Services({ items, id = 'home-services' }) {
+function Services({ items, heading = {}, id = 'home-services' }) {
   return (
     <ServicesRoot id={id}>
       <ServicesContainer>
         <ServicesIntro>
           <div>
             <SafeReveal from={{ y: 12 }} duration={0.6}>
-              <ServicesEyebrow>Designed around your day</ServicesEyebrow>
+              <ServicesEyebrow>{heading.eyebrow ?? 'Designed around your day'}</ServicesEyebrow>
             </SafeReveal>
             <ServicesTitle>
-              <TitleReveal>Details with a point of view.</TitleReveal>
+              <TitleReveal>{heading.title ?? 'Details with a point of view.'}</TitleReveal>
             </ServicesTitle>
           </div>
           <SafeReveal from={{ y: 20 }} duration={0.7} delay={0.15}>
             <ServicesIntroCopy>
-              From the atmosphere in the room to the little moments guests take home, we style celebrations with warmth, intention and a hint of the unexpected.
+              {heading.description ??
+                'From the atmosphere in the room to the little moments guests take home, we style celebrations with warmth, intention and a hint of the unexpected.'}
             </ServicesIntroCopy>
             <Button as={NavLink} to="/services" variant={BUTTON_VARIANTS.GHOST}>
               Explore our services

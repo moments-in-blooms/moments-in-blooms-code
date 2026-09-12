@@ -1,41 +1,46 @@
+import { useRef, useState } from "react";
 import { FiArrowRight, FiCheck } from "react-icons/fi";
 
 import Button from "../../../../../components/Button/index.js";
+import { buildBoothTabs } from "../../../../../services/photobooth.js";
 
 import * as S from "./LuxePhotoboothShowcase.styles.js";
 
-function LuxePhotoboothShowcase({ highlights, packages = [] }) {
+function LuxePhotoboothShowcase({ highlights, groups = [] }) {
+  const [activeGroupId, setActiveGroupId] = useState(() => groups[0]?.id);
+  const tabRefs = useRef({});
+
   if (!highlights) return null;
+
+  const pricing = highlights.pricing ?? {};
+  const showTabs = groups.length > 1;
+  const tabs = showTabs ? buildBoothTabs(groups) : [];
+  const visibleGroup =
+    (showTabs
+      ? groups.find((group) => String(group.id) === String(activeGroupId))
+      : groups[0]) ??
+    groups[0] ??
+    null;
+
+  const handleTabKeyDown = (event, index) => {
+    let nextIndex = null;
+
+    if (event.key === "ArrowRight") nextIndex = index + 1;
+    else if (event.key === "ArrowLeft") nextIndex = index - 1;
+    else if (event.key === "Home") nextIndex = 0;
+    else if (event.key === "End") nextIndex = tabs.length - 1;
+
+    if (nextIndex === null) return;
+    event.preventDefault();
+
+    const clampedIndex = (nextIndex + tabs.length) % tabs.length;
+    const nextTab = tabs[clampedIndex];
+    setActiveGroupId(nextTab.id);
+    tabRefs.current[nextTab.id]?.focus();
+  };
 
   return (
     <S.PhotoboothSection>
-      <S.StoryHeroBlock>
-        <S.StoryHeroContent>
-          <S.TabTag>Refined Entertainment</S.TabTag>
-          <S.StoryHeroTitle>Luxury Booth Experience</S.StoryHeroTitle>
-          <S.StoryHeroDesc>
-            Designed for Melbourne&rsquo;s most elegant celebrations, our studio
-            photobooths elevate traditional event captures into high-fashion
-            portraiture. Equipped with beauty softbox lights and
-            high-resolution DSLR sensors, every photo looks like a magazine
-            print.
-          </S.StoryHeroDesc>
-          <div>
-            <Button to="/contact" variant="primary" size="large">
-              <span>Reserve Your Date</span>
-              <FiArrowRight />
-            </Button>
-          </div>
-        </S.StoryHeroContent>
-        <S.StoryHeroImageWrapper>
-          <img
-            src="https://images.unsplash.com/photo-1527529482837-4698179dc6ce?auto=format&fit=crop&w=1200&q=85"
-            alt="Luxury Photobooth Guest Moment"
-            loading="lazy"
-          />
-        </S.StoryHeroImageWrapper>
-      </S.StoryHeroBlock>
-
       <S.ExclusiveFramesFeature>
         <div>
           <S.ExclusiveFramesBadge>
@@ -84,16 +89,54 @@ function LuxePhotoboothShowcase({ highlights, packages = [] }) {
 
       <S.PricingContainer>
         <S.PricingHeader>
-          <S.TabTag>Transparent Investment</S.TabTag>
-          <S.PricingTitle>Luxury Photobooth Packages</S.PricingTitle>
+          <S.TabTag>{pricing.tag ?? 'Transparent Investment'}</S.TabTag>
+          <S.PricingTitle>{pricing.title ?? 'Luxury Photobooth Packages'}</S.PricingTitle>
           <S.PricingDesc>
-            All-inclusive packages tailored with zero hidden fees. Select the
-            perfect suite for your event duration and guest experience.
+            {pricing.description ??
+              'All-inclusive packages tailored with zero hidden fees. Select the perfect suite for your event duration and guest experience.'}
           </S.PricingDesc>
         </S.PricingHeader>
 
-        <S.PackageGrid>
-          {packages.map((pkg) => (
+        {showTabs ? (
+          <S.BoothTabBar role="tablist" aria-label="Photobooth packages">
+            {tabs.map((tab, index) => {
+              const isActive = String(tab.id) === String(visibleGroup?.id);
+              return (
+                <S.BoothTab
+                  key={tab.id}
+                  type="button"
+                  role="tab"
+                  id={`booth-tab-${tab.id}`}
+                  aria-selected={isActive}
+                  aria-controls={`booth-panel-${tab.id}`}
+                  tabIndex={isActive ? 0 : -1}
+                  ref={(node) => {
+                    tabRefs.current[tab.id] = node;
+                  }}
+                  $isActive={isActive}
+                  onClick={() => setActiveGroupId(tab.id)}
+                  onKeyDown={(event) => handleTabKeyDown(event, index)}
+                >
+                  {tab.label}
+                </S.BoothTab>
+              );
+            })}
+          </S.BoothTabBar>
+        ) : null}
+
+        {visibleGroup ? (
+          <div
+            key={visibleGroup.id}
+            {...(showTabs
+              ? {
+                  role: "tabpanel",
+                  id: `booth-panel-${visibleGroup.id}`,
+                  "aria-labelledby": `booth-tab-${visibleGroup.id}`,
+                }
+              : {})}
+          >
+            <S.PackageGrid>
+              {visibleGroup.packages.map((pkg) => (
             <S.PackageCard key={pkg.id} $popular={pkg.popular}>
               {pkg.popular && <S.PackageBadge>{pkg.badge}</S.PackageBadge>}
 
@@ -143,8 +186,10 @@ function LuxePhotoboothShowcase({ highlights, packages = [] }) {
                 </Button>
               </div>
             </S.PackageCard>
-          ))}
-        </S.PackageGrid>
+              ))}
+            </S.PackageGrid>
+          </div>
+        ) : null}
       </S.PricingContainer>
     </S.PhotoboothSection>
   );

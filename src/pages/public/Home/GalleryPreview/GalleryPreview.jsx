@@ -18,7 +18,7 @@ import {
   GalleryTitle,
 } from './GalleryPreview.styles.js'
 
-function GalleryPreview({ items = [], id = 'home-gallery-preview' }) {
+function GalleryPreview({ items = [], heading = {}, id = 'home-gallery-preview' }) {
   const [feature, firstSide, secondSide] = items
 
   return (
@@ -27,15 +27,16 @@ function GalleryPreview({ items = [], id = 'home-gallery-preview' }) {
         <GalleryHeader>
           <div>
             <SafeReveal from={{ y: 12 }} duration={0.6}>
-              <GalleryEyebrow>A glimpse of the good stuff</GalleryEyebrow>
+              <GalleryEyebrow>{heading.eyebrow ?? 'A glimpse of the good stuff'}</GalleryEyebrow>
             </SafeReveal>
             <GalleryTitle>
-              <TitleReveal>Made for the memory.</TitleReveal>
+              <TitleReveal>{heading.title ?? 'Made for the memory.'}</TitleReveal>
             </GalleryTitle>
           </div>
           <SafeReveal>
             <GalleryCopy>
-              A little floral, a little playful, always intentional. Explore a selection of celebrations styled with our signature mix of softness and surprise.
+              {heading.description ??
+                'A little floral, a little playful, always intentional. Explore a selection of celebrations styled with our signature mix of softness and surprise.'}
             </GalleryCopy>
           </SafeReveal>
         </GalleryHeader>

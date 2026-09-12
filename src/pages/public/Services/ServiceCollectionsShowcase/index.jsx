@@ -10,6 +10,7 @@ import {
   buildServicesCatalog,
   inferCatalogKind,
 } from "../../../../services/content.js";
+import { groupBoothPackages } from "../../../../services/photobooth.js";
 
 import BlissfulNestShowcase from "./BlissfulNestShowcase/BlissfulNestShowcase.jsx";
 import DecorHireCatalogue from "./DecorHireCatalogue/DecorHireCatalogue.jsx";
@@ -20,12 +21,6 @@ import * as S from "./ServiceCollectionsShowcase.styles.js";
 // The catalogue renderers predate the canonical tree, so each category is
 // adapted to the shape its renderer reads. Field names are identical — this
 // only selects which slice of the canonical category each renderer gets.
-const flattenPackages = (category) => [
-  ...(Array.isArray(category?.items) ? category.items : []),
-  ...(Array.isArray(category?.subcategories) ? category.subcategories : []).flatMap(
-    (subcategory) => (Array.isArray(subcategory?.items) ? subcategory.items : []),
-  ),
-];
 
 const toDecorSections = (category) => {
   const sections = (
@@ -58,7 +53,7 @@ function CollectionContent({
     return (
       <LuxePhotoboothShowcase
         highlights={photoboothHighlights}
-        packages={flattenPackages(category)}
+        groups={groupBoothPackages(category)}
       />
     );
   }

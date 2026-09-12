@@ -17,57 +17,6 @@ export const TabTag = styled.span`
   margin-bottom: 0.35rem;
 `;
 
-export const StoryHeroBlock = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2.5rem;
-  background: ${({ theme }) => theme.gradients.storyHero};
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.radii.xl};
-  padding: clamp(2rem, 4vw, 3.5rem);
-
-  @media (min-width: ${({ theme }) => theme.breakpoints.desktop}) {
-    grid-template-columns: 1.1fr 0.9fr;
-    align-items: center;
-  }
-`;
-
-export const StoryHeroContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.75rem;
-`;
-
-export const StoryHeroTitle = styled.h3`
-  margin: 0;
-  color: ${({ theme }) => theme.colors.textPrimary};
-  font-family: ${({ theme }) => theme.typography.headingFont};
-  font-size: clamp(2rem, 3.5vw, 2.75rem);
-  font-weight: 500;
-  line-height: 1.1;
-`;
-
-export const StoryHeroDesc = styled.p`
-  margin: 0 0 1rem;
-  color: ${({ theme }) => theme.colors.textSecondary};
-  font-size: 1.05rem;
-  line-height: 1.8;
-`;
-
-export const StoryHeroImageWrapper = styled.div`
-  border-radius: 20px;
-  overflow: hidden;
-  height: 340px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-`;
-
 export const ExclusiveFramesFeature = styled.div`
   background: ${({ theme }) => theme.gradients.exclusiveFrames};
   color: ${({ theme }) => theme.colors.surface};
@@ -241,6 +190,47 @@ export const PricingDesc = styled.p`
   color: ${({ theme }) => theme.colors.textSecondary};
   font-size: 1rem;
   line-height: 1.7;
+`;
+
+export const BoothTabBar = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 0.5rem 0 0.25rem;
+`;
+
+export const BoothTab = styled.button`
+  padding: 0.65rem 1.6rem;
+  border-radius: ${({ theme }) => theme.radii.pill};
+  border: 1px solid
+    ${({ $isActive, theme }) => ($isActive ? theme.colors.gold : theme.colors.border)};
+  background: ${({ $isActive, theme }) =>
+    $isActive ? theme.colors.ink : theme.colors.surface};
+  color: ${({ $isActive, theme }) =>
+    $isActive ? theme.colors.surface : theme.colors.textPrimary};
+  font-family: ${({ theme }) => theme.typography.uiFont};
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  cursor: pointer;
+  transition: background ${({ theme }) => theme.transitions.standard},
+    color ${({ theme }) => theme.transitions.standard},
+    border-color ${({ theme }) => theme.transitions.standard};
+
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.gold};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.focus};
+    outline-offset: 2px;
+  }
 `;
 
 export const PackageGrid = styled.div`

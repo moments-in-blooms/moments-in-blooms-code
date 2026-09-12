@@ -3,11 +3,20 @@ import ContentCard from '../../../components/admin/ContentCard/index.js'
 import ContentList from '../../../components/admin/ContentList/index.js'
 import { adminPageMeta } from '../../../constants/admin.js'
 import { useContent } from '../../../hooks/useContent.js'
+import { buildServiceCards } from '../../../services/homepageCards.js'
+import { listCategories } from '../ServicesCMS/catalog.js'
 import { homepageSections } from './sections.jsx'
 import { HomepageCMSPage } from './HomepageCMS.styles.js'
 
 function HomepageCMS() {
   const { values, savedAt } = useContent('homepage')
+  const { values: servicesValues, savedAt: servicesSavedAt } = useContent('services')
+  // Homepage service cards are the live catalog categories, managed from
+  // the dedicated Services section below (not from homepageSections).
+  const serviceCards = buildServiceCards(
+    listCategories(servicesValues),
+    values.services ?? [],
+  )
 
   return (
     <HomepageCMSPage>
@@ -26,6 +35,14 @@ function HomepageCMS() {
             lastUpdated={savedAt}
           />
         ))}
+        <ContentCard
+          key="services"
+          to="/admin/homepage/services"
+          title="Services"
+          description="Homepage service cards. Each card follows a live service category; copy, image and layout set here override it."
+          meta={[`${serviceCards.length} service${serviceCards.length === 1 ? '' : 's'}`]}
+          lastUpdated={savedAt ?? servicesSavedAt}
+        />
       </ContentList>
     </HomepageCMSPage>
   )

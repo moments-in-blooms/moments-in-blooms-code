@@ -293,6 +293,24 @@ function HighlightsForm({ value, onChange }) {
         />
       </HighlightBlock>
       <HighlightBlock>
+        <strong>Pricing heading</strong>
+        <TextField
+          label="Tag"
+          value={value?.pricing?.tag ?? ''}
+          onChange={(event) => onChange((prev) => ({ ...prev, pricing: { ...(prev.pricing ?? {}), tag: event.target.value } }))}
+        />
+        <TextField
+          label="Title"
+          value={value?.pricing?.title ?? ''}
+          onChange={(event) => onChange((prev) => ({ ...prev, pricing: { ...(prev.pricing ?? {}), title: event.target.value } }))}
+        />
+        <TextAreaField
+          label="Description"
+          value={value?.pricing?.description ?? ''}
+          onChange={(event) => onChange((prev) => ({ ...prev, pricing: { ...(prev.pricing ?? {}), description: event.target.value } }))}
+        />
+      </HighlightBlock>
+      <HighlightBlock>
         <strong>Studio grade</strong>
         {baseFields('studioGrade')}
         <Repeater

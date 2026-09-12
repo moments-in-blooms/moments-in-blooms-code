@@ -7,6 +7,7 @@ export const homepageHero = Object.freeze({
     'Floral design, considered styling and joyful details for celebrations that feel entirely your own.',
   primaryCta: 'Enquire Now',
   secondaryCta: 'View Gallery',
+  sideNote: 'Floral design\nthoughtful details\njoyful gatherings',
   image: {
     src: imageUrl('https://images.unsplash.com/photo-1553705426-c702161740bb', 2200),
     alt: 'Pink and white floral installation at an elegant event, Ivo Raeber on Unsplash',
@@ -20,6 +21,20 @@ export const homepageTrustMarks = Object.freeze([
   'Brand events',
   'Melbourne venues',
 ])
+
+export const homepageServicesHeading = Object.freeze({
+  eyebrow: 'Designed around your day',
+  title: 'Details with a point of view.',
+  description:
+    'From the atmosphere in the room to the little moments guests take home, we style celebrations with warmth, intention and a hint of the unexpected.',
+})
+
+export const homepageGalleryHeading = Object.freeze({
+  eyebrow: 'A glimpse of the good stuff',
+  title: 'Made for the memory.',
+  description:
+    'A little floral, a little playful, always intentional. Explore a selection of celebrations styled with our signature mix of softness and surprise.',
+})
 
 export const homepageServices = Object.freeze([
   {

@@ -1,3 +1,4 @@
+import { Fragment } from 'react'
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
 import { FiArrowDown, FiArrowUpRight } from 'react-icons/fi'
 import { NavLink } from 'react-router-dom'
@@ -26,6 +27,10 @@ function Hero({ content = {}, id = 'home-hero' }) {
   const mediaY = useTransform(scrollY, [0, 800], [0, shouldReduceMotion ? 0 : 72])
   const image = content.image ?? {}
   const heroSrc = image.src ?? ''
+  const sideNoteLines = String(content.sideNote ?? '')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
 
   return (
     <HeroRoot id={id}>
@@ -84,17 +89,20 @@ function Hero({ content = {}, id = 'home-hero' }) {
             </HeroActions>
           </motion.div>
         </HeroCopy>
-        <HeroSideNote
-          initial={{ opacity: 0, x: 18 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 1.15, ease: EASE_LUXE }}
-        >
-          Floral design
-          <br />
-          thoughtful details
-          <br />
-          joyful gatherings
-        </HeroSideNote>
+        {sideNoteLines.length > 0 ? (
+          <HeroSideNote
+            initial={{ opacity: 0, x: 18 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 1.15, ease: EASE_LUXE }}
+          >
+            {sideNoteLines.map((line, index) => (
+              <Fragment key={index}>
+                {index > 0 ? <br /> : null}
+                {line}
+              </Fragment>
+            ))}
+          </HeroSideNote>
+        ) : null}
       </HeroContainer>
       <ScrollCue
         initial={{ opacity: 0 }}

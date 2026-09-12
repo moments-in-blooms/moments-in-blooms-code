@@ -28,12 +28,14 @@ import {
 } from '../constants/faqs.js'
 import {
   homepageCta,
+  homepageGalleryHeading,
   homepageGalleryItems,
   homepageHero,
   homepageInstagramItems,
   homepageReasons,
   homepageSeo,
   homepageServices,
+  homepageServicesHeading,
   homepageTestimonials,
   homepageTrustMarks,
 } from '../constants/homepage.js'
@@ -616,6 +618,19 @@ const normalizeContent = (pageKey, values) => {
     } else {
       next.catalog = normalizeServicesCatalog(buildServicesCatalog(next))
     }
+    // Backfill the photobooth pricing heading for services content saved
+    // before it was editable. Per-field merge so an explicit blank stays
+    // blank instead of snapping back to the default.
+    if (next.photoboothHighlights && typeof next.photoboothHighlights === 'object') {
+      const savedPricing =
+        next.photoboothHighlights.pricing && typeof next.photoboothHighlights.pricing === 'object'
+          ? next.photoboothHighlights.pricing
+          : {}
+      next.photoboothHighlights = {
+        ...next.photoboothHighlights,
+        pricing: { ...photoboothHighlights.pricing, ...savedPricing },
+      }
+    }
     // Retired "unlimited prints" copy in content saved before the rewording
     // (Supabase page_content / localStorage) so it reads correctly on every
     // render until the page is next saved through the CMS.
@@ -623,6 +638,25 @@ const normalizeContent = (pageKey, values) => {
   }
   if (pageKey === 'gallery' && next.items) {
     next.items = normalizeGalleryPageItems(next.items)
+  }
+  if (pageKey === 'homepage' && next.hero && typeof next.hero === 'object') {
+    // Backfill the floating side note for hero content saved before it was
+    // editable, so the homepage keeps showing it until the next CMS save.
+    if (next.hero.sideNote == null) {
+      next.hero = { ...next.hero, sideNote: homepageHero.sideNote }
+    }
+  }
+  if (pageKey === 'homepage') {
+    // Backfill the services/gallery section headings for homepage content
+    // saved before they were editable. Per-field merge so an explicit blank
+    // stays blank instead of snapping back to the default.
+    for (const [key, seed] of [
+      ['servicesHeading', homepageServicesHeading],
+      ['galleryHeading', homepageGalleryHeading],
+    ]) {
+      const saved = next[key] && typeof next[key] === 'object' ? next[key] : {}
+      next[key] = { ...seed, ...saved }
+    }
   }
   if (pageKey === 'homepage' && Array.isArray(next.services)) {
     // Backfill deep-link target for cards saved before `collectionId`
@@ -682,6 +716,8 @@ export const contentSeeds = Object.freeze({
     hero: homepageHero,
     trustMarks: homepageTrustMarks,
     services: homepageServices,
+    servicesHeading: homepageServicesHeading,
+    galleryHeading: homepageGalleryHeading,
     galleryItems: homepageGalleryItems,
     reasons: homepageReasons,
     testimonials: homepageTestimonials,
@@ -794,6 +830,33 @@ function writeStored(state) {
 }
 
 export const getStoredContent = () => readStored()
+
+/**
+ * Remove demo-mode entries for the given page keys from localStorage.
+ * Used when Supabase is configured: remote-backed pages are authoritative
+ * from the server, so stale local copies must not shadow the seed/remote
+ * value before the first fetch settles.
+ */
+export function dropStoredPages(pageKeys) {
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY)
+    if (!raw) return
+    const parsed = JSON.parse(raw)
+    if (!parsed || typeof parsed !== 'object') return
+    let changed = false
+    for (const key of pageKeys ?? []) {
+      if (key in parsed) {
+        delete parsed[key]
+        changed = true
+      }
+    }
+    if (changed) {
+      writeStored(parsed)
+    }
+  } catch {
+    // Storage unavailable or corrupt — the provider falls back to seeds.
+  }
+}
 
 export function savePageContent(pageKey, values) {
   const normalized = normalizeContent(pageKey, clone(values))

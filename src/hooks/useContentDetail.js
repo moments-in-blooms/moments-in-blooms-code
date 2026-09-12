@@ -36,13 +36,17 @@ function useContentDetail(pageKey, { sectionKey, listKey, itemId, initialValue }
   const syncedRef = useRef({ item, initialValue })
 
   useEffect(() => {
+    // Never clobber unsaved edits: an upstream values change (mount fetch
+    // settling, realtime event) while the form is dirty leaves the draft
+    // alone. It re-syncs on the next settled change after save/discard.
+    if (dirty) return
     const previous = syncedRef.current
     if (previous.item !== item || previous.initialValue !== initialValue) {
       syncedRef.current = { item, initialValue }
       setDraft(clone(creating ? initialValue : item ?? null))
       setDirty(false)
     }
-  }, [item, initialValue, creating])
+  }, [item, initialValue, creating, dirty])
 
   const patch = (updater) => {
     setDraft((current) =>
