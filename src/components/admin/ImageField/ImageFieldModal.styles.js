@@ -145,3 +145,105 @@ export const ModalCurrentText = styled.div`
 export const HiddenInput = styled.input`
   display: none;
 `
+
+export const ModalTabs = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing.xs};
+  margin-bottom: ${({ theme }) => theme.spacing.md};
+`
+
+export const ModalTab = styled.button`
+  flex: 1;
+  padding: 0.55rem 0.5rem;
+  border: 1px solid ${({ theme, $active }) =>
+    $active ? theme.colors.primary : theme.colors.border};
+  border-radius: ${({ theme }) => theme.radii.md};
+  background: ${({ theme, $active }) =>
+    $active ? theme.colors.primary : theme.colors.surface};
+  color: ${({ theme, $active }) =>
+    $active ? theme.colors.surface : theme.colors.textSecondary};
+  font-family: ${({ theme }) => theme.typography.uiFont};
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: color ${({ theme }) => theme.transitions.fast},
+    background ${({ theme }) => theme.transitions.fast},
+    border-color ${({ theme }) => theme.transitions.fast};
+
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.taupe};
+  }
+`
+
+export const LibraryGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: ${({ theme }) => theme.spacing.sm};
+  max-height: 22rem;
+  overflow-y: auto;
+`
+
+export const LibraryItem = styled.div`
+  position: relative;
+  overflow: hidden;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radii.md};
+  background: ${({ theme }) => theme.colors.secondary};
+`
+
+export const LibraryThumbButton = styled.button`
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+
+  img {
+    display: block;
+    width: 100%;
+    height: 5.5rem;
+    object-fit: cover;
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.focus};
+    outline-offset: -2px;
+  }
+`
+
+export const LibraryDeleteButton = styled.button`
+  position: absolute;
+  top: 0.3rem;
+  right: 0.3rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.3rem 0.5rem;
+  border: none;
+  border-radius: ${({ theme }) => theme.radii.pill};
+  background: rgba(26, 26, 26, 0.78);
+  color: #fff;
+  font-family: ${({ theme }) => theme.typography.uiFont};
+  font-size: 0.66rem;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: ${({ theme }) => theme.colors.danger};
+  }
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: wait;
+  }
+`
+
+export const LibraryEmpty = styled.p`
+  margin: 0;
+  padding: ${({ theme }) => theme.spacing.lg} 0;
+  color: ${({ theme }) => theme.colors.textSecondary};
+  font-size: 0.8rem;
+  line-height: 1.6;
+  text-align: center;
+`

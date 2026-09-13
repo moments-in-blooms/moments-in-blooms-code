@@ -11,6 +11,7 @@ const ALLOWED_TYPES = new Set([
 
 const UPLOAD_ERROR_MESSAGE = "We couldn't upload the image. Please try again."
 const DELETE_ERROR_MESSAGE = "We couldn't delete the image. Please try again."
+const LIST_ERROR_MESSAGE = "We couldn't load the media library. Please try again."
 
 const slugifyFileName = (name) =>
   String(name ?? 'image')
@@ -142,6 +143,44 @@ export async function deleteImage(pathOrUrl) {
     return { error: { message: DELETE_ERROR_MESSAGE, detail: error } }
   }
   return { error: null }
+}
+
+/**
+ * List uploaded images under a Storage prefix (newest first) so admins can
+ * reuse them instead of uploading duplicates. Returns
+ * `{ data: [{ name, path, publicUrl, createdAt, size }], error }`.
+ * In demo mode there is no bucket to list — returns an empty library.
+ */
+export async function listImages({ prefix = 'cms', limit = 100 } = {}) {
+  if (!isSupabaseConfigured() || !supabase) {
+    return { data: [], error: null, demo: true }
+  }
+
+  try {
+    const { data, error } = await supabase.storage.from(BUCKET).list(prefix, {
+      limit,
+      sortBy: { column: 'created_at', order: 'desc' },
+    })
+    if (error) throw error
+
+    const items = (data ?? [])
+      .filter((entry) => entry && entry.name && !String(entry.name).startsWith('.'))
+      .map((entry) => {
+        const path = `${prefix}/${entry.name}`
+        const { data: urlData } = supabase.storage.from(BUCKET).getPublicUrl(path)
+        return {
+          name: entry.name,
+          path,
+          publicUrl: urlData?.publicUrl ?? '',
+          createdAt: entry.created_at ?? null,
+          size: entry.metadata?.size ?? null,
+        }
+      })
+    return { data: items, error: null, demo: false }
+  } catch (error) {
+    console.error('[storage] list failed', error)
+    return { data: null, error: { message: LIST_ERROR_MESSAGE, detail: error }, demo: false }
+  }
 }
 
 /**
