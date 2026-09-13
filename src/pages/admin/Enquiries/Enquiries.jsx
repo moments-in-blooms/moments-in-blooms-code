@@ -8,9 +8,9 @@ import Modal from '../../../components/admin/Modal/index.js'
 import StatusBadge from '../../../components/admin/StatusBadge/index.js'
 import Button from '../../../components/Button/index.js'
 import { showError, showSuccess } from '../../../utils/sweetAlert.js'
-import { SelectField, TextField } from '../../../components/FormField/index.js'
+import { SelectField, TextAreaField, TextField } from '../../../components/FormField/index.js'
 import { adminPageMeta, ENQUIRY_STATUSES, enquiryStatusLabels } from '../../../constants/admin.js'
-import { deleteEnquiry, listEnquiries, updateEnquiryStatus } from '../../../services/enquiries.js'
+import { deleteEnquiry, listEnquiries, updateEnquiryNotes, updateEnquiryStatus } from '../../../services/enquiries.js'
 import {
   CardList,
   DetailGrid,
@@ -32,6 +32,8 @@ import {
   FilterBar,
   FilterButton,
   LoadError,
+  NotesActions,
+  NotesBlock,
   SearchWrap,
   TableCellActions,
   TableOnly,
@@ -69,7 +71,7 @@ const formatDateTime = (isoDate) => {
 }
 
 const toCsv = (rows) => {
-  const header = ['customer_name', 'email', 'phone', 'event_type', 'event_date', 'venue', 'guest_count', 'setup_required', 'selected_services', 'custom_inquiry', 'status', 'created_at']
+  const header = ['customer_name', 'email', 'phone', 'event_type', 'event_date', 'venue', 'guest_count', 'setup_required', 'selected_services', 'custom_inquiry', 'status', 'notes', 'created_at']
   const escape = (value) => {
     const text = String(value ?? '')
     return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text
@@ -94,6 +96,9 @@ function Enquiries() {
   const [statusError, setStatusError] = useState(null)
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [notesDraft, setNotesDraft] = useState('')
+  const [isSavingNotes, setIsSavingNotes] = useState(false)
+  const [notesForId, setNotesForId] = useState(null)
 
   useEffect(() => {
     let mounted = true
@@ -111,6 +116,16 @@ function Enquiries() {
     }
   }, [])
 
+  // Reset the notes draft whenever a different enquiry is opened. Keyed on
+  // id (not the whole record) so status changes don't wipe an in-progress
+  // draft. Adjusted during render — no effect needed.
+  const selectedId = selected?.id ?? null
+  if (selectedId !== notesForId) {
+    setNotesForId(selectedId)
+    setNotesDraft(selected?.notes ?? '')
+    setIsSavingNotes(false)
+  }
+
 
 
   const visible = useMemo(() => {
@@ -126,6 +141,7 @@ function Enquiries() {
         enquiry.event_type,
         enquiry.venue,
         enquiry.phone,
+        enquiry.notes,
       ]
         .filter(Boolean)
         .some((field) => String(field).toLowerCase().includes(normalized)),
@@ -153,6 +169,23 @@ function Enquiries() {
     const msg = result.error?.message ?? "We couldn't update the status. Please try again."
     setStatusError(msg)
     showError('Update failed', msg)
+  }
+
+  const handleSaveNotes = async () => {
+    if (!selected || isSavingNotes) return
+    if ((notesDraft ?? '') === (selected.notes ?? '')) return
+    setIsSavingNotes(true)
+    const result = await updateEnquiryNotes(selected.id, notesDraft)
+    setIsSavingNotes(false)
+    if (result.data) {
+      setEnquiries((current) =>
+        current.map((enquiry) => (enquiry.id === selected.id ? result.data : enquiry)),
+      )
+      setSelected(result.data)
+      showSuccess('Saved', 'Staff note saved.')
+      return
+    }
+    showError('Save failed', result.error?.message ?? "We couldn't save the note. Please try again.")
   }
 
   const handleDeleteConfirm = async () => {
@@ -420,6 +453,26 @@ function Enquiries() {
           />
           <DetailRow label="Status" value={<StatusBadge status={selected?.status ?? 'new'} />} />
         </DetailGrid>
+
+        <NotesBlock>
+          <TextAreaField
+            label="Staff notes"
+            rows={4}
+            value={notesDraft}
+            onChange={(event) => setNotesDraft(event.target.value)}
+            hint="Internal only — never shown to the customer."
+          />
+          <NotesActions>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleSaveNotes}
+              disabled={isSavingNotes || (notesDraft ?? '') === (selected?.notes ?? '')}
+            >
+              {isSavingNotes ? 'Saving…' : 'Save note'}
+            </Button>
+          </NotesActions>
+        </NotesBlock>
       </Modal>
 
       <ConfirmDialog

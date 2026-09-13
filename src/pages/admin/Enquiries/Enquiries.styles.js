@@ -120,6 +120,19 @@ export const DetailValue = styled.span`
   overflow-wrap: anywhere;
 `
 
+export const NotesBlock = styled.div`
+  display: grid;
+  gap: ${({ theme }) => theme.spacing.sm};
+  margin-top: ${({ theme }) => theme.spacing.lg};
+  padding-top: ${({ theme }) => theme.spacing.lg};
+  border-top: 1px solid ${({ theme }) => theme.colors.border};
+`
+
+export const NotesActions = styled.div`
+  display: flex;
+  justify-content: flex-end;
+`
+
 export const TableCellActions = styled.span`
   display: inline-flex;
   align-items: center;

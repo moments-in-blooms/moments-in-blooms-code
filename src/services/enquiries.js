@@ -17,6 +17,7 @@ export const DOCUMENTED_COLUMNS = [
   'setup_requests',
   'custom_inquiry',
   'status',
+  'notes',
 ]
 
 const FALLBACK_ERROR_MESSAGE =
@@ -196,6 +197,53 @@ export async function updateEnquiryStatus(id, status) {
     return { data, error: null, demo: false }
   } catch (error) {
     return { data: null, error: shapeError(error), demo: false }
+  }
+}
+
+const MAX_NOTES_LENGTH = 2000
+const NOTES_FALLBACK_ERROR_MESSAGE =
+  "We couldn't save the note. Please try again."
+
+/**
+ * Save internal staff notes on an enquiry. Notes are admin-only: the public
+ * form payload never includes them (see toExternal) and anon has no SELECT
+ * policy, so visitors can neither read nor write them. A blank note clears
+ * the field (stored as null).
+ */
+export async function updateEnquiryNotes(id, notes) {
+  const trimmed = trimToNull(notes)
+  if (trimmed && trimmed.length > MAX_NOTES_LENGTH) {
+    return {
+      data: null,
+      error: { message: `Please keep notes under ${MAX_NOTES_LENGTH} characters.` },
+      demo: false,
+    }
+  }
+
+  if (!supabase) {
+    const queue = readDemoQueue()
+    const next = queue.map((record) =>
+      record.id === id
+        ? { ...record, notes: trimmed, updated_at: new Date().toISOString() }
+        : record,
+    )
+    writeDemoQueue(next)
+    return { data: next.find((record) => record.id === id) ?? null, error: null, demo: true }
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('enquiries')
+      .update({ notes: trimmed })
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) throw error
+    return { data, error: null, demo: false }
+  } catch (error) {
+    console.error('[enquiries] notes update failed', error)
+    return { data: null, error: { message: NOTES_FALLBACK_ERROR_MESSAGE }, demo: false }
   }
 }
 
