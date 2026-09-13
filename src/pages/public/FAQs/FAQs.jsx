@@ -157,6 +157,7 @@ function FAQs() {
         title={faqsSeo.title}
         description={faqsSeo.description}
         canonical={faqsSeo.url}
+        image={faqsSeo.image}
         url={faqsSeo.url}
         keywords={faqsSeo.keywords}
         jsonLd={ready ? [buildFaqStructuredData(categories), buildBreadcrumbJsonLd('/faqs')] : buildBreadcrumbJsonLd('/faqs')}

@@ -1,9 +1,10 @@
 import { useMemo } from 'react'
 import { useContent } from '../../../hooks/useContent.js'
+import useSiteSettings from '../../../hooks/useSiteSettings.js'
 import SEO from '../../../components/SEO/index.js'
 import { HOME_SECTION_IDS } from '../../../constants/homepage.js'
 import { buildServiceCards } from '../../../services/homepageCards.js'
-import { buildBreadcrumbJsonLd } from '../../../utils/seo.js'
+import { buildBreadcrumbJsonLd, buildLocalBusinessJsonLd } from '../../../utils/seo.js'
 import CTA from './CTA/CTA.jsx'
 import GalleryPreview from './GalleryPreview/GalleryPreview.jsx'
 import Hero from './Hero/Hero.jsx'
@@ -14,31 +15,11 @@ import Testimonials from './Testimonials/Testimonials.jsx'
 import TrustedBy from './TrustedBy/TrustedBy.jsx'
 import WhyChooseUs from './WhyChooseUs/WhyChooseUs.jsx'
 
-const localBusinessJsonLd = Object.freeze({
-  '@context': 'https://schema.org',
-  '@type': 'LocalBusiness',
-  name: 'Moments in Blooms',
-  url: 'https://momentsinblooms.vercel.app',
-  image: 'https://momentsinblooms.vercel.app/pwa-512x512.png',
-  telephone: '+61 3 0000 0000',
-  address: {
-    '@type': 'PostalAddress',
-    addressLocality: 'Melbourne',
-    addressRegion: 'VIC',
-    addressCountry: 'AU',
-  },
-  areaServed: 'Melbourne',
-  priceRange: '$$',
-  sameAs: [
-    'https://ig.me/m/momentsinblooms',
-    'https://m.me/61575145079420',
-  ],
-})
-
 function Home() {
   const { values, loading } = useContent('homepage')
   const { values: seoValues } = useContent('seo')
   const { values: servicesValues } = useContent('services')
+  const { contact, socialLinks } = useSiteSettings()
   const seo = seoValues.home ?? seoValues.site ?? {}
 
   // Homepage service cards are driven by the live catalog (single source of
@@ -49,7 +30,12 @@ function Home() {
     [servicesValues.catalog, values.services],
   )
 
-  const jsonLdArray = [localBusinessJsonLd, buildBreadcrumbJsonLd('/')]
+  // LocalBusiness schema reads the Settings CMS so the studio's contact
+  // details and social links stay accurate when the client edits them.
+  const jsonLdArray = [
+    buildLocalBusinessJsonLd({ contact, socialLinks, image: seo.image }),
+    buildBreadcrumbJsonLd('/'),
+  ]
 
   return (
     <HomePage aria-busy={loading ? 'true' : undefined}>

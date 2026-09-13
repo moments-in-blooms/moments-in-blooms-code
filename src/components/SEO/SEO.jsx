@@ -26,6 +26,9 @@ function SEO({
     : `${SITE_URL}${canonical || location.pathname}`
   const resolvedUrl = url || canonicalPath
   const resolvedImage = image || DEFAULT_OG_IMAGE
+  // Dimensions match the admin's 1200×630 share-image guidance, so only
+  // claim them for a CMS-provided image — never for the fallback icon.
+  const hasShareImage = Boolean(image)
 
   return (
     <Helmet>
@@ -41,8 +44,8 @@ function SEO({
       <meta property="og:locale" content="en_AU" />
       <meta property="og:url" content={resolvedUrl} />
       {resolvedImage ? <meta property="og:image" content={resolvedImage} /> : null}
-      {resolvedImage ? <meta property="og:image:width" content="1200" /> : null}
-      {resolvedImage ? <meta property="og:image:height" content="630" /> : null}
+      {hasShareImage ? <meta property="og:image:width" content="1200" /> : null}
+      {hasShareImage ? <meta property="og:image:height" content="630" /> : null}
       <meta name="twitter:card" content={resolvedImage ? 'summary_large_image' : 'summary'} />
       <meta name="twitter:title" content={resolvedTitle} />
       <meta name="twitter:description" content={resolvedDescription} />
