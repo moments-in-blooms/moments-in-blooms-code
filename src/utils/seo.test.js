@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { buildBreadcrumbJsonLd, buildLocalBusinessJsonLd } from './seo.js'
+import {
+  buildBreadcrumbJsonLd,
+  buildImageGalleryJsonLd,
+  buildLocalBusinessJsonLd,
+  buildServiceSchemas,
+} from './seo.js'
 
 describe('buildLocalBusinessJsonLd', () => {
   it('returns the base LocalBusiness fields with the default image', () => {
@@ -72,8 +77,7 @@ describe('buildLocalBusinessJsonLd', () => {
   })
 })
 
-describe('buildBreadcrumbJsonLd', () => {
-  it('builds a breadcrumb trail from the pathname', () => {
+describe('buildBreadcrumbJsonLd', () => {  it('builds a breadcrumb trail from the pathname', () => {
     const jsonLd = buildBreadcrumbJsonLd('/about')
 
     expect(jsonLd).toMatchObject({ '@context': 'https://schema.org', '@type': 'BreadcrumbList' })
@@ -86,5 +90,111 @@ describe('buildBreadcrumbJsonLd', () => {
         item: 'https://momentsinblooms.vercel.app/about',
       },
     ])
+  })
+})
+
+describe('buildServiceSchemas', () => {
+  const catalog = {
+    categories: [
+      {
+        id: 'luxe-photobooth',
+        title: 'Luxe Photobooth',
+        tagline: 'Mirror booth experiences',
+        items: [
+          { id: 'p1', name: 'SIGNATURE', price: '$600', description: 'Essential luxury' },
+          { id: 'p2', name: 'GLAM', price: '$850' },
+          { id: 'p3', name: 'POA special', price: 'POA' },
+          { id: 'p4', name: 'Hourly extra', price: '$100/hr' },
+        ],
+        subcategories: [
+          {
+            id: 'sub-studio',
+            title: 'Studio',
+            items: [{ id: 'p5', name: 'STUDIO SIGNATURE', price: '1,200' }],
+          },
+        ],
+      },
+      {
+        id: 'decor-hire',
+        title: 'Decor Hire',
+        description: 'Curated pieces',
+        items: [],
+        subcategories: [],
+      },
+      { id: 'blank', title: '   ', items: [] },
+    ],
+  }
+
+  it('builds one Service node per titled category', () => {
+    const schemas = buildServiceSchemas(catalog)
+    expect(schemas).toHaveLength(2)
+    expect(schemas[0]).toMatchObject({
+      '@context': 'https://schema.org',
+      '@type': 'Service',
+      name: 'Luxe Photobooth',
+      description: 'Mirror booth experiences',
+      areaServed: 'Melbourne',
+    })
+    expect(schemas[0].provider).toMatchObject({
+      '@type': 'LocalBusiness',
+      name: 'Moments in Blooms',
+    })
+  })
+
+  it('includes Offers only for strict dollar prices', () => {
+    const schemas = buildServiceSchemas(catalog)
+    expect(schemas[0].offers).toEqual([
+      {
+        '@type': 'Offer',
+        name: 'SIGNATURE',
+        price: 600,
+        priceCurrency: 'AUD',
+        description: 'Essential luxury',
+      },
+      { '@type': 'Offer', name: 'GLAM', price: 850, priceCurrency: 'AUD' },
+      { '@type': 'Offer', name: 'STUDIO SIGNATURE', price: 1200, priceCurrency: 'AUD' },
+    ])
+  })
+
+  it('omits offers for categories without priced items', () => {
+    const schemas = buildServiceSchemas(catalog)
+    expect(schemas[1].name).toBe('Decor Hire')
+    expect(schemas[1].offers).toBeUndefined()
+  })
+
+  it('returns an empty array for missing catalogs', () => {
+    expect(buildServiceSchemas(null)).toEqual([])
+    expect(buildServiceSchemas({})).toEqual([])
+  })
+})
+
+describe('buildImageGalleryJsonLd', () => {
+  it('builds ImageObject entries from gallery items', () => {
+    const jsonLd = buildImageGalleryJsonLd([
+      { id: 1, src: 'https://example.com/a.jpg', title: 'Garden Wedding', subtitle: 'Styling' },
+      { id: 2, src: 'https://example.com/b.jpg' },
+      { id: 3, src: '  ', title: 'No src' },
+    ])
+
+    expect(jsonLd).toMatchObject({
+      '@context': 'https://schema.org',
+      '@type': 'ImageGallery',
+      name: 'Moments in Blooms Gallery',
+      url: 'https://momentsinblooms.vercel.app/gallery',
+    })
+    expect(jsonLd.image).toEqual([
+      {
+        '@type': 'ImageObject',
+        contentUrl: 'https://example.com/a.jpg',
+        name: 'Garden Wedding',
+        caption: 'Styling',
+      },
+      { '@type': 'ImageObject', contentUrl: 'https://example.com/b.jpg' },
+    ])
+  })
+
+  it('returns null when there is nothing to describe', () => {
+    expect(buildImageGalleryJsonLd([])).toBeNull()
+    expect(buildImageGalleryJsonLd(null)).toBeNull()
   })
 })

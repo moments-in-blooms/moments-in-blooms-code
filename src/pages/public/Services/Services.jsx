@@ -2,7 +2,7 @@ import { useContent } from '../../../hooks/useContent.js'
 import SEO from '../../../components/SEO/index.js'
 import { SERVICES_SECTION_IDS } from '../../../constants/services.js'
 import { buildServicesCatalog } from '../../../services/content.js'
-import { buildBreadcrumbJsonLd } from '../../../utils/seo.js'
+import { buildBreadcrumbJsonLd, buildServiceSchemas } from '../../../utils/seo.js'
 import FaqSection from './FaqSection/index.js'
 import ServiceCollectionsShowcase from './ServiceCollectionsShowcase/index.js'
 import { ServicesPage } from './Services.styles.js'
@@ -18,6 +18,9 @@ function Services() {
   // The canonical catalog is the single source of truth; legacy-only blobs
   // (e.g. mid-migration saves) are converted on the fly.
   const catalog = values.catalog ?? buildServicesCatalog(values)
+  // Service markup follows the live catalog — CMS price/name edits flow
+  // into the schema with no deploy.
+  const jsonLd = [buildBreadcrumbJsonLd('/services'), ...buildServiceSchemas(catalog)]
 
   return (
     <ServicesPage aria-busy={loading ? 'true' : undefined}>
@@ -28,7 +31,7 @@ function Services() {
         image={seo.image}
         keywords={seo.keywords}
         url={seo.url}
-        jsonLd={buildBreadcrumbJsonLd('/services')}
+        jsonLd={jsonLd}
       />
       <ServicesHero content={values.hero} id={SERVICES_SECTION_IDS.HERO} />
       <ServiceCollectionsShowcase

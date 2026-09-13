@@ -1,6 +1,6 @@
 import { useContent } from '../../../hooks/useContent.js'
 import SEO from '../../../components/SEO/index.js'
-import { buildBreadcrumbJsonLd } from '../../../utils/seo.js'
+import { buildBreadcrumbJsonLd, buildImageGalleryJsonLd } from '../../../utils/seo.js'
 import { useGallery } from './hooks/index.js'
 import { useLightbox } from './hooks/index.js'
 
@@ -31,6 +31,12 @@ function Gallery() {
 
   const { visibleItems, hasMore, loadMore } = useGallery(items)
 
+  // ImageGallery markup follows the live gallery items (seed or CMS-saved).
+  const galleryJsonLd = buildImageGalleryJsonLd(items)
+  const jsonLd = galleryJsonLd
+    ? [buildBreadcrumbJsonLd('/gallery'), galleryJsonLd]
+    : buildBreadcrumbJsonLd('/gallery')
+
   const {
     isOpen,
     currentIndex,
@@ -59,7 +65,7 @@ function Gallery() {
         image={seo.image}
         keywords={seo.keywords}
         url={seo.url}
-        jsonLd={buildBreadcrumbJsonLd('/gallery')}
+        jsonLd={jsonLd}
       />
 
       <GalleryHero content={hero} />
