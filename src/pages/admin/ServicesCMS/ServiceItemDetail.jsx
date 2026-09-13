@@ -41,6 +41,7 @@ import {
   itemDisplayName,
   itemPath,
   itemsPath,
+  itemsPathWithContext,
   listCategories,
   upsertItem,
   validateItem,
@@ -252,15 +253,19 @@ function ServiceItemDetail() {
       collectStorageUrls(removed).forEach((url) => deleteImage(url).catch(() => {}))
     }
     bypass()
-    navigate(itemsPath)
+    navigate(itemsPathWithContext({ categoryId, subcategoryId }))
   }
 
   const displayName = itemDisplayName(draft)
 
+  // Returning to the list reopens the current placement scope. The Items
+  // list reads the same context from the URL (see catalog.js).
+  const backToItems = itemsPathWithContext({ categoryId, subcategoryId })
+
   return (
     <CatalogPage>
       <ContentDetailHeader
-        backTo={itemsPath}
+        backTo={backToItems}
         backLabel="Back to Items"
         eyebrow={selectedCategory?.title ?? 'Services'}
         title={creating ? 'New item' : displayName || 'Untitled item'}
@@ -338,7 +343,7 @@ function ServiceItemDetail() {
       <SaveActions
         dirty={dirty}
         saving={saving}
-        onCancel={() => navigate(itemsPath)}
+        onCancel={() => navigate(backToItems)}
         onSave={handleSave}
         onDelete={!creating ? () => setConfirmDelete(true) : undefined}
         deleteLabel="Delete item"

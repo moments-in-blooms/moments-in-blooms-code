@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { createItemDraft, validateCategory } from './catalog.js'
+import { createItemDraft, itemsPathWithContext, itemPath, validateCategory } from './catalog.js'
 
 const luxeCategory = { id: 'luxe-photobooth', slug: 'luxe-photobooth', title: 'Luxe Photobooth' }
 const decorCategory = { id: 'decor-hire', slug: 'decor-hire', title: 'Decor Hire' }
@@ -59,5 +59,47 @@ describe('createItemDraft', () => {
 
   it('keeps new packages unbadged by default', () => {
     expect(createItemDraft('package').popular).toBe(false)
+  })
+})
+
+describe('itemPath', () => {
+  it('returns the bare detail path without context', () => {
+    expect(itemPath('signature-package')).toBe('/admin/services/items/signature-package')
+  })
+
+  it('carries the list category so Back returns to the right tab', () => {
+    expect(itemPath('signature-package', { categoryId: 'luxe-photobooth' })).toBe(
+      '/admin/services/items/signature-package?category=luxe-photobooth',
+    )
+  })
+
+  it('carries the sub-category as well when one is selected', () => {
+    expect(
+      itemPath('item-1', { categoryId: 'decor-hire', subcategoryId: 'florals' }),
+    ).toBe('/admin/services/items/item-1?category=decor-hire&subcategory=florals')
+  })
+
+  it('omits empty context values', () => {
+    expect(itemPath('item-1', { categoryId: '', subcategoryId: null })).toBe(
+      '/admin/services/items/item-1',
+    )
+  })
+})
+
+describe('itemsPathWithContext', () => {
+  it('returns the bare items path without context', () => {
+    expect(itemsPathWithContext()).toBe('/admin/services/items')
+  })
+
+  it('carries the list category so Back returns to the right tab', () => {
+    expect(itemsPathWithContext({ categoryId: 'luxe-photobooth' })).toBe(
+      '/admin/services/items?category=luxe-photobooth',
+    )
+  })
+
+  it('carries the sub-category as well when one is selected', () => {
+    expect(
+      itemsPathWithContext({ categoryId: 'decor-hire', subcategoryId: 'florals' }),
+    ).toBe('/admin/services/items?category=decor-hire&subcategory=florals')
   })
 })

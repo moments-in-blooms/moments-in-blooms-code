@@ -38,15 +38,22 @@ export const newSubcategoryPath = (categoryId) =>
   categoryId
     ? `/admin/services/subcategories/new?category=${encodeURIComponent(categoryId)}`
     : '/admin/services/subcategories/new'
-export const itemsPath = '/admin/services/items'
-export const itemPath = (itemId) => `/admin/services/items/${itemId}`
-export const newItemPath = ({ categoryId, subcategoryId } = {}) => {
+
+// Category context (the list's active category/sub-category) rides along as
+// query params so returning to a list page reopens the tab the visitor left.
+const withItemsContext = (basePath, { categoryId, subcategoryId } = {}) => {
   const params = new URLSearchParams()
-  if (categoryId) params.set('category', categoryId)
-  if (subcategoryId) params.set('subcategory', subcategoryId)
+  if (categoryId) params.set('category', String(categoryId))
+  if (subcategoryId) params.set('subcategory', String(subcategoryId))
   const query = params.toString()
-  return `/admin/services/items/new${query ? `?${query}` : ''}`
+  return query ? `${basePath}?${query}` : basePath
 }
+export const itemsPath = '/admin/services/items'
+export const itemsPathWithContext = (context) => withItemsContext(itemsPath, context)
+export const itemPath = (itemId, context) =>
+  withItemsContext(`/admin/services/items/${itemId}`, context)
+export const newItemPath = ({ categoryId, subcategoryId } = {}) =>
+  withItemsContext('/admin/services/items/new', { categoryId, subcategoryId })
 export const servicesPagePath = '/admin/services/page'
 export const servicesPageSectionPath = (sectionKey) => `/admin/services/page/${sectionKey}`
 

@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from 'react'
 import { FiChevronDown, FiChevronUp, FiPlus } from 'react-icons/fi'
+import { useSearchParams } from 'react-router-dom'
 import AdminPageHeader from '../../../components/admin/AdminPageHeader/index.js'
 import ContentCard from '../../../components/admin/ContentCard/index.js'
 import ContentList from '../../../components/admin/ContentList/index.js'
@@ -39,8 +40,20 @@ const byDisplayOrder = (a, b) => (a.order ?? 0) - (b.order ?? 0)
 
 function ItemsPage() {
   const { values, savedAt, update, save } = useContent('services')
-  const [activeCategoryId, setActiveCategoryId] = useState(null)
-  const [activeSubId, setActiveSubId] = useState(null)
+  const [searchParams] = useSearchParams()
+  // Returning from an item detail reopens the tab the visitor left:
+  // the detail links carry the active category/sub-category as query
+  // params. Unknown ids fall back to the defaults below.
+  const [activeCategoryId, setActiveCategoryId] = useState(() => {
+    const hinted = searchParams.get('category')
+    if (!hinted) return null
+    return listCategories(values).some((entry) => String(entry?.id) === hinted)
+      ? hinted
+      : null
+  })
+  const [activeSubId, setActiveSubId] = useState(
+    () => searchParams.get('subcategory'),
+  )
   const [busy, setBusy] = useState(false)
   const categoryTabRefs = useRef({})
   const subTabRefs = useRef({})
@@ -267,7 +280,11 @@ function ItemsPage() {
           const card = (
             <ContentCard
               key={item.id}
-              to={itemPath(item.id)}
+              to={itemPath(item.id, {
+                categoryId: String(activeCategory.id),
+                subcategoryId:
+                  effectiveSubId === SUB_TOP_LEVEL ? undefined : effectiveSubId,
+              })}
               title={label}
               description={itemSubtitle(item) || itemDescription(item)}
               meta={[
