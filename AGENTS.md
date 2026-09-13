@@ -9,9 +9,10 @@ npm install
 npm run dev      # Vite dev server on port 3000 (NOT the 5173 default; vite.config.js + package.json)
 npm run lint     # eslint .
 npm run build    # output to dist/
+npm run test     # vitest run (colocated *.test.js / *.test.jsx, jsdom for component tests)
 ```
 
-- No test framework, no test script, no typecheck. Manual QA only — never run `npm test`.
+- Vitest is configured (`vitest.config.js`, `npm run test`): unit tests colocated as `src/**/*.test.js`, component tests as `*.test.jsx` (jsdom). Run the suite before committing; no typecheck exists.
 - `.env` is required for real enquiries: copy `.env.example` with `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY`. Without it the site still works; the contact form falls back to demo mode (see below).
 
 ## Architecture facts that are not obvious
