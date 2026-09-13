@@ -398,7 +398,7 @@ function DecorItemForm({ draft, patch, errors }) {
         />
         <ToggleSwitch
           label={CATALOG_TERMS.featured.label}
-          hint="Highlighted items stand out on the public site."
+          hint="Featured items appear in the public services catalogue. Turning this off hides the item from the public site."
           checked={Boolean(draft?.isFeatured ?? draft?.popular)}
           onChange={(checked) => patch({ ...draft, isFeatured: checked })}
         />

@@ -74,22 +74,26 @@ function ContentProvider({ children }) {
     setLoadingPages(next)
   }, [])
 
-  // On mount, overlay any Supabase-backed (pilot) page on top of the seed/local
-  // state so public visitors and the admin both see the live saved content.
-  // Fetches run in parallel and each page settles independently; errors fall
-  // back to seed (public) — never clobber a page the admin started editing.
-  useEffect(() => {
-    if (!isSupabaseConfigured()) return undefined
-    let cancelled = false
-    const pilotKeys = [...SUPABASE_CONTENT_PAGES]
-    // Ensure loading state is correct if the set changed since initial state.
-    pilotKeys.forEach((key) => {
-      if (!loadingPagesRef.current.has(key)) markLoading(key, true)
-    })
-    Promise.all(
-      pilotKeys.map(async (pageKey) => {
-        const { data, error } = await fetchPageContent(pageKey)
-        if (cancelled) return
+  // Re-fetch every Supabase-backed page with the same save guards as the
+  // initial load: settled edits (dirty) and pages saved since mount are
+  // never overwritten by an upstream read.
+  const refreshRemotePages = useCallback(
+    async (isCancelled = () => false) => {
+      const pilotKeys = [...SUPABASE_CONTENT_PAGES]
+      // Ensure loading state is correct if the set changed since initial state.
+      pilotKeys.forEach((key) => {
+        if (!loadingPagesRef.current.has(key)) markLoading(key, true)
+      })
+      const results = await Promise.all(
+        pilotKeys.map((pageKey) =>
+          fetchPageContent(pageKey).then(
+            (result) => ({ pageKey, data: result.data, error: result.error }),
+            () => ({ pageKey, data: null, error: { message: 'fetch failed' } }),
+          ),
+        ),
+      )
+      if (isCancelled()) return
+      results.forEach(({ pageKey, data, error }) => {
         if (error || !hasValues(data?.values)) {
           markLoading(pageKey, false)
           return
@@ -103,12 +107,40 @@ function ContentProvider({ children }) {
           [pageKey]: { values: data.values, savedAt: data.savedAt },
         })
         markLoading(pageKey, false)
-      }),
-    )
+      })
+    },
+    [commit, markLoading],
+  )
+
+  // On mount, overlay any Supabase-backed (pilot) page on top of the seed/local
+  // state so public visitors and the admin both see the live saved content.
+  // Fetches run in parallel and each page settles independently; errors fall
+  // back to seed (public) — never clobber a page the admin started editing.
+  useEffect(() => {
+    if (!isSupabaseConfigured()) return undefined
+    let cancelled = false
+    void refreshRemotePages(() => cancelled)
     return () => {
       cancelled = true
     }
-  }, [commit, markLoading])
+  }, [refreshRemotePages])
+
+  // Realtime misses happen (offline tabs, blocked sockets, unpublished
+  // migrations): when a visitor returns to the tab, re-fetch so the public
+  // site catches up without a manual refresh.
+  useEffect(() => {
+    if (!isSupabaseConfigured()) return undefined
+    const resync = () => {
+      if (typeof document !== 'undefined' && document.visibilityState === 'hidden') return
+      void refreshRemotePages()
+    }
+    document.addEventListener('visibilitychange', resync)
+    window.addEventListener('focus', resync)
+    return () => {
+      document.removeEventListener('visibilitychange', resync)
+      window.removeEventListener('focus', resync)
+    }
+  }, [refreshRemotePages])
 
   // Realtime: keep all 7 pages in sync across tabs/devices without refresh.
   // Supabase Realtime pushes INSERT/UPDATE/DELETE on page_content to every client.
@@ -132,6 +164,39 @@ function ContentProvider({ children }) {
     return unsubscribe
   }, [commit, markLoading])
 
+  // Demo mode fallback: without Supabase there is no realtime channel, so
+  // localStorage writes from another tab (admin in one tab, public site in
+  // another) arrive as `storage` events instead. Adopt them with the same
+  // never-clobber-dirty-drafts guard as the realtime path — no refresh
+  // required to see another tab's saves.
+  useEffect(() => {
+    if (isSupabaseConfigured()) return undefined
+    const adoptStoredContent = () => {
+      const fresh = getStoredContent()
+      const next = { ...storedRef.current }
+      let changed = false
+      for (const [pageKey, entry] of Object.entries(fresh)) {
+        if (dirtyPagesRef.current.has(pageKey)) continue
+        if (
+          JSON.stringify(storedRef.current[pageKey] ?? null) ===
+          JSON.stringify(entry ?? null)
+        ) {
+          continue
+        }
+        next[pageKey] = entry
+        changed = true
+      }
+      for (const pageKey of Object.keys(storedRef.current)) {
+        if (pageKey in fresh || dirtyPagesRef.current.has(pageKey)) continue
+        delete next[pageKey]
+        changed = true
+      }
+      if (changed) commit(next)
+    }
+    window.addEventListener('storage', adoptStoredContent)
+    return () => window.removeEventListener('storage', adoptStoredContent)
+  }, [commit])
+
   const updatePage = useCallback(
     (pageKey, updater) => {
       const prev = storedRef.current
@@ -148,7 +213,10 @@ function ContentProvider({ children }) {
 
   const savePage = useCallback(
     async (pageKey) => {
-      const values = storedRef.current[pageKey]?.values ?? {}
+      // Start from the seed when the page never loaded (fetch still pending
+      // or failed) — persisting `{}` would blank the public page for every
+      // visitor until the next save.
+      const values = storedRef.current[pageKey]?.values ?? cloneValues(getSeedContent(pageKey))
 
       let entry
       if (isSupabaseContentPage(pageKey)) {

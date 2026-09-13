@@ -10,6 +10,9 @@ import {
 } from './TrustedBy.styles.js'
 
 function TrustedBy({ marks, id = 'home-trusted-by' }) {
+  // Stored homepage blobs saved before the badges were editable have no
+  // list — render the statement without badges instead of crashing.
+  const safeMarks = Array.isArray(marks) ? marks : []
   return (
     <TrustedByRoot id={id}>
       <TrustedByContainer>
@@ -36,7 +39,7 @@ function TrustedBy({ marks, id = 'home-trusted-by' }) {
           whileInView="visible"
           viewport={{ once: true, amount: 0.5 }}
         >
-          {marks.map((mark) => (
+          {safeMarks.map((mark) => (
             <motion.li
               key={mark}
               variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}

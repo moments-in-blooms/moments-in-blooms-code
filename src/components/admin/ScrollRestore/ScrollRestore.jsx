@@ -70,6 +70,20 @@ function ScrollRestore() {
     }
   }, [])
 
+  // Save the page being left when this component unmounts: the AppShell
+  // Suspense boundary unmounts the whole admin layout while a first-time
+  // lazy chunk loads, before the pathname effect below could record the
+  // leaving page. Without this, returning via Cancel/Back finds no memory
+  // and the list restarts at the top. The tracked ref (not a live read) is
+  // used because the document has already collapsed when cleanup runs.
+  useEffect(() => {
+    return () => {
+      if (pendingRef.current) {
+        scrollMemory.set(pendingRef.current, currentScrollRef.current)
+      }
+    }
+  }, [])
+
   useLayoutEffect(() => {
     // Save the position of the page we are leaving, then resolve the
     // position of the page we are entering. Query-string-only changes are

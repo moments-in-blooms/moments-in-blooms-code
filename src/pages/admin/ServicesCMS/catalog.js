@@ -292,7 +292,7 @@ export function createItemDraft(kind) {
       price: '',
       items: [],
       image: { src: '', alt: '' },
-      isFeatured: false,
+      isFeatured: true,
     }
   }
   return {
@@ -302,7 +302,7 @@ export function createItemDraft(kind) {
     dimensions: '',
     description: '',
     price: '',
-    isFeatured: false,
+    isFeatured: true,
     image: { src: '', alt: '' },
     options: [],
     gallery: [],

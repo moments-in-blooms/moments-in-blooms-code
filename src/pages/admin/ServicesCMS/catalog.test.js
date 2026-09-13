@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { validateCategory } from './catalog.js'
+import { createItemDraft, validateCategory } from './catalog.js'
 
 const luxeCategory = { id: 'luxe-photobooth', slug: 'luxe-photobooth', title: 'Luxe Photobooth' }
 const decorCategory = { id: 'decor-hire', slug: 'decor-hire', title: 'Decor Hire' }
@@ -45,5 +45,19 @@ describe('validateCategory', () => {
     )
 
     expect(errors).toEqual({})
+  })
+})
+
+describe('createItemDraft', () => {
+  it('defaults new decor items to featured so they appear on the public catalogue', () => {
+    expect(createItemDraft('decor').isFeatured).toBe(true)
+  })
+
+  it('defaults new prize items to featured so they appear on the public grid', () => {
+    expect(createItemDraft('prize').isFeatured).toBe(true)
+  })
+
+  it('keeps new packages unbadged by default', () => {
+    expect(createItemDraft('package').popular).toBe(false)
   })
 })

@@ -657,6 +657,12 @@ const normalizeContent = (pageKey, values) => {
       const saved = next[key] && typeof next[key] === 'object' ? next[key] : {}
       next[key] = { ...seed, ...saved }
     }
+    // Backfill the trust-mark badges for homepage content saved before they
+    // were editable. Only a missing list is backfilled — an explicit empty
+    // list stays empty so the section can still be cleared on purpose.
+    if (next.trustMarks == null) {
+      next.trustMarks = [...homepageTrustMarks]
+    }
   }
   if (pageKey === 'homepage' && Array.isArray(next.services)) {
     // Backfill deep-link target for cards saved before `collectionId`
