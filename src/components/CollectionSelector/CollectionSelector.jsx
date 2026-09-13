@@ -1,7 +1,8 @@
-import { useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { FiArrowRight } from "react-icons/fi";
 import { MotionConfig } from "framer-motion";
 import { COLLECTION_INSTRUCTION } from "../../constants/ui.js";
+import { shouldShowScrollHint } from "./scrollHints.js";
 import {
   ActivePill,
   CollectionArrow,
@@ -13,6 +14,8 @@ import {
   CollectionName,
   CollectionNav,
   CollectionNavList,
+  CollectionScrollFade,
+  CollectionScrollHint,
   CollectionTextGroup,
 } from "./CollectionSelector.styles.js";
 
@@ -24,6 +27,48 @@ function CollectionSelector({
   idPrefix = "category",
 }) {
   const itemRefs = useRef({});
+  const listRef = useRef(null);
+  const [showHint, setShowHint] = useState(false);
+
+  // The "scroll for more" note (and trailing fade) appear only while the
+  // row actually overflows and the user has not reached the end. Re-checked
+  // on scroll, resize and category changes.
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list || typeof ResizeObserver === "undefined") return undefined;
+    const update = () => {
+      setShowHint(
+        shouldShowScrollHint({
+          scrollLeft: list.scrollLeft,
+          scrollWidth: list.scrollWidth,
+          clientWidth: list.clientWidth,
+        })
+      );
+    };
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(list);
+    list.addEventListener("scroll", update, { passive: true });
+    return () => {
+      observer.disconnect();
+      list.removeEventListener("scroll", update);
+    };
+  }, [categories]);
+
+  const focusCategory = useCallback((categoryId) => {
+    const node = itemRefs.current[categoryId];
+    node?.focus();
+    // Pull keyboard-reached tabs into view without moving the page.
+    const reduceMotion =
+      typeof window !== "undefined" &&
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    node?.scrollIntoView?.({
+      inline: "nearest",
+      block: "nearest",
+      behavior: reduceMotion ? "auto" : "smooth",
+    });
+  }, []);
 
   if (!categories.length) return null;
 
@@ -41,7 +86,7 @@ function CollectionSelector({
     const clampedIndex = (nextIndex + categories.length) % categories.length;
     const nextCategory = categories[clampedIndex];
     onSelect(nextCategory.id);
-    itemRefs.current[nextCategory.id]?.focus();
+    focusCategory(nextCategory.id);
   };
 
   return (
@@ -49,7 +94,12 @@ function CollectionSelector({
       <CollectionNav aria-label={ariaLabel}>
         <CollectionInstruction>{COLLECTION_INSTRUCTION}</CollectionInstruction>
 
-        <CollectionNavList role="tablist" aria-label={ariaLabel}>
+        <CollectionNavList
+          ref={listRef}
+          role="tablist"
+          aria-label={ariaLabel}
+        >
+          <CollectionScrollFade aria-hidden="true" $visible={showHint} />
           {categories.map((category, index) => {
             const isActive = category.id === activeId;
 
@@ -106,6 +156,10 @@ function CollectionSelector({
             );
           })}
         </CollectionNavList>
+        <CollectionScrollHint aria-hidden="true" $visible={showHint}>
+          Scroll for more
+          <FiArrowRight aria-hidden="true" size={12} />
+        </CollectionScrollHint>
       </CollectionNav>
     </MotionConfig>
   );

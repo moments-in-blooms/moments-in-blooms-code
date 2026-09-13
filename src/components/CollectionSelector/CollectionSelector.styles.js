@@ -3,6 +3,7 @@ import { css } from "styled-components";
 import styled from "styled-components";
 
 export const CollectionNav = styled.nav`
+  position: relative;
   width: 100%;
 `;
 
@@ -41,6 +42,7 @@ export const CollectionNavList = styled.div`
   box-shadow: ${({ theme }) => theme.shadows.card};
   overflow-x: auto;
   overflow-y: hidden;
+  overscroll-behavior-x: contain;
   scrollbar-width: none;
   -ms-overflow-style: none;
 
@@ -65,8 +67,10 @@ export const CollectionItem = styled.button`
   display: flex;
   align-items: center;
   gap: 0.9rem;
-  flex: 1 1 0;
-  min-width: 0;
+  // Grow to fill the row when few categories fit, but never shrink below
+  // the full label width — overflow scrolls instead of compressing.
+  flex: 1 0 auto;
+  min-width: max-content;
   padding: 1.15rem 1.5rem;
   background: transparent;
   border: none;
@@ -118,6 +122,7 @@ export const CollectionItem = styled.button`
     width: 100%;
     flex: none;
     min-width: 0;
+    max-width: 100%;
     flex-direction: column;
     align-items: stretch;
     gap: 0.35rem;
@@ -238,15 +243,13 @@ export const CollectionName = styled.span`
   letter-spacing: -0.01em;
   color: ${({ $isActive, theme }) =>
     $isActive ? theme.colors.nearWhite : theme.colors.textPrimary};
+  // Never truncate the title — the card sizes to fit it and the row scrolls.
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-  min-width: 0;
   transition: color ${({ theme }) => theme.transitions.standard};
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     font-size: 1.35rem;
+    white-space: normal;
   }
 `;
 
@@ -255,19 +258,14 @@ export const CollectionDesc = styled.span`
   line-height: 1.45;
   color: ${({ $isActive, theme }) =>
     $isActive ? theme.colors.greige : theme.colors.textSecondary};
+  // Never truncate — the card sizes to fit and the row scrolls.
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-  min-width: 0;
   transition: color ${({ theme }) => theme.transitions.standard};
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     font-size: 0.82rem;
     line-height: 1.5;
     white-space: normal;
-    overflow: visible;
-    text-overflow: clip;
   }
 `;
 
@@ -279,14 +277,69 @@ export const CollectionMeta = styled.span`
   text-transform: uppercase;
   color: ${({ $isActive, theme }) =>
     $isActive ? theme.colors.greige : theme.colors.primaryHover};
+  // Never truncate — the card sizes to fit and the row scrolls.
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
   transition: color ${({ theme }) => theme.transitions.standard};
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     letter-spacing: 0.09em;
+    white-space: normal;
+  }
+`;
+
+// Trailing fade that signals more categories to the side. Shown only while
+// the row actually overflows and the user has not reached the end.
+export const CollectionScrollFade = styled.span`
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  bottom: 1px;
+  width: 3.5rem;
+  border-radius: 0 ${({ theme }) => theme.radii.lg} ${({ theme }) =>
+    theme.radii.lg} 0;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    ${({ theme }) => theme.colors.surface} 100%
+  );
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  pointer-events: none;
+  transition: opacity ${({ theme }) => theme.transitions.standard};
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+`;
+
+// "Scroll for more" note under the row. Rendered only when the row
+// overflows and the user has not reached the end.
+export const CollectionScrollHint = styled.span`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.6rem;
+  font-family: ${({ theme }) => theme.typography.uiFont};
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.colors.taupeText};
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  visibility: ${({ $visible }) => ($visible ? 'visible' : 'hidden')};
+  transition: opacity ${({ theme }) => theme.transitions.standard},
+    visibility ${({ theme }) => theme.transitions.standard};
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
   }
 `;
 
