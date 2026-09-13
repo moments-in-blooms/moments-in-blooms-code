@@ -68,7 +68,7 @@ After signing in you land on the **Dashboard** ("Studio at a glance", "Welcome b
 
 Every content page works the same way:
 
-1. Open the page from `Website Pages` (e.g. **Homepage**). It lists its sections — labelled in plain words like **Top banner** (the first thing visitors see), **Trust badges**, **Services section title**, **Gallery photos**, **Why choose us**, **Client reviews**, **Instagram photos**, and **Bottom banner** (the final section at the bottom).
+1. Open the page from `Website Pages` (e.g. **Homepage**). It lists its sections — labelled in plain words like **Top banner** (the first thing visitors see), **Trust statement**, **Trust badges**, **Services section title**, **Gallery photos**, **Why choose us intro**, **Why choose us**, **Client reviews heading**, **Client reviews**, **Instagram heading**, **Instagram photos**, and **Bottom banner** (the final section at the bottom). Sections ending in "heading", "intro" or "statement" edit the words *above* a section; the matching section below edits the items themselves.
 2. Open a section to edit it. Common fields:
    - **Small line above the title** — the short phrase shown above a heading.
    - **Main heading** — the big title.
@@ -80,14 +80,14 @@ Every content page works the same way:
 ### What you will find on each page
 
 - **Homepage** — top banner, trust badges, the services section title, the gallery collage, "why choose us" reasons, client reviews, the Instagram strip and the bottom banner. The service cards on the homepage are *not* edited here: each card follows its own category (see the **Linked category** note on a card). To change what a card says, edit the category itself under `Services → Categories` (§6).
-- **About** — your brand story, values, and why couples choose the studio.
-- **Services Page** — only the words *around* the catalogue: top banner, highlights, introduction, experience timeline and bottom banner. The services and prices themselves live in `Services → Categories / Sub-Categories / Items` (§6).
-- **Gallery** — the page banners plus **Featured stories** (the stories you want to tell), opened through `Admin → Gallery → Items` where you can **Add image**, use **Search images…** and **Filter by category**, select many images at once (**Select all**), set each image's **Grid size** (how big it appears), and remove images (**Delete** with confirmation).
+- **About** — your brand story, **Values heading** plus values, and why couples choose the studio.
+- **Services Page** — the top banner, **Services intro** (the heading above the catalogue), **Catalogue labels** (button and tag wording: prices, quotes, package lists), highlights, introduction, experience timeline, **FAQ preview**, and bottom banner. The services and prices themselves live in `Services → Categories / Sub-Categories / Items` (§6).
+- **Gallery** — the page banners plus **Featured stories** (the stories you want to tell), opened through `Admin → Gallery → Items` where you can **Add image**, use **Search images…** and **Filter by category**, select many images at once (**Select all**), set each image's **Grid size** (how big it appears), and remove images (**Delete** with confirmation). **Interface labels** edits the gallery's button and helper wording (Load More, story links, the story modal headings).
 - **FAQs** — three cards: **FAQ top banner**, **FAQ Content** (press **Manage FAQ Content**), and **FAQ bottom banner** (press **Manage bottom banner**). Inside **FAQ Content** you edit the **Section Heading**, then the filter categories, then the **FAQ Items** (press **Manage FAQ Items**):
   - To add a question, press **Add FAQ** in the FAQ Items list, write the question and answer, choose its category and press **Create FAQ**. To add a category, press **Add category** and then **Create category**.
   - The **Published** switch controls whether visitors see an item or category. Items you archive disappear from the public page but stay in the admin with a banner (*"Archived and hidden from visitors"*) and a **Restore** button — nothing is ever lost.
   - Deleting a category that still has questions is blocked on purpose: the panel will ask you to **move those FAQs** to another category first, so no question is ever orphaned.
-- **Contact** — the top banner, the enquiry form steps and options, the contact information visitors see, and the bottom banner.
+- **Contact** — the top banner, the enquiry form steps and options (the form section also holds the four **form step names** and the **success message** visitors see after sending), the contact information visitors see, and the bottom banner.
 
 ---
 

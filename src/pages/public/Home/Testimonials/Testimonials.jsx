@@ -13,6 +13,7 @@ import {
   TestimonialMeta,
   TestimonialName,
   TestimonialQuote,
+  TestimonialTitle,
   TestimonialSlide,
   TestimonialViewport,
   TestimonialsContainer,
@@ -20,8 +21,10 @@ import {
   TestimonialEyebrow,
 } from './Testimonials.styles.js'
 
-function Testimonials({ items = [], id = 'home-testimonials' }) {
+function Testimonials({ items = [], heading = {}, id = 'home-testimonials' }) {
   const [activeIndex, setActiveIndex] = useState(0)
+  const eyebrow = heading.eyebrow ?? 'Kind words from good people'
+  const title = heading.title ?? ''
 
   if (items.length === 0) {
     return null
@@ -51,8 +54,9 @@ function Testimonials({ items = [], id = 'home-testimonials' }) {
           viewport={VIEWPORT_DEFAULT}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          <TestimonialEyebrow>Kind words from good people</TestimonialEyebrow>
+          <TestimonialEyebrow>{eyebrow}</TestimonialEyebrow>
         </motion.div>
+        {title ? <TestimonialTitle>{title}</TestimonialTitle> : null}
         <QuoteMark
           key={activeIndex}
           aria-hidden="true"

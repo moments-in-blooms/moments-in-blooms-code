@@ -49,6 +49,21 @@ function EnquiryForm({ content = {}, id, eventTypeOptions = [], serviceInterestO
   const submittingRef = useRef(false)
   const lastSubmitAt = useRef(0)
   const railSteps = Array.isArray(content.steps) ? content.steps : []
+  // Wizard copy is CMS-editable via the rail: four step names plus the
+  // success message. Falls back to the seed constants when unset.
+  const savedLabels = Array.isArray(content.stepLabels) ? content.stepLabels : []
+  const wizardSteps = [0, 1, 2, 3].map((index) => ({
+    number: String(index + 1).padStart(2, '0'),
+    label: savedLabels[index] || ENQUIRY_STEPS[index].label,
+  }))
+  const success = content.success ?? {}
+  const successEyebrow = success.eyebrow ?? 'Enquiry received'
+  const successTitle = success.title ?? 'Thank you.'
+  const successText =
+    success.text ??
+    'Your enquiry has been sent successfully. The Moments in Blooms team will review your details and get back to you within one to two business days.'
+  const homeLabel = success.homeLabel ?? 'Back to the homepage'
+  const againLabel = success.againLabel ?? 'Send another enquiry'
 
   const {
     register,
@@ -202,23 +217,19 @@ function EnquiryForm({ content = {}, id, eventTypeOptions = [], serviceInterestO
                   <div className="success-icon">
                     <FiCheckCircle aria-hidden="true" color="currentColor" />
                   </div>
-                  <S.SuccessEyebrow>Enquiry received</S.SuccessEyebrow>
-                  <S.SuccessTitle>Thank you.</S.SuccessTitle>
-                  <S.SuccessText>
-                    Your enquiry has been sent successfully. The Moments in Blooms
-                    team will review your details and get back to you within one to
-                    two business days.
-                  </S.SuccessText>
+                  <S.SuccessEyebrow>{successEyebrow}</S.SuccessEyebrow>
+                  <S.SuccessTitle>{successTitle}</S.SuccessTitle>
+                  <S.SuccessText>{successText}</S.SuccessText>
                   <S.SuccessText>
                     In the meantime, you can also reach the team directly at{' '}
                     <a href={`mailto:${contact.email}`}>{contact.email}</a>.
                   </S.SuccessText>
                   <S.SuccessActions>
                     <Button to="/" variant="primary">
-                      Back to the homepage
+                      {homeLabel}
                     </Button>
                     <Button variant="ghost" onClick={resetEnquiry}>
-                      Send another enquiry
+                      {againLabel}
                     </Button>
                   </S.SuccessActions>
                 </S.SuccessPanel>
@@ -237,13 +248,14 @@ function EnquiryForm({ content = {}, id, eventTypeOptions = [], serviceInterestO
                     style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0 }}
                     {...register('website')}
                   />
-                  <StepIndicator currentIndex={step} />
+                  <StepIndicator steps={wizardSteps} currentIndex={step} />
 
                   <S.StepPanel hidden={step !== 0} aria-labelledby="enquiry-step-heading-0">
                     <PersonalDetails
                       register={register}
                       errors={errors}
                       titleId="enquiry-step-heading-0"
+                      label={wizardSteps[0].label}
                     />
                   </S.StepPanel>
 
@@ -256,6 +268,7 @@ function EnquiryForm({ content = {}, id, eventTypeOptions = [], serviceInterestO
                       titleId="enquiry-step-heading-1"
                       eventTypeOptions={eventTypeOptions}
                       guestCountOptions={guestCountOptions}
+                      label={wizardSteps[1].label}
                     />
                   </S.StepPanel>
 
@@ -264,6 +277,7 @@ function EnquiryForm({ content = {}, id, eventTypeOptions = [], serviceInterestO
                       control={control}
                       titleId="enquiry-step-heading-2"
                       serviceInterestOptions={serviceInterestOptions}
+                      label={wizardSteps[2].label}
                     />
                   </S.StepPanel>
 
@@ -274,6 +288,7 @@ function EnquiryForm({ content = {}, id, eventTypeOptions = [], serviceInterestO
                       watch={watch}
                       titleId="enquiry-step-heading-3"
                       setupRequirementOptions={setupRequirementOptions}
+                      label={wizardSteps[3].label}
                     />
                   </S.StepPanel>
 

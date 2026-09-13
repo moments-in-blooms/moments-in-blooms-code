@@ -74,6 +74,19 @@ export const enquiryFormRail = Object.freeze({
     },
   ],
   note: 'The team usually replies within one to two business days.',
+  stepLabels: Object.freeze([
+    'Your Details',
+    'Event Details',
+    'Service Interest',
+    'Setup & Styling',
+  ]),
+  success: Object.freeze({
+    eyebrow: 'Enquiry received',
+    title: 'Thank you.',
+    text: 'Your enquiry has been sent successfully. The Moments in Blooms team will review your details and get back to you within one to two business days.',
+    homeLabel: 'Back to the homepage',
+    againLabel: 'Send another enquiry',
+  }),
 })
 
 export const contactInformation = Object.freeze({

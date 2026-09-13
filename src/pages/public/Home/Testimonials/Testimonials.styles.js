@@ -34,6 +34,18 @@ export const TestimonialEyebrow = styled.span`
   text-transform: uppercase;
 `
 
+export const TestimonialTitle = styled.h2`
+  position: relative;
+  z-index: 1;
+  margin-top: ${({ theme }) => theme.spacing.sm};
+  color: ${({ theme }) => theme.colors.textPrimary};
+  font-family: ${({ theme }) => theme.typography.headingFont};
+  font-size: clamp(1.75rem, 4.5vw, 3.25rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+`
+
 export const QuoteMark = styled(motion.span)`
   position: absolute;
   z-index: 0;

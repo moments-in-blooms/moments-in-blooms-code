@@ -306,7 +306,9 @@ export const serviceCollections = Object.freeze([
     featured: true,
     title: "Decor Hire",
     navSub: "Event Decor Hire",
-    navMeta: "4 Collections",
+    // navMeta ("Menu note") is intentionally blank: the tab now shows an
+    // automatically counted line (e.g. "4 collections") instead.
+    navMeta: "",
     description:
       "Curated decorative collections for hire — floral arrangements, backdrops, plinths, and feature pieces, professionally set up and styled for your event.",
     tagline: "Curated Decor Collections",
@@ -419,7 +421,9 @@ export const serviceCollections = Object.freeze([
     featured: true,
     title: "Luxe Photobooth",
     navSub: "Premium Mirror Booth Experiences",
-    navMeta: "3 Packages",
+    // navMeta ("Menu note") is intentionally blank: the tab now shows an
+    // automatically counted line (e.g. "3 packages") instead.
+    navMeta: "",
     description:
       "Premium mirror photobooth experiences designed for unforgettable celebrations.",
     tagline: "Premium Mirror Booths",
@@ -436,7 +440,9 @@ export const serviceCollections = Object.freeze([
     featured: true,
     title: "Blissful Nest",
     navSub: "Claw Machine Hire",
-    navMeta: "4 Prize Options",
+    // navMeta ("Menu note") is intentionally blank: the tab now shows an
+    // automatically counted line (e.g. "4 prize options") instead.
+    navMeta: "",
     description:
       "Beautifully presented claw machine experiences with curated prizes — a playful, polished highlight for your celebration.",
     tagline: "Playful Luxury",
@@ -463,6 +469,31 @@ export const serviceCollectionsShowcase = Object.freeze({
     "Select a service category below to explore our decor hire catalogue, the Luxe Photobooth, and Blissful Nest claw machines.",
   subcategoryLabel: "Choose a Collection Here",
   allCollectionsLabel: "All Collections",
+  priceStartsAtLabel: "Price starts at",
+});
+
+export const servicesCatalogueLabels = Object.freeze({
+  requestQuote: "Request a Quote",
+  enquireNow: "Enquire Now",
+  inclusions: "Inclusions",
+  optionalAddOns: "Optional Add-Ons",
+  notePrefix: "Note:",
+  featuredCollection: "Featured Collection",
+  viewFullDetails: "View full details",
+  catalogueShowcase: "Catalogue Showcase",
+  dimensionsPrefix: "Dimensions:",
+  currentOffering: "Current Offering",
+  moreOptions: "More options",
+  featuredBadge: "Featured",
+  collectionsLabel: "collections",
+  packagesLabel: "packages",
+  prizeOptionsLabel: "prize options",
+});
+
+export const servicesFaqPreview = Object.freeze({
+  eyebrow: "A few helpful things",
+  title: "Good to know.",
+  buttonLabel: "View all FAQs",
 });
 
 export const servicesExperienceTimeline = Object.freeze({

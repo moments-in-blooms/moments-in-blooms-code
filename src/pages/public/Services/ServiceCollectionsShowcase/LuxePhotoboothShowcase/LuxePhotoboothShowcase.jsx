@@ -6,7 +6,10 @@ import { buildBoothTabs } from "../../../../../services/photobooth.js";
 
 import * as S from "./LuxePhotoboothShowcase.styles.js";
 
-function LuxePhotoboothShowcase({ highlights, groups = [] }) {
+function LuxePhotoboothShowcase({ highlights, groups = [], labels = {} }) {
+  const inclusionsLabel = labels.inclusions ?? 'Inclusions'
+  const addOnsLabel = labels.optionalAddOns ?? 'Optional Add-Ons'
+  const notePrefix = labels.notePrefix ?? 'Note:'
   const [activeGroupId, setActiveGroupId] = useState(() => groups[0]?.id);
   const tabRefs = useRef({});
 
@@ -152,7 +155,7 @@ function LuxePhotoboothShowcase({ highlights, groups = [] }) {
               </S.PackageTagline>
 
               <S.InclusionsBlock>
-                <h6>Inclusions</h6>
+                <h6>{inclusionsLabel}</h6>
                 <S.HighlightList $popular={pkg.popular}>
                   {(pkg.inclusions ?? []).map((inclusion, index) => (
                     <li key={index}>
@@ -164,7 +167,7 @@ function LuxePhotoboothShowcase({ highlights, groups = [] }) {
               </S.InclusionsBlock>
 
               <S.AddOnsBlock $popular={pkg.popular}>
-                <h6>Optional Add-Ons</h6>
+                <h6>{addOnsLabel}</h6>
                 <ul>
                   {(pkg.addOns ?? []).map((addOn, index) => (
                     <li key={index}>• {addOn}</li>
@@ -172,7 +175,7 @@ function LuxePhotoboothShowcase({ highlights, groups = [] }) {
                 </ul>
               </S.AddOnsBlock>
 
-              <S.TravelNote>Note: {pkg.travelNotes}</S.TravelNote>
+              <S.TravelNote>{notePrefix} {pkg.travelNotes}</S.TravelNote>
 
               <div>
                 <Button

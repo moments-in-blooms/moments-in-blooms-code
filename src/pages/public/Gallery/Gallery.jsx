@@ -27,6 +27,7 @@ function Gallery() {
   const cta = values.cta ?? {}
   const featuredStories = values.featuredStories ?? []
   const featuredStoriesSection = values.featuredStoriesSection ?? {}
+  const galleryLabels = values.galleryLabels ?? {}
 
   const { visibleItems, hasMore, loadMore } = useGallery(items)
 
@@ -68,9 +69,12 @@ function Gallery() {
         hasMore={hasMore}
         onLoadMore={loadMore}
         onImageClick={openLightbox}
+        labels={galleryLabels}
       />
 
-      {featuredStoryContent ? <FeaturedStory content={featuredStoryContent} /> : null}
+      {featuredStoryContent ? (
+        <FeaturedStory content={featuredStoryContent} labels={galleryLabels} />
+      ) : null}
 
       <InstagramPreview content={instagramContent} posts={instagramPosts} />
 

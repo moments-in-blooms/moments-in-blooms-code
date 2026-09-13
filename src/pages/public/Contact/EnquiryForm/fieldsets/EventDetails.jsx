@@ -4,13 +4,13 @@ import DatePicker from '../DatePicker/index.js'
 import Dropdown from '../Dropdown/index.js'
 import * as S from '../EnquiryForm.styles.js'
 
-function EventDetails({ register, watch, setValue, errors, titleId, eventTypeOptions, guestCountOptions }) {
+function EventDetails({ register, watch, setValue, errors, titleId, eventTypeOptions, guestCountOptions, label = 'Event Details' }) {
   return (
     <S.Fieldset>
-      <legend className="sr-only">Event Details</legend>
+      <legend className="sr-only">{label}</legend>
       <S.FieldsetHeading id={titleId} tabIndex={-1}>
         <S.FieldsetKicker>Part 02</S.FieldsetKicker>
-        <S.FieldsetTitle>Event Details</S.FieldsetTitle>
+        <S.FieldsetTitle>{label}</S.FieldsetTitle>
       </S.FieldsetHeading>
 
       <S.FieldRow>

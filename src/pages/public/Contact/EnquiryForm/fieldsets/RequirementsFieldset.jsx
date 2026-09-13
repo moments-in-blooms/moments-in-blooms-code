@@ -1,15 +1,15 @@
 import { FiAlertCircle } from 'react-icons/fi'
 import * as S from '../EnquiryForm.styles.js'
 
-function RequirementsFieldset({ register, errors, watch, titleId, setupRequirementOptions }) {
+function RequirementsFieldset({ register, errors, watch, titleId, setupRequirementOptions, label = 'Setup & Styling of Hired Items' }) {
   const setupRequired = watch('setupRequired')
 
   return (
     <S.Fieldset>
-      <legend className="sr-only">Setup and Styling of Hired Items</legend>
+      <legend className="sr-only">{label}</legend>
       <S.FieldsetHeading id={titleId} tabIndex={-1}>
         <S.FieldsetKicker>Part 04</S.FieldsetKicker>
-        <S.FieldsetTitle>Setup &amp; Styling of Hired Items</S.FieldsetTitle>
+        <S.FieldsetTitle>{label}</S.FieldsetTitle>
         <S.FieldsetHint>
           Our team offers professional setup and styling of your hired items on the
           day — not full event styling.

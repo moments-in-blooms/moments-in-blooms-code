@@ -8,6 +8,7 @@ import { serviceCollectionsShowcase } from "../../../../constants/services.js";
 import { SECTION_TONES } from "../../../../constants/ui.js";
 import {
   buildServicesCatalog,
+  catalogCategoryCount,
   inferCatalogKind,
 } from "../../../../services/content.js";
 import { groupBoothPackages } from "../../../../services/photobooth.js";
@@ -46,6 +47,8 @@ function CollectionContent({
   category,
   photoboothHighlights,
   blissfulNestIntro,
+  showcase,
+  labels,
 }) {
   const kind = inferCatalogKind(category);
 
@@ -54,12 +57,19 @@ function CollectionContent({
       <LuxePhotoboothShowcase
         highlights={photoboothHighlights}
         groups={groupBoothPackages(category)}
+        labels={labels}
       />
     );
   }
 
   if (kind === "prize") {
-    return <BlissfulNestShowcase collection={category} intro={blissfulNestIntro} />;
+    return (
+      <BlissfulNestShowcase
+        collection={category}
+        intro={blissfulNestIntro}
+        labels={labels}
+      />
+    );
   }
 
   // Generic: any other collection renders its sub-categories as the
@@ -67,6 +77,8 @@ function CollectionContent({
   return (
     <DecorHireCatalogue
       collection={{ ...category, sections: toDecorSections(category) }}
+      showcase={showcase}
+      labels={labels}
     />
   );
 }
@@ -75,8 +87,16 @@ function ServiceCollectionsShowcase({
   catalog,
   photoboothHighlights = null,
   blissfulNestIntro = null,
+  showcase = {},
+  labels = {},
   id,
 }) {
+  const sectionSubtitle = showcase.subtitle ?? serviceCollectionsShowcase.subtitle;
+  const sectionTitle = showcase.title ?? serviceCollectionsShowcase.title;
+  const sectionDescription =
+    showcase.description ?? serviceCollectionsShowcase.description;
+  const priceStartsAt =
+    showcase.priceStartsAtLabel ?? serviceCollectionsShowcase.priceStartsAtLabel;
   // The canonical tree is the single source of truth; legacy-only blobs
   // (e.g. mid-migration saves) are converted on the fly.
   const categories = useMemo(() => {
@@ -141,6 +161,21 @@ function ServiceCollectionsShowcase({
     [collectionIds, searchParams, setSearchParams],
   );
 
+  // Automatic per-category totals for the filter tabs (e.g. "4 collections",
+  // "3 packages", "4 prize options"), derived from the live catalog so the
+  // numbers follow CMS edits with no manual step. Hidden when a category
+  // holds nothing to count.
+  const selectorCategories = useMemo(
+    () =>
+      (categories ?? []).map((category) => {
+        const summary = catalogCategoryCount(category, labels ?? {});
+        return summary
+          ? { ...category, countText: `${summary.count} ${summary.label}` }
+          : category;
+      }),
+    [categories, labels],
+  );
+
   if (!categories || !categories.length) return null;
 
   const activeCollection =
@@ -150,15 +185,15 @@ function ServiceCollectionsShowcase({
   return (
     <Section
       id={id}
-      subtitle={serviceCollectionsShowcase.subtitle}
-      title={serviceCollectionsShowcase.title}
-      description={serviceCollectionsShowcase.description}
+      subtitle={sectionSubtitle}
+      title={sectionTitle}
+      description={sectionDescription}
       tone={SECTION_TONES.SURFACE}
     >
       <Container>
         <S.ShowcaseSection>
           <CollectionSelector
-            categories={categories}
+            categories={selectorCategories}
             activeId={activeCollection.id}
             ariaLabel="Main Service Collections"
             idPrefix="collection"
@@ -186,7 +221,7 @@ function ServiceCollectionsShowcase({
                   </S.CollectionHeroDesc>
                   {collection.priceFrom ? (
                     <S.CollectionHeroPrice>
-                      Price starts at {collection.priceFrom}
+                      {priceStartsAt} {collection.priceFrom}
                     </S.CollectionHeroPrice>
                   ) : null}
                 </S.CollectionHeroContent>
@@ -205,6 +240,8 @@ function ServiceCollectionsShowcase({
                 category={collection}
                 photoboothHighlights={photoboothHighlights}
                 blissfulNestIntro={blissfulNestIntro}
+                showcase={showcase}
+                labels={labels}
               />
             </S.CollectionPanel>
           ))}

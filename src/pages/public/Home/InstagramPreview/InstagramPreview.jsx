@@ -15,9 +15,12 @@ import {
   InstagramTitle,
 } from './InstagramPreview.styles.js'
 
-function InstagramPreview({ items, id = 'home-instagram', profileUrl = 'https://www.instagram.com' }) {
+function InstagramPreview({ items = [], heading = {}, id = 'home-instagram', profileUrl = 'https://www.instagram.com' }) {
   const shouldReduceMotion = useReducedMotion()
   const repeatedItems = [...items, ...items]
+  const eyebrow = heading.eyebrow ?? 'A little more over on Instagram'
+  const handle = heading.handle ?? '@momentsinblooms'
+  const followLabel = heading.followLabel ?? 'Follow @momentsinblooms'
 
   return (
     <InstagramRoot id={id}>
@@ -28,7 +31,7 @@ function InstagramPreview({ items, id = 'home-instagram', profileUrl = 'https://
           viewport={VIEWPORT_DEFAULT}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          <InstagramEyebrow>A little more over on Instagram</InstagramEyebrow>
+          <InstagramEyebrow>{eyebrow}</InstagramEyebrow>
         </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 18 }}
@@ -36,7 +39,7 @@ function InstagramPreview({ items, id = 'home-instagram', profileUrl = 'https://
           viewport={VIEWPORT_DEFAULT}
           transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
         >
-          <InstagramTitle>@momentsinblooms</InstagramTitle>
+          <InstagramTitle>{handle}</InstagramTitle>
         </motion.div>
       </InstagramContainer>
       <InstagramStripViewport aria-label="Moments in Blooms Instagram preview">
@@ -63,7 +66,7 @@ function InstagramPreview({ items, id = 'home-instagram', profileUrl = 'https://
       <InstagramAction>
         <Button as="a" href={profileUrl} target="_blank" rel="noreferrer">
           <FiInstagram aria-hidden="true" color="currentColor" size={17} />
-          Follow @momentsinblooms
+          {followLabel}
         </Button>
       </InstagramAction>
       <span className="sr-only">{items.map((item) => item.image.credit).join('. ')}</span>

@@ -26,8 +26,11 @@ import {
   FAQTrigger,
 } from './FAQPreview.styles.js'
 
-function FAQPreview({ items, id = 'home-faq-preview', tone }) {
+function FAQPreview({ items, heading = {}, id = 'home-faq-preview', tone }) {
   const [openId, setOpenId] = useState(null)
+  const eyebrow = heading.eyebrow ?? 'A few helpful things'
+  const title = heading.title ?? 'Good to know.'
+  const buttonLabel = heading.buttonLabel ?? 'View all FAQs'
 
   return (
     <FAQRoot id={id} $tone={tone}>
@@ -39,10 +42,10 @@ function FAQPreview({ items, id = 'home-faq-preview', tone }) {
             viewport={VIEWPORT_DEFAULT}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
-            <FAQEyebrow>A few helpful things</FAQEyebrow>
+            <FAQEyebrow>{eyebrow}</FAQEyebrow>
           </motion.div>
           <FAQTitle>
-            <TitleReveal>Good to know.</TitleReveal>
+            <TitleReveal>{title}</TitleReveal>
           </FAQTitle>
         </FAQHeader>
         <FAQList
@@ -102,7 +105,7 @@ function FAQPreview({ items, id = 'home-faq-preview', tone }) {
             viewport={VIEWPORT_DEFAULT}
           >
             <Button as={NavLink} to="/faqs" variant={BUTTON_VARIANTS.GHOST}>
-              View all FAQs
+              {buttonLabel}
               <FiArrowUpRight aria-hidden="true" color="currentColor" size={16} />
             </Button>
           </motion.div>

@@ -2,13 +2,13 @@ import { FiAlertCircle } from 'react-icons/fi'
 import { EMAIL_PATTERN } from '../../../../../utils/validation.js'
 import * as S from '../EnquiryForm.styles.js'
 
-function PersonalDetails({ register, errors, titleId }) {
+function PersonalDetails({ register, errors, titleId, label = 'Your Details' }) {
   return (
     <S.Fieldset>
-      <legend className="sr-only">Your Details</legend>
+      <legend className="sr-only">{label}</legend>
       <S.FieldsetHeading id={titleId} tabIndex={-1}>
         <S.FieldsetKicker>Part 01</S.FieldsetKicker>
-        <S.FieldsetTitle>Your Details</S.FieldsetTitle>
+        <S.FieldsetTitle>{label}</S.FieldsetTitle>
       </S.FieldsetHeading>
 
       <S.FieldRow>

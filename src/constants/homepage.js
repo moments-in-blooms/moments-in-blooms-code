@@ -8,6 +8,7 @@ export const homepageHero = Object.freeze({
   primaryCta: 'Enquire Now',
   secondaryCta: 'View Gallery',
   sideNote: 'Floral design\nthoughtful details\njoyful gatherings',
+  scrollCue: 'Scroll to discover',
   image: {
     src: imageUrl('https://images.unsplash.com/photo-1553705426-c702161740bb', 2200),
     alt: 'Pink and white floral installation at an elegant event, Ivo Raeber on Unsplash',
@@ -22,11 +23,19 @@ export const homepageTrustMarks = Object.freeze([
   'Melbourne venues',
 ])
 
+export const homepageTrustedBy = Object.freeze({
+  eyebrow: 'Trusted by beautiful celebrations',
+  statementLead: 'We believe a celebration should feel',
+  statementRest: 'as beautiful as the reason you\'re gathering.',
+})
+
 export const homepageServicesHeading = Object.freeze({
   eyebrow: 'Designed around your day',
   title: 'Details with a point of view.',
   description:
     'From the atmosphere in the room to the little moments guests take home, we style celebrations with warmth, intention and a hint of the unexpected.',
+  buttonLabel: 'Explore our services',
+  cardLinkLabel: 'Learn more',
 })
 
 export const homepageGalleryHeading = Object.freeze({
@@ -34,6 +43,7 @@ export const homepageGalleryHeading = Object.freeze({
   title: 'Made for the memory.',
   description:
     'A little floral, a little playful, always intentional. Explore a selection of celebrations styled with our signature mix of softness and surprise.',
+  buttonLabel: 'View Gallery',
 })
 
 export const homepageServices = Object.freeze([
@@ -138,6 +148,23 @@ export const homepageReasons = Object.freeze([
     description: 'Beautiful design is only half the story; we bring dependable delivery and on-the-day care.',
   },
 ])
+
+export const homepageWhyChooseUs = Object.freeze({
+  eyebrow: 'The difference is in the detail',
+  title: 'Why us?',
+  intro:
+    'You bring the reason to celebrate. We bring the calm, creative thinking and considered details that make it all feel easy.',
+})
+
+export const homepageTestimonialsHeading = Object.freeze({
+  eyebrow: 'Kind words from good people',
+})
+
+export const homepageInstagramHeading = Object.freeze({
+  eyebrow: 'A little more over on Instagram',
+  handle: '@momentsinblooms',
+  followLabel: 'Follow @momentsinblooms',
+})
 
 export const homepageTestimonials = Object.freeze([
   {

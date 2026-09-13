@@ -77,6 +77,13 @@ export const aboutMissionVision = Object.freeze({
   },
 })
 
+export const aboutCoreValuesHeading = Object.freeze({
+  subtitle: 'Our Principles',
+  title: 'Values that guide every arrangement',
+  description:
+    'The foundational standards behind our creative direction, floral selection, and client relationships.',
+})
+
 export const aboutCoreValues = Object.freeze([
   {
     id: 'artistic-mastery',

@@ -34,6 +34,8 @@ function getServiceLink(service) {
 }
 
 function Services({ items, heading = {}, id = 'home-services' }) {
+  const exploreLabel = heading.buttonLabel ?? 'Explore our services'
+  const cardLinkLabel = heading.cardLinkLabel ?? 'Learn more'
   return (
     <ServicesRoot id={id}>
       <ServicesContainer>
@@ -52,7 +54,7 @@ function Services({ items, heading = {}, id = 'home-services' }) {
                 'From the atmosphere in the room to the little moments guests take home, we style celebrations with warmth, intention and a hint of the unexpected.'}
             </ServicesIntroCopy>
             <Button as={NavLink} to="/services" variant={BUTTON_VARIANTS.GHOST}>
-              Explore our services
+              {exploreLabel}
               <FiArrowUpRight aria-hidden="true" color="currentColor" size={16} />
             </Button>
           </SafeReveal>
@@ -87,7 +89,7 @@ function Services({ items, heading = {}, id = 'home-services' }) {
                 </SafeReveal>
                 <SafeReveal from={{ y: 14 }} duration={0.7}>
                   <ServiceLink as={NavLink} to={getServiceLink(service)}>
-                    Learn more
+                    {cardLinkLabel}
                     <FiArrowUpRight aria-hidden="true" color="currentColor" size={14} />
                   </ServiceLink>
                 </SafeReveal>

@@ -32,7 +32,11 @@ function About() {
       <AboutHero content={values.hero} id={ABOUT_SECTION_IDS.HERO} />
       <BrandStory content={values.brandStory} id={ABOUT_SECTION_IDS.BRAND_STORY} />
       <MissionVision content={values.missionVision} id={ABOUT_SECTION_IDS.MISSION_VISION} />
-      <CoreValues items={values.coreValues} id={ABOUT_SECTION_IDS.CORE_VALUES} />
+      <CoreValues
+        items={values.coreValues}
+        heading={values.coreValuesHeading}
+        id={ABOUT_SECTION_IDS.CORE_VALUES}
+      />
       <WhyChooseUs content={values.whyChooseUs} id={ABOUT_SECTION_IDS.WHY_US} />
       <BehindExperience
         content={values.behindExperience}

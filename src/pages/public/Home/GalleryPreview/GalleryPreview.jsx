@@ -76,7 +76,7 @@ function GalleryPreview({ items = [], heading = {}, id = 'home-gallery-preview' 
         <GalleryAction>
           <SafeReveal from={{ y: 14 }} duration={0.7}>
             <Button as={NavLink} to="/gallery" variant={BUTTON_VARIANTS.OUTLINE}>
-              View Gallery
+              {heading.buttonLabel ?? 'View Gallery'}
               <FiArrowUpRight aria-hidden="true" color="currentColor" size={16} />
             </Button>
           </SafeReveal>

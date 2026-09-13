@@ -305,19 +305,11 @@ function CategoryDetailPage() {
             hint={CATALOG_TERMS.categoryType.hint}
           />
         </FieldRow>
-        <FieldRow>
-          <TextField
-            label={CATALOG_TERMS.navSubtitle.label}
-            value={draft.navSub ?? ''}
-            onChange={(event) => patch({ ...draft, navSub: event.target.value })}
-          />
-          <TextField
-            label={CATALOG_TERMS.navMeta.label}
-            value={draft.navMeta ?? ''}
-            onChange={(event) => patch({ ...draft, navMeta: event.target.value })}
-            placeholder="4 Collections"
-          />
-        </FieldRow>
+        <TextField
+          label={CATALOG_TERMS.navSubtitle.label}
+          value={draft.navSub ?? ''}
+          onChange={(event) => patch({ ...draft, navSub: event.target.value })}
+        />
         <TextField
           label="Tagline"
           value={draft.tagline ?? ''}

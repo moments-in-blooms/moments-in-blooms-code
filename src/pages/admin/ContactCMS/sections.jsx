@@ -146,6 +146,50 @@ function EnquiryFormRailForm({ value, onChange }) {
         onChange={(event) => patch({ note: event.target.value })}
       />
       <HelpText>
+        The four form step names shown in the enquiry wizard ("Step 1 of 4 — …").
+      </HelpText>
+      {[0, 1, 2, 3].map((index) => (
+        <TextField
+          key={index}
+          label={`Form step ${index + 1} name`}
+          value={value?.stepLabels?.[index] ?? ''}
+          onChange={(event) => {
+            const next = [...(value?.stepLabels ?? ['', '', '', ''])]
+            next[index] = event.target.value
+            patch({ stepLabels: next })
+          }}
+        />
+      ))}
+      <HelpText>
+        The confirmation shown after a visitor sends an enquiry.
+      </HelpText>
+      <TextField
+        label="Success line"
+        value={value?.success?.eyebrow ?? ''}
+        onChange={(event) => patch({ success: { ...(value?.success ?? {}), eyebrow: event.target.value } })}
+      />
+      <TextField
+        label="Success title"
+        value={value?.success?.title ?? ''}
+        onChange={(event) => patch({ success: { ...(value?.success ?? {}), title: event.target.value } })}
+      />
+      <TextAreaField
+        label="Success message"
+        rows={3}
+        value={value?.success?.text ?? ''}
+        onChange={(event) => patch({ success: { ...(value?.success ?? {}), text: event.target.value } })}
+      />
+      <TextField
+        label="Homepage button"
+        value={value?.success?.homeLabel ?? ''}
+        onChange={(event) => patch({ success: { ...(value?.success ?? {}), homeLabel: event.target.value } })}
+      />
+      <TextField
+        label="Send another button"
+        value={value?.success?.againLabel ?? ''}
+        onChange={(event) => patch({ success: { ...(value?.success ?? {}), againLabel: event.target.value } })}
+      />
+      <HelpText>
         Step numbers are generated automatically from the order below. Drag to reorder.
       </HelpText>
       <Repeater

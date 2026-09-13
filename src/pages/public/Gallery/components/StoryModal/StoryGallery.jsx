@@ -8,7 +8,7 @@ import { GALLERY_FALLBACK_IMAGES } from '../../constants/galleryImages.js'
 
 import * as S from './StoryGallery.styles.js'
 
-function StoryGallery({ images = [], title }) {
+function StoryGallery({ images = [], title, sectionTitle = 'Inside The Event' }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const total = images.length
   const { src, onError } = useImageFallback(images[activeIndex], GALLERY_FALLBACK_IMAGES.story)
@@ -44,7 +44,7 @@ function StoryGallery({ images = [], title }) {
 
   return (
     <S.StoryGallerySection>
-      <S.StorySectionTitle>Inside The Event</S.StorySectionTitle>
+      <S.StorySectionTitle>{sectionTitle}</S.StorySectionTitle>
 
       <S.StoryGalleryFrame>
         <AnimatePresence mode="wait">

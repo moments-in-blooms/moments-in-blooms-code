@@ -12,7 +12,10 @@ import * as S from './StoryModal.styles.js'
 const EASE = [0.22, 1, 0.36, 1]
 const EASE_EXIT = [0.4, 0, 1, 1]
 
-function StoryModal({ story, onClose }) {
+function StoryModal({ story, onClose, labels = {} }) {
+  const highlightsLabel = labels.decorHighlights ?? 'Decor Highlights'
+  const servicesLabel = labels.servicesUsed ?? 'Services Used'
+  const insideTitle = labels.insideTheEvent ?? 'Inside The Event'
   const { src, onError } = useImageFallback(story?.image, GALLERY_FALLBACK_IMAGES.story)
   const { overlayProps } = useModal({
     isOpen: Boolean(story),
@@ -75,7 +78,7 @@ function StoryModal({ story, onClose }) {
 
               {story.highlights?.length > 0 && (
                 <S.StorySection>
-                  <S.StorySectionTitle>Decor Highlights</S.StorySectionTitle>
+                  <S.StorySectionTitle>{highlightsLabel}</S.StorySectionTitle>
                   <S.HighlightList>
                     {story.highlights.map((highlight) => (
                       <S.HighlightItem key={highlight}>{highlight}</S.HighlightItem>
@@ -86,7 +89,7 @@ function StoryModal({ story, onClose }) {
 
               {story.services?.length > 0 && (
                 <S.StorySection>
-                  <S.StorySectionTitle>Services Used</S.StorySectionTitle>
+                  <S.StorySectionTitle>{servicesLabel}</S.StorySectionTitle>
                   <S.ServiceList>
                     {story.services.map((service) => (
                       <S.ServiceTag key={service}>{service}</S.ServiceTag>
@@ -95,7 +98,7 @@ function StoryModal({ story, onClose }) {
                 </S.StorySection>
               )}
 
-              <StoryGallery images={story.gallery} title={story.title} />
+              <StoryGallery images={story.gallery} title={story.title} sectionTitle={insideTitle} />
             </S.StoryBody>
           </S.StoryPanel>
         </S.StoryOverlay>

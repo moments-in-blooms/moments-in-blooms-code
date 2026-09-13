@@ -2,7 +2,7 @@ import { useController } from 'react-hook-form'
 import { FiAlertCircle } from 'react-icons/fi'
 import * as S from '../EnquiryForm.styles.js'
 
-function ServiceSelection({ control, titleId, serviceInterestOptions }) {
+function ServiceSelection({ control, titleId, serviceInterestOptions, label = 'Service Interest' }) {
   const {
     field,
     fieldState: { error },
@@ -34,10 +34,10 @@ function ServiceSelection({ control, titleId, serviceInterestOptions }) {
 
   return (
     <S.Fieldset>
-      <legend className="sr-only">Service Interest</legend>
+      <legend className="sr-only">{label}</legend>
       <S.FieldsetHeading id={titleId} tabIndex={-1}>
         <S.FieldsetKicker>Part 03</S.FieldsetKicker>
-        <S.FieldsetTitle>Service Interest</S.FieldsetTitle>
+        <S.FieldsetTitle>{label}</S.FieldsetTitle>
       </S.FieldsetHeading>
 
       <S.Field>

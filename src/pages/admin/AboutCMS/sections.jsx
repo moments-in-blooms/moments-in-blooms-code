@@ -110,6 +110,14 @@ export const aboutSections = [
     form: MissionVisionForm,
   },
   {
+    key: 'coreValuesHeading',
+    title: SECTION_TERMS.coreValuesHeading.label,
+    description: SECTION_TERMS.coreValuesHeading.hint,
+    type: 'object',
+    sectionMeta: (values) => [values.coreValuesHeading?.title].filter(Boolean),
+    form: CoreValuesHeadingForm,
+  },
+  {
     key: 'coreValues',
     title: 'Core values',
     description: 'The values that guide your work, with an icon for each.',
@@ -293,6 +301,21 @@ function CoreValuesForm({ value, onChange }) {
         </>
       )}
     />
+  )
+}
+
+function CoreValuesHeadingForm({ value, onChange }) {
+  const patch = (next) => onChange((prev) => ({ ...prev, ...(typeof next === 'function' ? next(prev) : next) }))
+  return (
+    <>
+      <SubtitleTitleFields value={value} onChange={patch} />
+      <TextAreaField
+        label="Description"
+        rows={3}
+        value={value?.description ?? ''}
+        onChange={(event) => patch({ description: event.target.value })}
+      />
+    </>
   )
 }
 

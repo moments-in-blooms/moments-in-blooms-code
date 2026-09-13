@@ -88,9 +88,9 @@ function CollectionSelector({
                       {category.navSub}
                     </CollectionDesc>
                   )}
-                  {category.navMeta && (
+                  {category.countText && (
                     <CollectionMeta $isActive={isActive}>
-                      {category.navMeta}
+                      {category.countText}
                     </CollectionMeta>
                   )}
                 </CollectionTextGroup>

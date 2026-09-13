@@ -22,13 +22,16 @@ const iconMap = {
   FiSun: FiSun,
 }
 
-function CoreValues({ items = [], id }) {
+function CoreValues({ items = [], heading = {}, id }) {
   return (
     <Section
       id={id}
-      subtitle="Our Principles"
-      title="Values that guide every arrangement"
-      description="The foundational standards behind our creative direction, floral selection, and client relationships."
+      subtitle={heading.subtitle ?? 'Our Principles'}
+      title={heading.title ?? 'Values that guide every arrangement'}
+      description={
+        heading.description ??
+        'The foundational standards behind our creative direction, floral selection, and client relationships.'
+      }
       tone={SECTION_TONES.INK}
     >
       <Container>

@@ -35,13 +35,15 @@ function Services() {
         catalog={catalog}
         photoboothHighlights={values.photoboothHighlights}
         blissfulNestIntro={values.blissfulNestIntro}
+        showcase={values.showcase}
+        labels={values.catalogueLabels}
         id={SERVICES_SECTION_IDS.FEATURED}
       />
       <ServicesExperience
         content={values.experienceTimeline}
         id={SERVICES_SECTION_IDS.EXPERIENCE}
       />
-      <FaqSection id={SERVICES_SECTION_IDS.FAQ} />
+      <FaqSection heading={values.faqPreview} id={SERVICES_SECTION_IDS.FAQ} />
       <ServicesCTA content={values.cta} id={SERVICES_SECTION_IDS.CTA} />
     </ServicesPage>
   )

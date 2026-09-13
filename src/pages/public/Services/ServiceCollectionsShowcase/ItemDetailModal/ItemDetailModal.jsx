@@ -17,9 +17,9 @@ const getFocusableElements = (container) =>
 /**
  * Accessible detail dialog for a Services collection item: full (uncropped)
  * image plus every available field, with an enquiry CTA.
- * Props: { item, contextLabel, onClose }
+ * Props: { item, contextLabel, onClose, ctaFallback }
  */
-function ItemDetailModal({ item, contextLabel, onClose }) {
+function ItemDetailModal({ item, contextLabel, onClose, ctaFallback = 'Enquire Now' }) {
   const containerRef = useRef(null)
   const reduceMotion = useReducedMotion()
 
@@ -142,7 +142,7 @@ function ItemDetailModal({ item, contextLabel, onClose }) {
 
               <S.ItemActions>
                 <Button to="/contact">
-                  <span>{item.ctaLabel || 'Enquire Now'}</span>
+                  <span>{item.ctaLabel || ctaFallback}</span>
                   <FiArrowRight aria-hidden="true" color="currentColor" size={16} />
                 </Button>
               </S.ItemActions>

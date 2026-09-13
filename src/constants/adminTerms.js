@@ -15,6 +15,42 @@ export const SECTION_TERMS = Object.freeze({
     label: 'Trust badges',
     hint: 'Short credibility words shown under the intro.',
   }),
+  trustedBy: Object.freeze({
+    label: 'Trust statement',
+    hint: 'The sentence and line above the trust badges.',
+  }),
+  whyChooseUs: Object.freeze({
+    label: 'Why choose us intro',
+    hint: 'The heading and intro above your reasons.',
+  }),
+  testimonialsHeading: Object.freeze({
+    label: 'Client reviews heading',
+    hint: 'The heading above your client reviews.',
+  }),
+  instagramHeading: Object.freeze({
+    label: 'Instagram heading',
+    hint: 'The heading and handle above the Instagram strip.',
+  }),
+  coreValuesHeading: Object.freeze({
+    label: 'Values heading',
+    hint: 'The heading above your values.',
+  }),
+  showcase: Object.freeze({
+    label: 'Services intro',
+    hint: 'The heading above the service catalogue filters.',
+  }),
+  catalogueLabels: Object.freeze({
+    label: 'Catalogue labels',
+    hint: 'Button and tag wording used across the catalogue (prices, quotes, package lists).',
+  }),
+  faqPreview: Object.freeze({
+    label: 'FAQ preview',
+    hint: 'The heading above the FAQ preview on the services page.',
+  }),
+  galleryLabels: Object.freeze({
+    label: 'Interface labels',
+    hint: 'Button and helper wording across the gallery grid, story cards and story modal.',
+  }),
   servicesHeading: Object.freeze({
     label: 'Services section title',
     hint: 'The heading above your three services.',
@@ -52,6 +88,30 @@ export const FIELD_TERMS = Object.freeze({
   }),
   headline: Object.freeze({
     label: 'Main heading',
+  }),
+  intro: Object.freeze({
+    label: 'Intro paragraph',
+    hint: 'The short paragraph under the heading.',
+  }),
+  handle: Object.freeze({
+    label: 'Instagram handle',
+    hint: 'Your @ name shown as the section title.',
+  }),
+  followLabel: Object.freeze({
+    label: 'Follow button label',
+    hint: 'The words on the follow button, e.g. "Follow @momentsinblooms".',
+  }),
+  buttonLabel: Object.freeze({
+    label: 'Button label',
+    hint: 'The words shown on the button, e.g. "Explore our services".',
+  }),
+  cardLinkLabel: Object.freeze({
+    label: 'Card link label',
+    hint: 'The link text under each card, e.g. "Learn more".',
+  }),
+  scrollCue: Object.freeze({
+    label: 'Scroll cue label',
+    hint: 'The hint shown at the bottom of the banner, e.g. "Scroll to discover".',
   }),
   floatingWords: Object.freeze({
     label: 'Side phrases',

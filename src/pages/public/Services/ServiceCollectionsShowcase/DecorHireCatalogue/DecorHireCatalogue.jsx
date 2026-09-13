@@ -25,7 +25,12 @@ const getImageAlt = (image, fallback = "") => {
   return image.alt || fallback;
 };
 
-function FeaturedItemBlock({ item, contextLabel, onOpenDetail }) {
+function FeaturedItemBlock({ item, contextLabel, onOpenDetail, labels = {} }) {
+  const featuredTag = labels.featuredCollection ?? 'Featured Collection'
+  const detailsLabel = labels.viewFullDetails ?? 'View full details'
+  const requestLabel = labels.requestQuote ?? 'Request a Quote'
+  const dimensionsPrefix = labels.dimensionsPrefix ?? 'Dimensions:'
+  const showcaseFallback = labels.catalogueShowcase ?? 'Catalogue Showcase'
   const imageSrc = getImageSrc(item.image);
   const hasOptions = Array.isArray(item.options) && item.options.length > 0;
   const hasGallery = Array.isArray(item.gallery) && item.gallery.length > 0;
@@ -42,7 +47,7 @@ function FeaturedItemBlock({ item, contextLabel, onOpenDetail }) {
 
   const openFeatureDetail = () =>
     onOpenDetail(
-      toDecorFeatureDetail(item, { src: optionMainSrc, alt: optionMainAlt }),
+      toDecorFeatureDetail(item, { src: optionMainSrc, alt: optionMainAlt }, requestLabel),
       contextLabel,
     );
 
@@ -65,7 +70,7 @@ function FeaturedItemBlock({ item, contextLabel, onOpenDetail }) {
               <img src={optionMainSrc} alt={optionMainAlt} loading="lazy" />
             </S.SplitImageButton>
             <S.SplitContent>
-              <S.FeaturedTag>Featured Collection</S.FeaturedTag>
+              <S.FeaturedTag>{featuredTag}</S.FeaturedTag>
               <S.FeaturedName>{item.name}</S.FeaturedName>
               {priceNode}
               {item.tagline ? <S.CollectionSubtitle>{item.tagline}</S.CollectionSubtitle> : null}
@@ -78,14 +83,14 @@ function FeaturedItemBlock({ item, contextLabel, onOpenDetail }) {
                   size="medium"
                   onClick={openFeatureDetail}
                 >
-                  <span>View full details</span>
+                  <span>{detailsLabel}</span>
                 </Button>
               </S.SplitActions>
             </S.SplitContent>
           </S.SplitFeature>
         ) : (
           <div>
-            <S.FeaturedTag>Featured Collection</S.FeaturedTag>
+            <S.FeaturedTag>{featuredTag}</S.FeaturedTag>
             <S.FeaturedName>{item.name}</S.FeaturedName>
             {priceNode}
             {item.tagline ? <S.CollectionSubtitle>{item.tagline}</S.CollectionSubtitle> : null}
@@ -113,7 +118,7 @@ function FeaturedItemBlock({ item, contextLabel, onOpenDetail }) {
                 type="button"
                 aria-haspopup="dialog"
                 aria-label={`View full details: ${option.name}`}
-                onClick={() => onOpenDetail(toDecorOptionDetail(option), contextLabel)}
+                onClick={() => onOpenDetail(toDecorOptionDetail(option, requestLabel), contextLabel)}
               >
                 <img src={optSrc} alt={getImageAlt(option.image, option.name)} loading="lazy" />
                 <S.OptionCardBody>
@@ -138,7 +143,7 @@ function FeaturedItemBlock({ item, contextLabel, onOpenDetail }) {
               type="button"
               aria-haspopup="dialog"
               aria-label={`View full preview: ${item.name}`}
-              onClick={() => onOpenDetail(toDecorFeatureDetail(item), contextLabel)}
+              onClick={() => onOpenDetail(toDecorFeatureDetail(item, undefined, requestLabel), contextLabel)}
             >
               <img src={imageSrc} alt={getImageAlt(item.image, item.name)} loading="lazy" />
             </S.SplitImageButton>
@@ -152,9 +157,9 @@ function FeaturedItemBlock({ item, contextLabel, onOpenDetail }) {
                   type="button"
                   variant={BUTTON_VARIANTS.GHOST}
                   size="medium"
-                  onClick={() => onOpenDetail(toDecorFeatureDetail(item), contextLabel)}
+                  onClick={() => onOpenDetail(toDecorFeatureDetail(item, undefined, requestLabel), contextLabel)}
                 >
-                  <span>View full details</span>
+                  <span>{detailsLabel}</span>
                 </Button>
               </S.SplitActions>
             </S.SplitContent>
@@ -174,7 +179,7 @@ function FeaturedItemBlock({ item, contextLabel, onOpenDetail }) {
               type="button"
               aria-haspopup="dialog"
               aria-label={`View full details: ${gItem.title}`}
-              onClick={() => onOpenDetail(toDecorGalleryDetail(gItem), contextLabel)}
+              onClick={() => onOpenDetail(toDecorGalleryDetail(gItem, requestLabel), contextLabel)}
             >
               <img src={gItem.src} alt={gItem.alt || gItem.title} loading="lazy" />
               <S.GalleryCaption>{gItem.title}</S.GalleryCaption>
@@ -196,26 +201,26 @@ function FeaturedItemBlock({ item, contextLabel, onOpenDetail }) {
         >
           <img src={imageSrc} alt={getImageAlt(item.image, item.name)} loading="lazy" />
         </S.SplitImageButton>
-        <S.SplitContent>
-          {item.dimensions ? <S.OptionSpecs>Dimensions: {item.dimensions}</S.OptionSpecs> : <S.OptionSpecs>Catalogue Showcase</S.OptionSpecs>}
-          <S.FeaturedName>{item.name}</S.FeaturedName>
-          {priceNode}
-          {item.tagline ? <S.CollectionSubtitle>{item.tagline}</S.CollectionSubtitle> : null}
-          {item.description ? <S.CollectionSubtitle>{item.description}</S.CollectionSubtitle> : null}
-          <S.SplitActions>
-            <Button to="/contact" variant="primary" size="medium">
-              <span>Request a Quote</span>
-              <FiArrowRight />
-            </Button>
-            <Button
-              type="button"
-              variant={BUTTON_VARIANTS.GHOST}
-              size="medium"
-              onClick={() => onOpenDetail(toDecorFeatureDetail(item), contextLabel)}
-            >
-              <span>View full details</span>
-            </Button>
-          </S.SplitActions>
+            <S.SplitContent>
+              {item.dimensions ? <S.OptionSpecs>{dimensionsPrefix} {item.dimensions}</S.OptionSpecs> : <S.OptionSpecs>{showcaseFallback}</S.OptionSpecs>}
+              <S.FeaturedName>{item.name}</S.FeaturedName>
+              {priceNode}
+              {item.tagline ? <S.CollectionSubtitle>{item.tagline}</S.CollectionSubtitle> : null}
+              {item.description ? <S.CollectionSubtitle>{item.description}</S.CollectionSubtitle> : null}
+              <S.SplitActions>
+                <Button to="/contact" variant="primary" size="medium">
+                  <span>{requestLabel}</span>
+                  <FiArrowRight />
+                </Button>
+                <Button
+                  type="button"
+                  variant={BUTTON_VARIANTS.GHOST}
+                  size="medium"
+                  onClick={() => onOpenDetail(toDecorFeatureDetail(item, undefined, requestLabel), contextLabel)}
+                >
+                  <span>{detailsLabel}</span>
+                </Button>
+              </S.SplitActions>
         </S.SplitContent>
       </S.SplitFeature>
     );
@@ -245,8 +250,11 @@ function SubcategoryHeaderMedia({ section }) {
   );
 }
 
-function DecorHireCatalogue({ collection }) {  const [activeSubcategory, setActiveSubcategory] = useState("all");
+function DecorHireCatalogue({ collection, showcase = {}, labels = {} }) {  const [activeSubcategory, setActiveSubcategory] = useState("all");
   const [detail, setDetail] = useState(null);
+  const priceStartsAt =
+    showcase.priceStartsAtLabel ?? labels.priceStartsAt ?? "Price starts at";
+  const requestLabel = labels.requestQuote ?? "Request a Quote";
 
   const openDetail = useCallback((item, contextLabel) => {
     setDetail({ item, contextLabel });
@@ -266,6 +274,8 @@ function DecorHireCatalogue({ collection }) {  const [activeSubcategory, setActi
         onSelect={setActiveSubcategory}
         ariaLabel={`${collection.title} Collections`}
         idPrefix={`decor-${collection.id}`}
+        allLabel={showcase.allCollectionsLabel}
+        listLabel={showcase.subcategoryLabel}
       />
 
       {collection.sections.map((section) => (
@@ -282,7 +292,7 @@ function DecorHireCatalogue({ collection }) {  const [activeSubcategory, setActi
             {section.subtitle ? <S.CollectionSubtitle>{section.subtitle}</S.CollectionSubtitle> : null}
             {section.description ? <S.CollectionSubtitle>{section.description}</S.CollectionSubtitle> : null}
             {section.priceFrom ? (
-              <S.CollectionPrice>Price starts at {section.priceFrom}</S.CollectionPrice>
+              <S.CollectionPrice>{priceStartsAt} {section.priceFrom}</S.CollectionPrice>
             ) : null}
           </S.CollectionHeader>
 
@@ -301,6 +311,7 @@ function DecorHireCatalogue({ collection }) {  const [activeSubcategory, setActi
                 item={item}
                 contextLabel={`${collection.title} · ${section.title}`}
                 onOpenDetail={openDetail}
+                labels={labels}
               />
             ));
           })()}
@@ -310,6 +321,7 @@ function DecorHireCatalogue({ collection }) {  const [activeSubcategory, setActi
         item={detail?.item}
         contextLabel={detail?.contextLabel}
         onClose={closeDetail}
+        ctaFallback={requestLabel}
       />
     </S.CatalogueSection>
   );

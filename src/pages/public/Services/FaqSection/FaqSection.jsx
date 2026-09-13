@@ -21,7 +21,7 @@ import { FaqLoadingHeader } from './FaqSection.styles.js'
  */
 const SERVICES_FAQ_CATEGORY = 'services'
 
-function FaqSection({ id }) {
+function FaqSection({ id, heading = {} }) {
   const [faqs, setFaqs] = useState([])
   const [status, setStatus] = useState('loading')
 
@@ -71,7 +71,7 @@ function FaqSection({ id }) {
     return null
   }
 
-  return <FAQPreview items={faqs} id={id} tone="surface" />
+  return <FAQPreview items={faqs} heading={heading} id={id} tone="surface" />
 }
 
 export default FaqSection

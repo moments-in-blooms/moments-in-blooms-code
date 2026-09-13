@@ -12,8 +12,9 @@ import StoryModal from '../StoryModal/StoryModal.jsx'
 
 import * as S from './FeaturedStory.styles.js'
 
-function FeaturedStory({ content }) {
+function FeaturedStory({ content, labels = {} }) {
   const [activeStory, setActiveStory] = useState(null)
+  const viewLabel = labels.viewFullStory ?? 'View Full Story'
 
   const handleClose = useCallback(() => setActiveStory(null), [])
 
@@ -39,17 +40,22 @@ function FeaturedStory({ content }) {
           viewport={VIEWPORT_DEFAULT}
         >
           {content.stories.map((story) => (
-            <StoryCard key={story.id} story={story} onOpen={setActiveStory} />
+            <StoryCard
+              key={story.id}
+              story={story}
+              onOpen={setActiveStory}
+              viewLabel={viewLabel}
+            />
           ))}
         </motion.div>
       </S.StoriesContainer>
 
-      <StoryModal story={activeStory} onClose={handleClose} />
+      <StoryModal story={activeStory} onClose={handleClose} labels={labels} />
     </S.FeaturedStoriesSection>
   )
 }
 
-function StoryCard({ story, onOpen }) {
+function StoryCard({ story, onOpen, viewLabel = 'View Full Story' }) {
   const { src, onError } = useImageFallback(story.image, GALLERY_FALLBACK_IMAGES.story)
 
   const handleOpen = useCallback(() => onOpen(story), [onOpen, story])
@@ -71,7 +77,7 @@ function StoryCard({ story, onOpen }) {
         </motion.div>
         <motion.div variants={softReveal}>
           <S.StoryLink type="button" onClick={handleOpen}>
-            View Full Story
+            {viewLabel}
             <FiArrowRight aria-hidden="true" size={16} />
           </S.StoryLink>
         </motion.div>

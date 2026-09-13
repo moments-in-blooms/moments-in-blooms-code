@@ -299,3 +299,16 @@ export const FEATURED_STORIES_SECTION_CONTENT = {
   eyebrow: 'Portfolio Highlights',
   title: 'Featured Event Stories',
 }
+
+// Button and helper wording used across the gallery grid, story cards and
+// story modal. Editable in the admin CMS (Gallery → Interface labels).
+export const GALLERY_LABELS = {
+  loadMore: 'Load More',
+  endOfGallery: "You've reached the end of the gallery.",
+  emptyStateTitle: 'This collection is resting',
+  emptyStateText: 'New pieces are being curated. Please check back soon to see our latest work.',
+  viewFullStory: 'View Full Story',
+  decorHighlights: 'Decor Highlights',
+  servicesUsed: 'Services Used',
+  insideTheEvent: 'Inside The Event',
+}

@@ -25,7 +25,7 @@ const getImageAlt = (image, fallback = "") => {
   return image.alt || fallback;
 };
 
-function PackageCard({ pkg, contextLabel, onOpenDetail }) {
+function PackageCard({ pkg, contextLabel, onOpenDetail, featuredBadge = 'Featured' }) {
   const imgSrc = getImageSrc(pkg.image);
   const imgAlt = getImageAlt(pkg.image, pkg.name);
   return (
@@ -40,7 +40,7 @@ function PackageCard({ pkg, contextLabel, onOpenDetail }) {
           <img src={imgSrc} alt={imgAlt} loading="lazy" />
         </S.PackageImageWrapper>
         <S.PackageBody>
-          {pkg.isFeatured ? <S.PackageBadge>Featured</S.PackageBadge> : <S.PackageBadge>{pkg.badge}</S.PackageBadge>}
+          {pkg.isFeatured ? <S.PackageBadge>{featuredBadge}</S.PackageBadge> : <S.PackageBadge>{pkg.badge}</S.PackageBadge>}
           <S.PackageName>{pkg.name}</S.PackageName>
           <S.PackageTagline>{pkg.tagline}</S.PackageTagline>
           {pkg.price ? <S.PackagePrice>{pkg.price}</S.PackagePrice> : null}
@@ -73,17 +73,28 @@ function SubcategoryHeaderMedia({ subcategory }) {
   );
 }
 
-function BlissfulNestShowcase({ collection, intro }) {
+function BlissfulNestShowcase({ collection, intro, labels = {} }) {
   const subcategories = Array.isArray(collection?.subcategories)
     ? collection.subcategories
     : [];
   const directItems = Array.isArray(collection?.items) ? collection.items : [];
   const introText = intro?.paragraph ?? "";
   const [detail, setDetail] = useState(null);
+  const enquireLabel = labels.enquireNow ?? 'Enquire Now';
+  const currentLabel = labels.currentOffering ?? 'Current Offering';
+  const moreLabel = labels.moreOptions ?? 'More options';
+  const priceStartsAt = labels.priceStartsAt ?? 'Price starts at';
+  const featuredBadge = labels.featuredBadge ?? 'Featured';
 
-  const openDetail = useCallback((pkg, contextLabel) => {
-    setDetail({ item: toBlissfulPackageDetail(pkg), contextLabel });
-  }, []);
+  const openDetail = useCallback(
+    (pkg, contextLabel) => {
+      setDetail({
+        item: toBlissfulPackageDetail(pkg, enquireLabel, featuredBadge),
+        contextLabel,
+      });
+    },
+    [enquireLabel, featuredBadge],
+  );
 
   const closeDetail = useCallback(() => {
     setDetail(null);
@@ -98,7 +109,7 @@ function BlissfulNestShowcase({ collection, intro }) {
         <S.NestIntroText>{introText}</S.NestIntroText>
         <div>
           <Button to="/contact" variant="primary" size="large">
-            <span>Enquire Now</span>
+            <span>{enquireLabel}</span>
             <FiArrowRight />
           </Button>
         </div>
@@ -108,13 +119,13 @@ function BlissfulNestShowcase({ collection, intro }) {
         <S.ProductCategory key={subcategory.id}>
           <S.ProductCategoryHeader>
             <SubcategoryHeaderMedia subcategory={subcategory} />
-            <S.ProductCategoryTag>Current Offering</S.ProductCategoryTag>
+            <S.ProductCategoryTag>{currentLabel}</S.ProductCategoryTag>
             <S.ProductCategoryTitle>{subcategory.title}</S.ProductCategoryTitle>
             {subcategory.description && (
               <S.ProductCategoryDesc>{subcategory.description}</S.ProductCategoryDesc>
             )}
             {subcategory.priceFrom ? (
-              <S.ProductCategoryPrice>Price starts at {subcategory.priceFrom}</S.ProductCategoryPrice>
+              <S.ProductCategoryPrice>{priceStartsAt} {subcategory.priceFrom}</S.ProductCategoryPrice>
             ) : null}
           </S.ProductCategoryHeader>
 
@@ -130,6 +141,7 @@ function BlissfulNestShowcase({ collection, intro }) {
                 pkg={pkg}
                 contextLabel={`${collection.title} · ${subcategory.title}`}
                 onOpenDetail={openDetail}
+                featuredBadge={featuredBadge}
               />
             ))}
           </S.PackageGrid>
@@ -138,7 +150,7 @@ function BlissfulNestShowcase({ collection, intro }) {
       {directItems.length > 0 ? (
         <S.ProductCategory>
           <S.ProductCategoryHeader>
-            <S.ProductCategoryTag>More options</S.ProductCategoryTag>
+            <S.ProductCategoryTag>{moreLabel}</S.ProductCategoryTag>
             <S.ProductCategoryTitle>{collection.title}</S.ProductCategoryTitle>
           </S.ProductCategoryHeader>
 
@@ -154,6 +166,7 @@ function BlissfulNestShowcase({ collection, intro }) {
                 pkg={pkg}
                 contextLabel={collection.title}
                 onOpenDetail={openDetail}
+                featuredBadge={featuredBadge}
               />
             ))}
           </S.PackageGrid>
@@ -163,6 +176,7 @@ function BlissfulNestShowcase({ collection, intro }) {
         item={detail?.item}
         contextLabel={detail?.contextLabel}
         onClose={closeDetail}
+        ctaFallback={enquireLabel}
       />
     </S.NestSection>
   );

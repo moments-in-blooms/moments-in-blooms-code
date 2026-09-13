@@ -21,10 +21,10 @@ beforeAll(() => {
   }
 })
 
-const renderTrustedBy = (marks) =>
+const renderTrustedBy = (marks, content) =>
   render(
     <ThemeProvider theme={theme}>
-      <TrustedBy marks={marks} />
+      <TrustedBy marks={marks} content={content} />
     </ThemeProvider>,
   )
 
@@ -41,5 +41,18 @@ describe('TrustedBy', () => {
 
     expect(screen.queryByText(/Trusted by beautiful celebrations/)).not.toBeNull()
     expect(screen.queryAllByRole('listitem')).toHaveLength(0)
+  })
+
+  it('renders CMS-provided heading copy', () => {
+    renderTrustedBy(['Weddings'], {
+      eyebrow: 'Loved by Melbourne',
+      statementLead: 'We believe every party deserves',
+      statementRest: 'a little sparkle.',
+    })
+
+    expect(screen.queryByText('Loved by Melbourne')).not.toBeNull()
+    expect(screen.queryByText('We believe every party deserves')).not.toBeNull()
+    expect(screen.queryByText('a little sparkle.')).not.toBeNull()
+    expect(screen.queryByText(/Trusted by beautiful celebrations/)).toBeNull()
   })
 })

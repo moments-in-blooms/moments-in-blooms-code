@@ -38,6 +38,21 @@ export const servicesSections = [
     form: HeroForm,
   },
   {
+    key: 'showcase',
+    title: SECTION_TERMS.showcase.label,
+    description: SECTION_TERMS.showcase.hint,
+    type: 'object',
+    sectionMeta: (values) => [values.showcase?.title].filter(Boolean),
+    form: ShowcaseForm,
+  },
+  {
+    key: 'catalogueLabels',
+    title: SECTION_TERMS.catalogueLabels.label,
+    description: SECTION_TERMS.catalogueLabels.hint,
+    type: 'object',
+    form: CatalogueLabelsForm,
+  },
+  {
     key: 'photoboothHighlights',
     title: 'Photobooth highlights',
     description: 'The two feature blocks below the packages.',
@@ -57,6 +72,14 @@ export const servicesSections = [
     description: "The six-step journey clients move through.",
     type: 'object',
     form: ExperienceTimelineForm,
+  },
+  {
+    key: 'faqPreview',
+    title: SECTION_TERMS.faqPreview.label,
+    description: SECTION_TERMS.faqPreview.hint,
+    type: 'object',
+    sectionMeta: (values) => [values.faqPreview?.title].filter(Boolean),
+    form: FaqPreviewForm,
   },
   {
     key: 'cta',
@@ -253,6 +276,118 @@ function IntroForm({ value, onChange }) {
         onChange={(src) => onChange((prev) => ({ ...prev, secondaryImage: { ...(prev.secondaryImage ?? {}), src } }))}
         alt={value?.secondaryImage?.alt ?? ''}
         onAltChange={(event) => onChange((prev) => ({ ...prev, secondaryImage: { ...(prev.secondaryImage ?? {}), alt: event.target.value } }))}
+      />
+    </>
+  )
+}
+
+function ShowcaseForm({ value, onChange }) {
+  const patch = (next) => onChange((prev) => ({ ...prev, ...(typeof next === 'function' ? next(prev) : next) }))
+  return (
+    <>
+      <TextField
+        label="Subtitle"
+        value={value?.subtitle ?? ''}
+        onChange={(event) => patch({ subtitle: event.target.value })}
+      />
+      <TextField
+        label="Title"
+        value={value?.title ?? ''}
+        onChange={(event) => patch({ title: event.target.value })}
+      />
+      <TextAreaField
+        label="Description"
+        value={value?.description ?? ''}
+        onChange={(event) => patch({ description: event.target.value })}
+      />
+      <FieldRow>
+        <TextField
+          label="All collections tab"
+          value={value?.allCollectionsLabel ?? ''}
+          onChange={(event) => patch({ allCollectionsLabel: event.target.value })}
+        />
+        <TextField
+          label="Collection chooser label"
+          value={value?.subcategoryLabel ?? ''}
+          onChange={(event) => patch({ subcategoryLabel: event.target.value })}
+        />
+      </FieldRow>
+      <TextField
+        label="Price prefix"
+        hint='Shown before a price, e.g. "Price starts at $600".'
+        value={value?.priceStartsAtLabel ?? ''}
+        onChange={(event) => patch({ priceStartsAtLabel: event.target.value })}
+      />
+    </>
+  )
+}
+
+function CatalogueLabelsForm({ value, onChange }) {
+  const patch = (next) => onChange((prev) => ({ ...prev, ...(typeof next === 'function' ? next(prev) : next) }))
+  const field = (key, label) => (
+    <TextField
+      label={label}
+      value={value?.[key] ?? ''}
+      onChange={(event) => patch({ [key]: event.target.value })}
+    />
+  )
+  return (
+    <>
+      <FieldRow>
+        {field('requestQuote', 'Request a quote button')}
+        {field('enquireNow', 'Enquire button')}
+      </FieldRow>
+      <FieldRow>
+        {field('viewFullDetails', 'Details link')}
+        {field('inclusions', 'Inclusions heading')}
+      </FieldRow>
+      <FieldRow>
+        {field('optionalAddOns', 'Add-ons heading')}
+        {field('notePrefix', 'Note prefix')}
+      </FieldRow>
+      <FieldRow>
+        {field('featuredCollection', 'Featured tag')}
+        {field('featuredBadge', 'Featured badge')}
+      </FieldRow>
+      <FieldRow>
+        {field('catalogueShowcase', 'Showcase fallback')}
+        {field('dimensionsPrefix', 'Dimensions prefix')}
+      </FieldRow>
+      <FieldRow>
+        {field('currentOffering', 'Current offering tag')}
+        {field('moreOptions', 'More options tag')}
+      </FieldRow>
+      <FieldRow>
+        {field('collectionsLabel', 'Collections word')}
+        {field('packagesLabel', 'Packages word')}
+      </FieldRow>
+      <FieldRow>
+        {field('prizeOptionsLabel', 'Prize options words')}
+      </FieldRow>
+    </>
+  )
+}
+
+function FaqPreviewForm({ value, onChange }) {
+  const patch = (next) => onChange((prev) => ({ ...prev, ...(typeof next === 'function' ? next(prev) : next) }))
+  return (
+    <>
+      <TextField
+        label={FIELD_TERMS.eyebrow.label}
+        hint={FIELD_TERMS.eyebrow.hint}
+        value={value?.eyebrow ?? ''}
+        onChange={(event) => patch({ eyebrow: event.target.value })}
+      />
+      <TextField
+        label="Title"
+        value={value?.title ?? ''}
+        onChange={(event) => patch({ title: event.target.value })}
+      />
+      <TextField
+        label={FIELD_TERMS.buttonLabel.label}
+        hint={FIELD_TERMS.buttonLabel.hint}
+        value={value?.buttonLabel ?? ''}
+        onChange={(event) => patch({ buttonLabel: event.target.value })}
       />
     </>
   )

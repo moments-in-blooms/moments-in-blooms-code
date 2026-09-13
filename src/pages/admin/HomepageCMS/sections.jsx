@@ -36,6 +36,14 @@ export const homepageSections = [
     form: HeroForm,
   },
   {
+    key: 'trustedBy',
+    title: SECTION_TERMS.trustedBy.label,
+    description: SECTION_TERMS.trustedBy.hint,
+    type: 'object',
+    sectionMeta: (values) => [values.trustedBy?.eyebrow].filter(Boolean),
+    form: TrustedByForm,
+  },
+  {
     key: 'trustMarks',
     title: SECTION_TERMS.trustMarks.label,
     description: SECTION_TERMS.trustMarks.hint,
@@ -49,7 +57,7 @@ export const homepageSections = [
     description: SECTION_TERMS.servicesHeading.hint,
     type: 'object',
     sectionMeta: (values) => [values.servicesHeading?.title].filter(Boolean),
-    form: SectionHeadingForm,
+    form: ServicesHeadingForm,
   },
   {
     key: 'galleryHeading',
@@ -57,7 +65,7 @@ export const homepageSections = [
     description: SECTION_TERMS.galleryHeading.hint,
     type: 'object',
     sectionMeta: (values) => [values.galleryHeading?.title].filter(Boolean),
-    form: SectionHeadingForm,
+    form: SectionButtonsHeadingForm,
   },
   {
     key: 'galleryItems',
@@ -85,12 +93,28 @@ export const homepageSections = [
     itemForm: GalleryPreviewItemForm,
   },
   {
+    key: 'whyChooseUs',
+    title: SECTION_TERMS.whyChooseUs.label,
+    description: SECTION_TERMS.whyChooseUs.hint,
+    type: 'object',
+    sectionMeta: (values) => [values.whyChooseUs?.title].filter(Boolean),
+    form: WhyChooseUsForm,
+  },
+  {
     key: 'reasons',
     title: SECTION_TERMS.reasons.label,
     description: SECTION_TERMS.reasons.hint,
     type: 'flatList',
     sectionMeta: (values) => [`${(values.reasons ?? []).length} reasons`],
     form: ReasonsForm,
+  },
+  {
+    key: 'testimonialsHeading',
+    title: SECTION_TERMS.testimonialsHeading.label,
+    description: SECTION_TERMS.testimonialsHeading.hint,
+    type: 'object',
+    sectionMeta: (values) => [values.testimonialsHeading?.eyebrow].filter(Boolean),
+    form: TestimonialsHeadingForm,
   },
   {
     key: 'testimonials',
@@ -121,6 +145,14 @@ export const homepageSections = [
       return errors
     },
     itemForm: TestimonialItemForm,
+  },
+  {
+    key: 'instagramHeading',
+    title: SECTION_TERMS.instagramHeading.label,
+    description: SECTION_TERMS.instagramHeading.hint,
+    type: 'object',
+    sectionMeta: (values) => [values.instagramHeading?.handle].filter(Boolean),
+    form: InstagramHeadingForm,
   },
   {
     key: 'instagramItems',
@@ -166,6 +198,12 @@ function HeroForm({ value, onChange }) {
         onChange={(event) => patch({ sideNote: event.target.value })}
         hint={FIELD_TERMS.floatingWords.hint}
       />
+      <TextField
+        label={FIELD_TERMS.scrollCue.label}
+        hint={FIELD_TERMS.scrollCue.hint}
+        value={value?.scrollCue ?? ''}
+        onChange={(event) => patch({ scrollCue: event.target.value })}
+      />
       <FieldRow>
         <TextField
           label={FIELD_TERMS.primaryButton.label}
@@ -191,7 +229,7 @@ function HeroForm({ value, onChange }) {
   )
 }
 
-function SectionHeadingForm({ value, onChange }) {
+function SectionHeadingForm({ value, onChange, showButtonLabel = false, showCardLinkLabel = false }) {
   const patch = (next) => onChange((prev) => ({ ...prev, ...(typeof next === 'function' ? next(prev) : next) }))
   return (
     <>
@@ -211,6 +249,130 @@ function SectionHeadingForm({ value, onChange }) {
         rows={3}
         value={value?.description ?? ''}
         onChange={(event) => patch({ description: event.target.value })}
+      />
+      {showButtonLabel ? (
+        <TextField
+          label={FIELD_TERMS.buttonLabel.label}
+          hint={FIELD_TERMS.buttonLabel.hint}
+          value={value?.buttonLabel ?? ''}
+          onChange={(event) => patch({ buttonLabel: event.target.value })}
+        />
+      ) : null}
+      {showCardLinkLabel ? (
+        <TextField
+          label={FIELD_TERMS.cardLinkLabel.label}
+          hint={FIELD_TERMS.cardLinkLabel.hint}
+          value={value?.cardLinkLabel ?? ''}
+          onChange={(event) => patch({ cardLinkLabel: event.target.value })}
+        />
+      ) : null}
+    </>
+  )
+}
+
+function SectionButtonsHeadingForm(props) {
+  return <SectionHeadingForm {...props} showButtonLabel />
+}
+
+function ServicesHeadingForm(props) {
+  return <SectionHeadingForm {...props} showButtonLabel showCardLinkLabel />
+}
+
+function TrustedByForm({ value, onChange }) {
+  const patch = (next) => onChange((prev) => ({ ...prev, ...(typeof next === 'function' ? next(prev) : next) }))
+  return (
+    <>
+      <TextField
+        label={FIELD_TERMS.eyebrow.label}
+        hint={FIELD_TERMS.eyebrow.hint}
+        value={value?.eyebrow ?? ''}
+        onChange={(event) => patch({ eyebrow: event.target.value })}
+      />
+      <TextAreaField
+        label="Statement lead"
+        hint="The first line, shown upright."
+        rows={2}
+        value={value?.statementLead ?? ''}
+        onChange={(event) => patch({ statementLead: event.target.value })}
+      />
+      <TextAreaField
+        label="Statement ending"
+        hint="The rest of the sentence, shown in italics."
+        rows={2}
+        value={value?.statementRest ?? ''}
+        onChange={(event) => patch({ statementRest: event.target.value })}
+      />
+    </>
+  )
+}
+
+function WhyChooseUsForm({ value, onChange }) {
+  const patch = (next) => onChange((prev) => ({ ...prev, ...(typeof next === 'function' ? next(prev) : next) }))
+  return (
+    <>
+      <TextField
+        label={FIELD_TERMS.eyebrow.label}
+        hint={FIELD_TERMS.eyebrow.hint}
+        value={value?.eyebrow ?? ''}
+        onChange={(event) => patch({ eyebrow: event.target.value })}
+      />
+      <TextField
+        label="Title"
+        value={value?.title ?? ''}
+        onChange={(event) => patch({ title: event.target.value })}
+      />
+      <TextAreaField
+        label={FIELD_TERMS.intro.label}
+        hint={FIELD_TERMS.intro.hint}
+        rows={3}
+        value={value?.intro ?? ''}
+        onChange={(event) => patch({ intro: event.target.value })}
+      />
+    </>
+  )
+}
+
+function TestimonialsHeadingForm({ value, onChange }) {
+  const patch = (next) => onChange((prev) => ({ ...prev, ...(typeof next === 'function' ? next(prev) : next) }))
+  return (
+    <>
+      <TextField
+        label={FIELD_TERMS.eyebrow.label}
+        hint={FIELD_TERMS.eyebrow.hint}
+        value={value?.eyebrow ?? ''}
+        onChange={(event) => patch({ eyebrow: event.target.value })}
+      />
+      <TextField
+        label="Title"
+        hint="Optional — leave blank to show only the small line above."
+        value={value?.title ?? ''}
+        onChange={(event) => patch({ title: event.target.value })}
+      />
+    </>
+  )
+}
+
+function InstagramHeadingForm({ value, onChange }) {
+  const patch = (next) => onChange((prev) => ({ ...prev, ...(typeof next === 'function' ? next(prev) : next) }))
+  return (
+    <>
+      <TextField
+        label={FIELD_TERMS.eyebrow.label}
+        hint={FIELD_TERMS.eyebrow.hint}
+        value={value?.eyebrow ?? ''}
+        onChange={(event) => patch({ eyebrow: event.target.value })}
+      />
+      <TextField
+        label={FIELD_TERMS.handle.label}
+        hint={FIELD_TERMS.handle.hint}
+        value={value?.handle ?? ''}
+        onChange={(event) => patch({ handle: event.target.value })}
+      />
+      <TextField
+        label={FIELD_TERMS.followLabel.label}
+        hint={FIELD_TERMS.followLabel.hint}
+        value={value?.followLabel ?? ''}
+        onChange={(event) => patch({ followLabel: event.target.value })}
       />
     </>
   )

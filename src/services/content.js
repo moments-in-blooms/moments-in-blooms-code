@@ -2,6 +2,7 @@ import {
   aboutBehindExperience,
   aboutBrandStory,
   aboutCoreValues,
+  aboutCoreValuesHeading,
   aboutCta,
   aboutHero,
   aboutMissionVision,
@@ -31,13 +32,17 @@ import {
   homepageGalleryHeading,
   homepageGalleryItems,
   homepageHero,
+  homepageInstagramHeading,
   homepageInstagramItems,
   homepageReasons,
   homepageSeo,
   homepageServices,
   homepageServicesHeading,
   homepageTestimonials,
+  homepageTestimonialsHeading,
+  homepageTrustedBy,
   homepageTrustMarks,
+  homepageWhyChooseUs,
 } from '../constants/homepage.js'
 import {
   footerContact,
@@ -51,8 +56,11 @@ import {
   photoboothHighlights,
   photoboothPackages,
   serviceCollections,
+  serviceCollectionsShowcase,
+  servicesCatalogueLabels,
   servicesCta,
   servicesExperienceTimeline,
+  servicesFaqPreview,
   servicesGallery,
   servicesHero,
   servicesIntro,
@@ -65,6 +73,7 @@ import {
   FEATURED_STORIES_SECTION_CONTENT,
   GALLERY_CATEGORIES,
   GALLERY_ITEMS,
+  GALLERY_LABELS,
   HERO_CONTENT,
   INSTAGRAM_CONTENT,
   INSTAGRAM_POSTS,
@@ -229,6 +238,43 @@ const inferCatalogKind = (collection) => {
   if (id === 'luxe-photobooth') return 'package'
   if (id === 'blissful-nest' || collection?.type === 'sub-brand') return 'prize'
   return 'decor'
+}
+
+/**
+ * Automatic count summary for one canonical catalog category, used for the
+ * category filter tabs on the public Services page. Replaces the old
+ * hardcoded `navMeta` counts ("4 Collections" etc.) so the number always
+ * reflects the live catalog: adding or removing an item, package or
+ * sub-category updates the tab instantly.
+ *
+ * Returns `{ count, label }`, or `null` when there is nothing to count so
+ * the tab hides the line instead of showing "0 …".
+ *
+ *   decor   → sub-categories (plus one when direct items render their own
+ *             "services" block)      → "N collections"
+ *   package → direct items           → "N packages"
+ *   prize   → direct + all subcategory items → "N prize options"
+ */
+const catalogCategoryCount = (category, labels = {}) => {
+  if (!category || typeof category !== 'object') return null
+  const kind = inferCatalogKind(category)
+  if (kind === 'package') {
+    const count = Array.isArray(category.items) ? category.items.length : 0
+    return count > 0 ? { count, label: labels.packagesLabel ?? 'packages' } : null
+  }
+  if (kind === 'prize') {
+    const direct = Array.isArray(category.items) ? category.items.length : 0
+    const nested = (Array.isArray(category.subcategories) ? category.subcategories : []).reduce(
+      (total, sub) => total + (Array.isArray(sub?.items) ? sub.items.length : 0),
+      0,
+    )
+    const count = direct + nested
+    return count > 0 ? { count, label: labels.prizeOptionsLabel ?? 'prize options' } : null
+  }
+  const subcategoryCount = Array.isArray(category.subcategories) ? category.subcategories.length : 0
+  const directCount = Array.isArray(category.items) && category.items.length > 0 ? 1 : 0
+  const count = subcategoryCount + directCount
+  return count > 0 ? { count, label: labels.collectionsLabel ?? 'collections' } : null
 }
 
 const orderAt = (entry, index) => {
@@ -631,6 +677,17 @@ const normalizeContent = (pageKey, values) => {
         pricing: { ...photoboothHighlights.pricing, ...savedPricing },
       }
     }
+    // Backfill the showcase heading, catalogue labels and FAQ preview for
+    // services content saved before they were editable. Per-field merge so
+    // an explicit blank stays blank instead of snapping back to the default.
+    for (const [key, seed] of [
+      ['showcase', serviceCollectionsShowcase],
+      ['catalogueLabels', servicesCatalogueLabels],
+      ['faqPreview', servicesFaqPreview],
+    ]) {
+      const saved = next[key] && typeof next[key] === 'object' ? next[key] : {}
+      next[key] = { ...seed, ...saved }
+    }
     // Retired "unlimited prints" copy in content saved before the rewording
     // (Supabase page_content / localStorage) so it reads correctly on every
     // render until the page is next saved through the CMS.
@@ -639,20 +696,65 @@ const normalizeContent = (pageKey, values) => {
   if (pageKey === 'gallery' && next.items) {
     next.items = normalizeGalleryPageItems(next.items)
   }
+  if (pageKey === 'gallery') {
+    // Backfill the interface labels for gallery content saved before they
+    // were editable. Per-field merge so an explicit blank stays blank.
+    const saved = next.galleryLabels && typeof next.galleryLabels === 'object'
+      ? next.galleryLabels
+      : {}
+    next.galleryLabels = { ...GALLERY_LABELS, ...saved }
+  }
+  if (pageKey === 'contact') {
+    // Backfill the form step labels and success message for rail content
+    // saved before they were editable. Per-field merge so explicit blanks
+    // stay blank; the 4 step labels keep their positions.
+    const railSeed = enquiryFormRail
+    const savedRail =
+      next.enquiryFormRail && typeof next.enquiryFormRail === 'object'
+        ? next.enquiryFormRail
+        : {}
+    const savedSteps = Array.isArray(savedRail.stepLabels) ? savedRail.stepLabels : []
+    const railNext = { ...railSeed, ...savedRail }
+    railNext.stepLabels = [0, 1, 2, 3].map((index) =>
+      savedSteps[index] ?? railSeed.stepLabels[index],
+    )
+    const savedSuccess =
+      savedRail.success && typeof savedRail.success === 'object'
+        ? savedRail.success
+        : {}
+    railNext.success = { ...railSeed.success, ...savedSuccess }
+    next.enquiryFormRail = railNext
+  }
+  if (pageKey === 'about') {
+    // Backfill the values heading for about content saved before it was
+    // editable. Per-field merge so an explicit blank stays blank.
+    const saved = next.coreValuesHeading && typeof next.coreValuesHeading === 'object'
+      ? next.coreValuesHeading
+      : {}
+    next.coreValuesHeading = { ...aboutCoreValuesHeading, ...saved }
+  }
   if (pageKey === 'homepage' && next.hero && typeof next.hero === 'object') {
-    // Backfill the floating side note for hero content saved before it was
-    // editable, so the homepage keeps showing it until the next CMS save.
+    // Backfill the floating side note and scroll cue for hero content saved
+    // before they were editable, so the homepage keeps showing them until
+    // the next CMS save.
     if (next.hero.sideNote == null) {
       next.hero = { ...next.hero, sideNote: homepageHero.sideNote }
     }
+    if (next.hero.scrollCue == null) {
+      next.hero = { ...next.hero, scrollCue: homepageHero.scrollCue }
+    }
   }
   if (pageKey === 'homepage') {
-    // Backfill the services/gallery section headings for homepage content
-    // saved before they were editable. Per-field merge so an explicit blank
-    // stays blank instead of snapping back to the default.
+    // Backfill the section headings for homepage content saved before they
+    // were editable. Per-field merge so an explicit blank stays blank
+    // instead of snapping back to the default.
     for (const [key, seed] of [
+      ['trustedBy', homepageTrustedBy],
       ['servicesHeading', homepageServicesHeading],
       ['galleryHeading', homepageGalleryHeading],
+      ['whyChooseUs', homepageWhyChooseUs],
+      ['testimonialsHeading', homepageTestimonialsHeading],
+      ['instagramHeading', homepageInstagramHeading],
     ]) {
       const saved = next[key] && typeof next[key] === 'object' ? next[key] : {}
       next[key] = { ...seed, ...saved }
@@ -720,13 +822,17 @@ const faqsSeoSeed = Object.freeze({
 export const contentSeeds = Object.freeze({
   homepage: Object.freeze({
     hero: homepageHero,
+    trustedBy: homepageTrustedBy,
     trustMarks: homepageTrustMarks,
     services: homepageServices,
     servicesHeading: homepageServicesHeading,
     galleryHeading: homepageGalleryHeading,
     galleryItems: homepageGalleryItems,
+    whyChooseUs: homepageWhyChooseUs,
     reasons: homepageReasons,
+    testimonialsHeading: homepageTestimonialsHeading,
     testimonials: homepageTestimonials,
+    instagramHeading: homepageInstagramHeading,
     instagramItems: homepageInstagramItems,
     cta: homepageCta,
   }),
@@ -734,6 +840,7 @@ export const contentSeeds = Object.freeze({
     hero: aboutHero,
     brandStory: aboutBrandStory,
     missionVision: aboutMissionVision,
+    coreValuesHeading: aboutCoreValuesHeading,
     coreValues: aboutCoreValues,
     whyChooseUs: aboutWhyChooseUs,
     behindExperience: aboutBehindExperience,
@@ -744,6 +851,8 @@ export const contentSeeds = Object.freeze({
   services: Object.freeze({
     hero: servicesHero,
     intro: servicesIntro,
+    showcase: serviceCollectionsShowcase,
+    catalogueLabels: servicesCatalogueLabels,
     photoboothPackages,
     photoboothHighlights,
     blissfulNestIntro,
@@ -757,6 +866,7 @@ export const contentSeeds = Object.freeze({
     experienceTimeline: servicesExperienceTimeline,
     gallery: servicesGallery,
     testimonials: servicesTestimonials,
+    faqPreview: servicesFaqPreview,
     cta: servicesCta,
   }),
   gallery: Object.freeze({
@@ -768,6 +878,7 @@ export const contentSeeds = Object.freeze({
     cta: CTA_CONTENT,
     instagram: INSTAGRAM_CONTENT,
     featuredStoriesSection: FEATURED_STORIES_SECTION_CONTENT,
+    galleryLabels: GALLERY_LABELS,
   }),
   faqs: Object.freeze({
     categories: faqCategories,
@@ -805,7 +916,7 @@ export const contentSeeds = Object.freeze({
 
 export const CONTENT_PAGE_KEYS = Object.freeze(Object.keys(contentSeeds))
 
-export { inferCatalogKind, normalizeContent, normalizeImage }
+export { catalogCategoryCount, inferCatalogKind, normalizeContent, normalizeImage }
 
 function readStored() {
   try {

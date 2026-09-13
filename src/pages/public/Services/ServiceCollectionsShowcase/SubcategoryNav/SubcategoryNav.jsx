@@ -10,11 +10,17 @@ function SubcategoryNav({
   onSelect,
   ariaLabel = "Collections",
   idPrefix = "subcategory",
+  allLabel,
+  listLabel,
 }) {
   const itemRefs = useRef({});
+  const allCollectionsLabel =
+    allLabel ?? serviceCollectionsShowcase.allCollectionsLabel;
+  const subcategoryLabel =
+    listLabel ?? serviceCollectionsShowcase.subcategoryLabel;
 
   const options = [
-    { id: "all", title: serviceCollectionsShowcase.allCollectionsLabel },
+    { id: "all", title: allCollectionsLabel },
     ...sections.map((section) => ({ id: section.id, title: section.title })),
   ];
 
@@ -40,7 +46,7 @@ function SubcategoryNav({
   return (
     <S.SubcategoryBar>
       <S.SubcategoryLabel>
-        {serviceCollectionsShowcase.subcategoryLabel}
+        {subcategoryLabel}
       </S.SubcategoryLabel>
 
       <S.SubcategoryGrid role="tablist" aria-label={ariaLabel}>

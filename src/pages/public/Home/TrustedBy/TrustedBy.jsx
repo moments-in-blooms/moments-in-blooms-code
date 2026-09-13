@@ -9,10 +9,13 @@ import {
   TrustedByRoot,
 } from './TrustedBy.styles.js'
 
-function TrustedBy({ marks, id = 'home-trusted-by' }) {
+function TrustedBy({ marks, content = {}, id = 'home-trusted-by' }) {
   // Stored homepage blobs saved before the badges were editable have no
   // list — render the statement without badges instead of crashing.
   const safeMarks = Array.isArray(marks) ? marks : []
+  const eyebrow = content.eyebrow ?? 'Trusted by beautiful celebrations'
+  const statementLead = content.statementLead ?? 'We believe a celebration should feel'
+  const statementRest = content.statementRest ?? "as beautiful as the reason you're gathering."
   return (
     <TrustedByRoot id={id}>
       <TrustedByContainer>
@@ -22,7 +25,7 @@ function TrustedBy({ marks, id = 'home-trusted-by' }) {
           viewport={VIEWPORT_DEFAULT}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          <TrustEyebrow>Trusted by beautiful celebrations</TrustEyebrow>
+          <TrustEyebrow>{eyebrow}</TrustEyebrow>
         </motion.div>
         <TrustStatement
           variants={softReveal}
@@ -30,8 +33,8 @@ function TrustedBy({ marks, id = 'home-trusted-by' }) {
           whileInView="visible"
           viewport={VIEWPORT_DEFAULT}
         >
-          <TrustStatementLead>We believe a celebration should feel</TrustStatementLead>{' '}
-          as beautiful as the reason you&apos;re gathering.
+          <TrustStatementLead>{statementLead}</TrustStatementLead>{' '}
+          {statementRest}
         </TrustStatement>
         <TrustMarks
           variants={staggerContainer}

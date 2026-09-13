@@ -154,6 +154,13 @@ export const gallerySections = [
     form: InstagramPostsForm,
   },
   {
+    key: 'galleryLabels',
+    title: SECTION_TERMS.galleryLabels.label,
+    description: SECTION_TERMS.galleryLabels.hint,
+    type: 'object',
+    form: GalleryLabelsForm,
+  },
+  {
     key: 'cta',
     title: SECTION_TERMS.cta.label,
     description: 'The closing invitation on the gallery page.',
@@ -420,6 +427,44 @@ function CtaForm({ value, onChange }) {
         value={value?.backgroundImage ?? ''}
         onChange={(backgroundImage) => patch({ backgroundImage })}
       />
+    </>
+  )
+}
+
+function GalleryLabelsForm({ value, onChange }) {
+  const patch = (next) => onChange((prev) => ({ ...prev, ...(typeof next === 'function' ? next(prev) : next) }))
+  const field = (key, label) => (
+    <TextField
+      label={label}
+      value={value?.[key] ?? ''}
+      onChange={(event) => patch({ [key]: event.target.value })}
+    />
+  )
+  return (
+    <>
+      <FieldRow>
+        {field('loadMore', 'Load more button')}
+        {field('viewFullStory', 'Story link')}
+      </FieldRow>
+      <FieldRow>
+        {field('endOfGallery', 'End of gallery message')}
+      </FieldRow>
+      <FieldRow>
+        {field('emptyStateTitle', 'Empty state title')}
+      </FieldRow>
+      <TextAreaField
+        label="Empty state message"
+        rows={2}
+        value={value?.emptyStateText ?? ''}
+        onChange={(event) => patch({ emptyStateText: event.target.value })}
+      />
+      <FieldRow>
+        {field('decorHighlights', 'Decor highlights heading')}
+        {field('servicesUsed', 'Services used heading')}
+      </FieldRow>
+      <FieldRow>
+        {field('insideTheEvent', 'Inside the event heading')}
+      </FieldRow>
     </>
   )
 }

@@ -20,7 +20,12 @@ import {
   WhyTitle,
 } from './WhyChooseUs.styles.js'
 
-function WhyChooseUs({ reasons, id = 'home-why-choose-us' }) {
+function WhyChooseUs({ reasons = [], content = {}, id = 'home-why-choose-us' }) {
+  const eyebrow = content.eyebrow ?? 'The difference is in the detail'
+  const title = content.title ?? 'Why us?'
+  const intro =
+    content.intro ??
+    'You bring the reason to celebrate. We bring the calm, creative thinking and considered details that make it all feel easy.'
   return (
     <WhyRoot id={id}>
       <WhyContainer>
@@ -31,10 +36,10 @@ function WhyChooseUs({ reasons, id = 'home-why-choose-us' }) {
             viewport={VIEWPORT_DEFAULT}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
-            <WhyEyebrow>The difference is in the detail</WhyEyebrow>
+            <WhyEyebrow>{eyebrow}</WhyEyebrow>
           </motion.div>
           <WhyTitle>
-            <TitleReveal>Why us?</TitleReveal>
+            <TitleReveal>{title}</TitleReveal>
           </WhyTitle>
           <motion.div
             initial={{ opacity: 0, y: 18 }}
@@ -42,9 +47,7 @@ function WhyChooseUs({ reasons, id = 'home-why-choose-us' }) {
             viewport={VIEWPORT_DEFAULT}
             transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
           >
-            <WhyCopy>
-              You bring the reason to celebrate. We bring the calm, creative thinking and considered details that make it all feel easy.
-            </WhyCopy>
+            <WhyCopy>{intro}</WhyCopy>
           </motion.div>
         </WhyLead>
         <ReasonsList

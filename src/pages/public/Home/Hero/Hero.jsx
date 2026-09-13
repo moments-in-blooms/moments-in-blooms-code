@@ -27,6 +27,7 @@ function Hero({ content = {}, id = 'home-hero' }) {
   const mediaY = useTransform(scrollY, [0, 800], [0, shouldReduceMotion ? 0 : 72])
   const image = content.image ?? {}
   const heroSrc = image.src ?? ''
+  const scrollCue = content.scrollCue ?? 'Scroll to discover'
   const sideNoteLines = String(content.sideNote ?? '')
     .split('\n')
     .map((line) => line.trim())
@@ -111,7 +112,7 @@ function Hero({ content = {}, id = 'home-hero' }) {
         href="#home-trusted-by"
         aria-label="Scroll to discover more"
       >
-        <span>Scroll to discover</span>
+        <span>{scrollCue}</span>
         <FiArrowDown aria-hidden="true" color="currentColor" size={14} />
       </ScrollCue>
       {image.credit ? <span className="sr-only">{image.credit}</span> : null}

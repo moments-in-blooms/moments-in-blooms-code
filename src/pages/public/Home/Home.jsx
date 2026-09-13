@@ -63,16 +63,32 @@ function Home() {
         jsonLd={jsonLdArray}
       />
       <Hero content={values.hero} id={HOME_SECTION_IDS.HERO} />
-      <TrustedBy marks={values.trustMarks} id={HOME_SECTION_IDS.TRUST} />
+      <TrustedBy
+        marks={values.trustMarks}
+        content={values.trustedBy}
+        id={HOME_SECTION_IDS.TRUST}
+      />
       <Services items={serviceCards} heading={values.servicesHeading} id={HOME_SECTION_IDS.SERVICES} />
       <GalleryPreview
         items={values.galleryItems}
         heading={values.galleryHeading}
         id={HOME_SECTION_IDS.GALLERY}
       />
-      <WhyChooseUs reasons={values.reasons} id={HOME_SECTION_IDS.WHY_US} />
-      <Testimonials items={values.testimonials} id={HOME_SECTION_IDS.TESTIMONIALS} />
-      <InstagramPreview items={values.instagramItems} id={HOME_SECTION_IDS.INSTAGRAM} />
+      <WhyChooseUs
+        reasons={values.reasons}
+        content={values.whyChooseUs}
+        id={HOME_SECTION_IDS.WHY_US}
+      />
+      <Testimonials
+        items={values.testimonials}
+        heading={values.testimonialsHeading}
+        id={HOME_SECTION_IDS.TESTIMONIALS}
+      />
+      <InstagramPreview
+        items={values.instagramItems}
+        heading={values.instagramHeading}
+        id={HOME_SECTION_IDS.INSTAGRAM}
+      />
       <CTA content={values.cta} id={HOME_SECTION_IDS.CTA} />
     </HomePage>
   )
