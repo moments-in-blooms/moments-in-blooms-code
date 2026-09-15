@@ -3,6 +3,7 @@ import { FiArrowRight, FiCheck } from "react-icons/fi";
 
 import Button from "../../../../../components/Button/index.js";
 import { buildBoothTabs } from "../../../../../services/photobooth.js";
+import SubcategoryBanner from "../SubcategoryBanner/index.js";
 
 import * as S from "./LuxePhotoboothShowcase.styles.js";
 
@@ -10,6 +11,7 @@ function LuxePhotoboothShowcase({ highlights, groups = [], labels = {} }) {
   const inclusionsLabel = labels.inclusions ?? 'Inclusions'
   const addOnsLabel = labels.optionalAddOns ?? 'Optional Add-Ons'
   const notePrefix = labels.notePrefix ?? 'Note:'
+  const priceStartsAt = labels.priceStartsAt ?? 'Price starts at'
   const [activeGroupId, setActiveGroupId] = useState(() => groups[0]?.id);
   const tabRefs = useRef({});
 
@@ -138,6 +140,15 @@ function LuxePhotoboothShowcase({ highlights, groups = [], labels = {} }) {
                 }
               : {})}
           >
+            <SubcategoryBanner
+              eyebrow="Booth"
+              title={visibleGroup?.title}
+              subtitle={visibleGroup?.subtitle}
+              description={visibleGroup?.description}
+              priceFrom={visibleGroup?.priceFrom}
+              image={visibleGroup?.image}
+              priceLabel={priceStartsAt}
+            />
             <S.PackageGrid>
               {visibleGroup.packages.map((pkg) => (
             <S.PackageCard key={pkg.id} $popular={pkg.popular}>

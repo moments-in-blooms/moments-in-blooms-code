@@ -78,60 +78,6 @@ export const ProductCategory = styled.div`
   gap: 2rem;
 `;
 
-export const ProductCategoryHeader = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-`;
-
-export const ProductCategoryTag = styled.span`
-  color: ${({ theme }) => theme.colors.primaryHover};
-  font-family: ${({ theme }) => theme.typography.uiFont};
-  font-size: 0.675rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-`;
-
-export const ProductCategoryTitle = styled.h4`
-  margin: 0;
-  color: ${({ theme }) => theme.colors.textPrimary};
-  font-family: ${({ theme }) => theme.typography.headingFont};
-  font-size: clamp(1.6rem, 2.8vw, 2.2rem);
-  font-weight: 500;
-  line-height: 1.2;
-`;
-
-export const ProductCategoryDesc = styled.p`
-  margin: 0;
-  max-width: 640px;
-  color: ${({ theme }) => theme.colors.textSecondary};
-  font-size: 0.95rem;
-  line-height: 1.7;
-`;
-
-export const ProductCategoryImage = styled.div`
-  overflow: hidden;
-  border-radius: ${({ theme }) => theme.radii.lg};
-  margin-bottom: 0.9rem;
-
-  img {
-    display: block;
-    width: 100%;
-    height: clamp(180px, 24vw, 300px);
-    object-fit: cover;
-  }
-`;
-
-export const ProductCategoryPrice = styled.span`
-  color: ${({ theme }) => theme.colors.primary};
-  font-family: ${({ theme }) => theme.typography.uiFont};
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-`;
-
 export const PackageGrid = styled(motion.div)`
   display: grid;
   grid-template-columns: 1fr;

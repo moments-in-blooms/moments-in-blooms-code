@@ -3,6 +3,7 @@ import { FiArrowRight } from "react-icons/fi";
 
 import Button from "../../../../../components/Button/index.js";
 import { BUTTON_VARIANTS } from "../../../../../constants/ui.js";
+import SubcategoryBanner from "../SubcategoryBanner/index.js";
 import SubcategoryNav from "../SubcategoryNav/index.js";
 import ItemDetailModal from "../ItemDetailModal/ItemDetailModal.jsx";
 import {
@@ -236,20 +237,6 @@ function FeaturedItemBlock({ item, contextLabel, onOpenDetail, labels = {} }) {
   );
 }
 
-function SubcategoryHeaderMedia({ section }) {
-  const imageSrc = getImageSrc(section?.image);
-  if (!imageSrc) return null;
-  return (
-    <S.CollectionImage>
-      <img
-        src={imageSrc}
-        alt={getImageAlt(section?.image, section?.title)}
-        loading="lazy"
-      />
-    </S.CollectionImage>
-  );
-}
-
 function DecorHireCatalogue({ collection, showcase = {}, labels = {} }) {  const [activeSubcategory, setActiveSubcategory] = useState("all");
   const [detail, setDetail] = useState(null);
   const priceStartsAt =
@@ -286,15 +273,14 @@ function DecorHireCatalogue({ collection, showcase = {}, labels = {} }) {  const
           aria-labelledby={`decor-subtab-${section.id}`}
           hidden={activeSubcategory !== "all" && activeSubcategory !== section.id}
         >
-          <S.CollectionHeader>
-            <SubcategoryHeaderMedia section={section} />
-            <S.CollectionTitle>{section.title}</S.CollectionTitle>
-            {section.subtitle ? <S.CollectionSubtitle>{section.subtitle}</S.CollectionSubtitle> : null}
-            {section.description ? <S.CollectionSubtitle>{section.description}</S.CollectionSubtitle> : null}
-            {section.priceFrom ? (
-              <S.CollectionPrice>{priceStartsAt} {section.priceFrom}</S.CollectionPrice>
-            ) : null}
-          </S.CollectionHeader>
+          <SubcategoryBanner
+            title={section.title}
+            subtitle={section.subtitle}
+            description={section.description}
+            priceFrom={section.priceFrom}
+            image={section.image}
+            priceLabel={priceStartsAt}
+          />
 
           {(() => {
             const allItems = Array.isArray(section.featuredItems)
