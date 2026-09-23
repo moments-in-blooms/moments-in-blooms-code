@@ -161,6 +161,37 @@ function ServiceCollectionsShowcase({
     [collectionIds, searchParams, setSearchParams],
   );
 
+  // Switching collections swaps the panel content above the bottom nav for
+  // content of a different height. With the previous panel removed, the
+  // browser loses its scroll anchor and keeps the numeric scroll offset, so
+  // the viewport lands near the top of the section (where the top nav is).
+  // Anchoring the viewport to the bottom nav before the swap and restoring
+  // its position after the commit keeps the page visually still — pages-like
+  // behavior instead of an involuntary scroll back to the top.
+  const bottomNavRef = useRef(null);
+  const handleSelectCollectionFromBottomNav = useCallback(
+    (nextId) => {
+      if (!collectionIds.has(nextId)) return;
+      if (typeof window === "undefined" || !bottomNavRef.current) {
+        handleSelectCollection(nextId);
+        return;
+      }
+      const navTop = bottomNavRef.current.getBoundingClientRect().top;
+      handleSelectCollection(nextId);
+      requestAnimationFrame(() => {
+        window.setTimeout(() => {
+          const nextNavTop =
+            bottomNavRef.current?.getBoundingClientRect().top ?? null;
+          if (nextNavTop == null) return;
+          const drift = nextNavTop - navTop;
+          if (Math.abs(drift) < 1) return;
+          window.scrollBy({ top: drift, left: 0, behavior: "auto" });
+        }, 0);
+      });
+    },
+    [collectionIds, handleSelectCollection],
+  );
+
   // Automatic per-category totals for the filter tabs (e.g. "4 collections",
   // "3 packages", "4 prize options"), derived from the live catalog so the
   // numbers follow CMS edits with no manual step. Hidden when a category
@@ -245,6 +276,23 @@ function ServiceCollectionsShowcase({
               />
             </S.CollectionPanel>
           ))}
+
+          {/*
+            Repeat of the top category nav, so users who finish reading a
+            collection can switch without scrolling back up. Selection state
+            lives in the URL, so both navs stay in sync; the local-selection
+            guard above keeps clicking here from scrolling the page.
+          */}
+          <S.BottomCollectionNav ref={bottomNavRef}>
+            <CollectionSelector
+              categories={selectorCategories}
+              activeId={activeCollection.id}
+              ariaLabel="Service Collections (bottom)"
+              idPrefix="collection-bottom"
+              panelIdPrefix="collection"
+              onSelect={handleSelectCollectionFromBottomNav}
+            />
+          </S.BottomCollectionNav>
         </S.ShowcaseSection>
       </Container>
     </Section>

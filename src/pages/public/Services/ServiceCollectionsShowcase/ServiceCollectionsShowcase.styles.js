@@ -6,6 +6,11 @@ export const ShowcaseSection = styled.div`
   gap: clamp(3rem, 6vw, 5rem);
 `;
 
+export const BottomCollectionNav = styled.div`
+  border-top: 1px solid ${({ theme }) => theme.colors.border};
+  padding-top: clamp(1.5rem, 3vw, 2.5rem);
+`;
+
 export const CollectionPanel = styled.div`
   display: flex;
   flex-direction: column;

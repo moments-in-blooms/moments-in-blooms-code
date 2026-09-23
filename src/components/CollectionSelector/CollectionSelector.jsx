@@ -25,6 +25,7 @@ function CollectionSelector({
   onSelect,
   ariaLabel = "Service Collections",
   idPrefix = "category",
+  panelIdPrefix = idPrefix,
 }) {
   const itemRefs = useRef({});
   const listRef = useRef(null);
@@ -109,7 +110,7 @@ function CollectionSelector({
                 type="button"
                 role="tab"
                 aria-selected={isActive}
-                aria-controls={`${idPrefix}-panel-${category.id}`}
+                aria-controls={`${panelIdPrefix}-panel-${category.id}`}
                 id={`${idPrefix}-tab-${category.id}`}
                 tabIndex={isActive ? 0 : -1}
                 ref={(node) => {

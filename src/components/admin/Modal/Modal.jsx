@@ -8,6 +8,16 @@ function Modal({ open = false, title, description, onClose, children, footer }) 
   const titleId = useId()
   const descriptionId = useId()
 
+  // Callers commonly pass inline onClose closures, so keep the latest in a ref
+  // and keep it out of the focus effect's deps. Otherwise every parent
+  // re-render (e.g. typing in a controlled input inside the modal) tears the
+  // effect down and re-runs it, stealing focus back to the close button after
+  // each keystroke.
+  const onCloseRef = useRef(onClose)
+  useEffect(() => {
+    onCloseRef.current = onClose
+  }, [onClose])
+
   useEffect(() => {
     if (!open) return undefined
 
@@ -18,7 +28,7 @@ function Modal({ open = false, title, description, onClose, children, footer }) 
 
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
-        onClose?.()
+        onCloseRef.current?.()
         return
       }
       if (event.key !== 'Tab') return
@@ -47,7 +57,7 @@ function Modal({ open = false, title, description, onClose, children, footer }) 
         previousActive.focus()
       }
     }
-  }, [open, onClose])
+  }, [open])
 
   if (!open) return null
 
