@@ -128,19 +128,39 @@ function ServiceCollectionsShowcase({
   // ScrollToTop ignores search-only changes, so an in-page footer click never
   // gets yanked to the page top either.
   const isLocalSelectionRef = useRef(false);
+  // Bottom-nav selection intent: the effect scrolls ONLY after the panel
+  // swap has committed. Pre-scheduling the scroll from the click handler
+  // races React Router's (transition-deferred) commit — at rAF time the
+  // target panel is still hidden (`display: none`), and scrollIntoView
+  // silently no-ops on hidden elements.
+  const pendingBottomScrollRef = useRef(null);
   const scrolledForRef = useRef(null);
   useEffect(() => {
     if (!isValidRequest || !id || !categories?.length) return;
+    const reduceMotion = window.matchMedia?.(
+      "(prefers-reduced-motion: reduce)",
+    )?.matches;
     if (isLocalSelectionRef.current) {
       isLocalSelectionRef.current = false;
       scrolledForRef.current = requestedCollectionId;
+      const pendingTarget = pendingBottomScrollRef.current;
+      pendingBottomScrollRef.current = null;
+      if (pendingTarget === requestedCollectionId) {
+        requestAnimationFrame(() => {
+          window.setTimeout(() => {
+            document
+              .getElementById(`collection-panel-${pendingTarget}`)
+              ?.scrollIntoView({
+                behavior: reduceMotion ? "auto" : "smooth",
+                block: "start",
+              });
+          }, 0);
+        });
+      }
       return;
     }
     if (scrolledForRef.current === requestedCollectionId) return;
     scrolledForRef.current = requestedCollectionId;
-    const reduceMotion = window.matchMedia?.(
-      "(prefers-reduced-motion: reduce)",
-    )?.matches;
     requestAnimationFrame(() => {
       window.setTimeout(() => {
         document
@@ -161,35 +181,33 @@ function ServiceCollectionsShowcase({
     [collectionIds, searchParams, setSearchParams],
   );
 
-  // Switching collections swaps the panel content above the bottom nav for
-  // content of a different height. With the previous panel removed, the
-  // browser loses its scroll anchor and keeps the numeric scroll offset, so
-  // the viewport lands near the top of the section (where the top nav is).
-  // Anchoring the viewport to the bottom nav before the swap and restoring
-  // its position after the commit keeps the page visually still — pages-like
-  // behavior instead of an involuntary scroll back to the top.
-  const bottomNavRef = useRef(null);
+  // Selecting from the bottom nav lands the visitor at the start of the
+  // newly selected category's content (just below the top nav). The actual
+  // scroll happens in the effect above, after the panel swap has committed.
   const handleSelectCollectionFromBottomNav = useCallback(
     (nextId) => {
-      if (!collectionIds.has(nextId)) return;
-      if (typeof window === "undefined" || !bottomNavRef.current) {
-        handleSelectCollection(nextId);
+      if (nextId === requestedCollectionId) {
+        // Same-category click: the URL won't change, so the effect above
+        // won't re-run — scroll directly.
+        const reduceMotion = window.matchMedia?.(
+          "(prefers-reduced-motion: reduce)",
+        )?.matches;
+        requestAnimationFrame(() => {
+          window.setTimeout(() => {
+            document
+              .getElementById(`collection-panel-${nextId}`)
+              ?.scrollIntoView({
+                behavior: reduceMotion ? "auto" : "smooth",
+                block: "start",
+              });
+          }, 0);
+        });
         return;
       }
-      const navTop = bottomNavRef.current.getBoundingClientRect().top;
+      pendingBottomScrollRef.current = nextId;
       handleSelectCollection(nextId);
-      requestAnimationFrame(() => {
-        window.setTimeout(() => {
-          const nextNavTop =
-            bottomNavRef.current?.getBoundingClientRect().top ?? null;
-          if (nextNavTop == null) return;
-          const drift = nextNavTop - navTop;
-          if (Math.abs(drift) < 1) return;
-          window.scrollBy({ top: drift, left: 0, behavior: "auto" });
-        }, 0);
-      });
     },
-    [collectionIds, handleSelectCollection],
+    [handleSelectCollection, requestedCollectionId],
   );
 
   // Automatic per-category totals for the filter tabs (e.g. "4 collections",
@@ -283,7 +301,7 @@ function ServiceCollectionsShowcase({
             lives in the URL, so both navs stay in sync; the local-selection
             guard above keeps clicking here from scrolling the page.
           */}
-          <S.BottomCollectionNav ref={bottomNavRef}>
+          <S.BottomCollectionNav>
             <CollectionSelector
               categories={selectorCategories}
               activeId={activeCollection.id}
