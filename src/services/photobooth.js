@@ -32,7 +32,10 @@ export function groupBoothPackages(category) {
   for (const subcategory of asList(category.subcategories)) {
     const packages = asList(subcategory.items)
     if (packages.length === 0) continue
+    // Carry the full sub-category through so the showroom can render its
+    // image, subtitle, description and price-from next to the packages.
     groups.push({
+      ...subcategory,
       id: String(subcategory.id ?? ''),
       title: subcategory.title ?? '',
       packages,

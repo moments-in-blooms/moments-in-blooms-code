@@ -15,6 +15,16 @@ const studioPackage = {
   inclusions: ['Studio booth', 'Prints'],
 }
 
+const mirrorSubcategory = {
+  id: 'sub-mirror',
+  title: 'Luxe Mirror Booth',
+  subtitle: 'Interactive mirror',
+  description: 'Our flagship mirror experience',
+  priceFrom: '$600',
+  image: { src: 'https://example.com/mirror.jpg', alt: 'Mirror booth' },
+  items: [mirrorPackage],
+}
+
 describe('groupBoothPackages', () => {
   it('groups subcategory items under their booth titles', () => {
     const groups = groupBoothPackages({
@@ -22,7 +32,7 @@ describe('groupBoothPackages', () => {
       title: 'Luxe Photobooth',
       items: [],
       subcategories: [
-        { id: 'sub-mirror', title: 'Luxe Mirror Booth', items: [mirrorPackage] },
+        mirrorSubcategory,
         { id: 'sub-studio', title: 'Luxe Studio Booth', items: [studioPackage] },
       ],
     })
@@ -33,6 +43,40 @@ describe('groupBoothPackages', () => {
     expect(groups[0].packages[0]).toMatchObject({ id: 'package-mirror-2h', name: 'MIRROR CLASSIC' })
     expect(groups[1]).toMatchObject({ id: 'sub-studio', title: 'Luxe Studio Booth' })
     expect(groups[1].packages[0]).toMatchObject({ id: 'package-studio-3h' })
+  })
+
+  it('carries the subcategory image and header copy through to the group', () => {
+    const groups = groupBoothPackages({
+      id: 'luxe-photobooth',
+      title: 'Luxe Photobooth',
+      items: [],
+      subcategories: [mirrorSubcategory],
+    })
+
+    expect(groups[0]).toMatchObject({
+      id: 'sub-mirror',
+      title: 'Luxe Mirror Booth',
+      subtitle: 'Interactive mirror',
+      description: 'Our flagship mirror experience',
+      priceFrom: '$600',
+      image: { src: 'https://example.com/mirror.jpg', alt: 'Mirror booth' },
+    })
+  })
+
+  it('keeps the direct-items group as a plain untitled group', () => {
+    const groups = groupBoothPackages({
+      id: 'luxe-photobooth',
+      title: 'Luxe Photobooth',
+      items: [mirrorPackage],
+      subcategories: [],
+    })
+
+    expect(groups).toHaveLength(1)
+    expect(groups[0]).toEqual({
+      id: 'luxe-photobooth',
+      title: '',
+      packages: [mirrorPackage],
+    })
   })
 
   it('falls back to a single untitled group for direct items', () => {

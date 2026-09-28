@@ -9,6 +9,7 @@ import {
   VIEWPORT_DEFAULT,
 } from "../../../../../styles/animations.js";
 import ItemDetailModal from "../ItemDetailModal/ItemDetailModal.jsx";
+import SubcategoryBanner from "../SubcategoryBanner/index.js";
 import { toBlissfulPackageDetail } from "../itemDetail.js";
 
 import * as S from "./BlissfulNestShowcase.styles.js";
@@ -59,20 +60,6 @@ function PackageCard({ pkg, contextLabel, onOpenDetail, featuredBadge = 'Feature
   );
 }
 
-function SubcategoryHeaderMedia({ subcategory }) {
-  const imageSrc = getImageSrc(subcategory?.image);
-  if (!imageSrc) return null;
-  return (
-    <S.ProductCategoryImage>
-      <img
-        src={imageSrc}
-        alt={getImageAlt(subcategory?.image, subcategory?.title)}
-        loading="lazy"
-      />
-    </S.ProductCategoryImage>
-  );
-}
-
 function BlissfulNestShowcase({ collection, intro, labels = {} }) {
   const subcategories = Array.isArray(collection?.subcategories)
     ? collection.subcategories
@@ -117,17 +104,14 @@ function BlissfulNestShowcase({ collection, intro, labels = {} }) {
 
       {subcategories.map((subcategory) => (
         <S.ProductCategory key={subcategory.id}>
-          <S.ProductCategoryHeader>
-            <SubcategoryHeaderMedia subcategory={subcategory} />
-            <S.ProductCategoryTag>{currentLabel}</S.ProductCategoryTag>
-            <S.ProductCategoryTitle>{subcategory.title}</S.ProductCategoryTitle>
-            {subcategory.description && (
-              <S.ProductCategoryDesc>{subcategory.description}</S.ProductCategoryDesc>
-            )}
-            {subcategory.priceFrom ? (
-              <S.ProductCategoryPrice>{priceStartsAt} {subcategory.priceFrom}</S.ProductCategoryPrice>
-            ) : null}
-          </S.ProductCategoryHeader>
+          <SubcategoryBanner
+            eyebrow={currentLabel}
+            title={subcategory.title}
+            description={subcategory.description}
+            priceFrom={subcategory.priceFrom}
+            image={subcategory.image}
+            priceLabel={priceStartsAt}
+          />
 
           <S.PackageGrid
             variants={staggerContainer}
@@ -149,11 +133,11 @@ function BlissfulNestShowcase({ collection, intro, labels = {} }) {
       ))}
       {directItems.length > 0 ? (
         <S.ProductCategory>
-          <S.ProductCategoryHeader>
-            <S.ProductCategoryTag>{moreLabel}</S.ProductCategoryTag>
-            <S.ProductCategoryTitle>{collection.title}</S.ProductCategoryTitle>
-          </S.ProductCategoryHeader>
-
+          <SubcategoryBanner
+            eyebrow={moreLabel}
+            title={collection.title}
+            image={null}
+          />
           <S.PackageGrid
             variants={staggerContainer}
             initial="hidden"
