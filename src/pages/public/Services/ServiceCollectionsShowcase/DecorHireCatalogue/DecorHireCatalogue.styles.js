@@ -298,3 +298,44 @@ export const SplitContent = styled.div`
   align-items: flex-start;
   gap: 0.75rem;
 `;
+
+export const InclusionsBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+`;
+
+export const InclusionsTitle = styled.span`
+  color: ${({ theme }) => theme.colors.textSecondary};
+  font-family: ${({ theme }) => theme.typography.uiFont};
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+`;
+
+export const InclusionsList = styled.ul`
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    color: ${({ theme }) => theme.colors.textSecondary};
+    font-size: 0.9rem;
+    line-height: 1.5;
+
+    svg {
+      color: ${({ theme }) => theme.colors.primary};
+      flex-shrink: 0;
+      margin-top: 0.15rem;
+    }
+  }
+`;
+

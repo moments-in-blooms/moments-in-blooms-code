@@ -1,7 +1,7 @@
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
-import { FiArrowRight, FiGift, FiX } from 'react-icons/fi'
+import { FiArrowRight, FiCheck, FiGift, FiX } from 'react-icons/fi'
 import { EASE_LUXE } from '../../../../../styles/animations.js'
 import Button from '../../../../../components/Button/index.js'
 import * as S from './ItemDetailModal.styles.js'
@@ -131,12 +131,15 @@ function ItemDetailModal({ item, contextLabel, onClose, ctaFallback = 'Enquire N
 
               {item.items?.length > 0 ? (
                 <S.ItemList>
-                  {item.items.map((entry) => (
-                    <li key={entry}>
-                      <FiGift aria-hidden="true" />
-                      <span>{entry}</span>
-                    </li>
-                  ))}
+                  {item.items.map((entry) => {
+                    const ItemIcon = item.itemsIcon === 'check' ? FiCheck : FiGift
+                    return (
+                      <li key={entry}>
+                        <ItemIcon aria-hidden="true" />
+                        <span>{entry}</span>
+                      </li>
+                    )
+                  })}
                 </S.ItemList>
               ) : null}
 

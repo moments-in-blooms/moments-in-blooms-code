@@ -46,7 +46,7 @@ import {
   upsertItem,
   validateItem,
 } from './catalog.js'
-import { BlissfulNestPackageForm, PhotoboothPackageForm } from './itemForms.jsx'
+import { BlissfulNestPackageForm, PhotoboothPackageForm, StringsRepeater } from './itemForms.jsx'
 
 const clone = (value) => (value == null ? null : JSON.parse(JSON.stringify(value)))
 
@@ -393,6 +393,13 @@ function DecorItemForm({ draft, patch, errors }) {
           rows={4}
           value={draft?.description ?? ''}
           onChange={(event) => patch({ ...draft, description: event.target.value })}
+        />
+        <StringsRepeater
+          label="Inclusion"
+          items={draft?.inclusions ?? []}
+          onChange={(inclusions) => patch({ ...draft, inclusions })}
+          addLabel="Add inclusion"
+          placeholder="Floral display stands"
         />
         <TextField
           label="Price"

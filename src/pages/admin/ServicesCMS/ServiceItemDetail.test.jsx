@@ -71,3 +71,23 @@ describe('ServiceItemDetail back navigation', () => {
     expect(luxeTab.getAttribute('aria-selected')).toBe('true')
   })
 })
+
+describe('inclusion editor', () => {
+  // Regression: the modal focus effect used to depend on the inline onClose
+  // prop, so every keystroke re-ran it and moved focus to the close button.
+  it('keeps focus in the inclusion field while typing continuously', () => {
+    renderAt('/admin/services/items/signature-package')
+
+    fireEvent.click(screen.getByRole('button', { name: /Add inclusion/i }))
+
+    const input = screen.getByLabelText(/Inclusion/)
+    input.focus()
+    expect(document.activeElement).toBe(input)
+
+    for (const value of ['F', 'Fl', 'Flo', 'Flor']) {
+      fireEvent.change(input, { target: { value } })
+      expect(input.value).toBe(value)
+      expect(document.activeElement).toBe(input)
+    }
+  })
+})

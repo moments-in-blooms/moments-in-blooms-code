@@ -1,5 +1,6 @@
 import { useContent } from '../../../hooks/useContent.js'
 import SEO from '../../../components/SEO/index.js'
+import { INSTAGRAM_PROFILE_URL } from '../../../constants/navigation.js'
 import { buildBreadcrumbJsonLd, buildImageGalleryJsonLd } from '../../../utils/seo.js'
 import { useGallery } from './hooks/index.js'
 import { useLightbox } from './hooks/index.js'
@@ -82,7 +83,11 @@ function Gallery() {
         <FeaturedStory content={featuredStoryContent} labels={galleryLabels} />
       ) : null}
 
-      <InstagramPreview content={instagramContent} posts={instagramPosts} />
+      <InstagramPreview
+        content={instagramContent}
+        posts={instagramPosts}
+        profileUrl={INSTAGRAM_PROFILE_URL}
+      />
 
       <GalleryCTA content={cta} />
 

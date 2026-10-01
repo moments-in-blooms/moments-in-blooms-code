@@ -313,6 +313,7 @@ export function createItemDraft(kind) {
     image: { src: '', alt: '' },
     options: [],
     gallery: [],
+    inclusions: [],
   }
 }
 

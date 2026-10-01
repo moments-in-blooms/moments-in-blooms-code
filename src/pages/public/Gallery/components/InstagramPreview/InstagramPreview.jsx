@@ -12,7 +12,7 @@ const fadeInUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
 }
 
-function InstagramPreview({ content, posts }) {
+function InstagramPreview({ content, posts, profileUrl }) {
   return (
     <S.InstagramSection>
       <S.InstagramContainer>
@@ -30,7 +30,12 @@ function InstagramPreview({ content, posts }) {
 
         <S.InstagramGrid>
           {posts.map((post, index) => (
-            <InstagramPost key={post.id} post={post} index={index} />
+            <InstagramPost
+              key={post.id}
+              post={post}
+              index={index}
+              profileUrl={profileUrl}
+            />
           ))}
         </S.InstagramGrid>
       </S.InstagramContainer>
@@ -38,11 +43,15 @@ function InstagramPreview({ content, posts }) {
   )
 }
 
-function InstagramPost({ post, index }) {
+function InstagramPost({ post, index, profileUrl }) {
   const { src, onError } = useImageFallback(post.src, GALLERY_FALLBACK_IMAGES.instagram)
 
   return (
     <S.InstagramItem
+      href={profileUrl}
+      target="_blank"
+      rel="noreferrer"
+      aria-label="Open Moments in Blooms on Instagram"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}

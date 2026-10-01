@@ -94,6 +94,10 @@ export const footerContact = Object.freeze({
   phone: '+61 3 0000 0000',
 })
 
+// Public Instagram profile — distinct from the footer's DM link above.
+// Instagram galleries/CTAs link here (see buildInstagramProfileUrl).
+export const INSTAGRAM_PROFILE_URL = 'https://www.instagram.com/momentsinblooms/'
+
 export const footerSocialLinks = Object.freeze([
   {
     label: 'Instagram',

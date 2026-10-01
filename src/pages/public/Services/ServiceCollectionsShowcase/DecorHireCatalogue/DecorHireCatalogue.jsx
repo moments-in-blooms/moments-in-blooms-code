@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { FiArrowRight } from "react-icons/fi";
+import { FiArrowRight, FiCheck } from "react-icons/fi";
 
 import Button from "../../../../../components/Button/index.js";
 import { BUTTON_VARIANTS } from "../../../../../constants/ui.js";
@@ -26,6 +26,29 @@ const getImageAlt = (image, fallback = "") => {
   return image.alt || fallback;
 };
 
+/**
+ * CMS inclusions for a standard/decor item, rendered one per line. Reads the
+ * same `inclusions` string array the admin editor writes; renders nothing when
+ * the list is empty so items without inclusions look unchanged.
+ */
+function InclusionsList({ items }) {
+  const entries = Array.isArray(items) ? items.filter(Boolean) : [];
+  if (entries.length === 0) return null;
+  return (
+    <S.InclusionsBlock>
+      <S.InclusionsTitle>Inclusions</S.InclusionsTitle>
+      <S.InclusionsList>
+        {entries.map((entry, index) => (
+          <li key={`${entry}-${index}`}>
+            <FiCheck aria-hidden="true" />
+            <span>{entry}</span>
+          </li>
+        ))}
+      </S.InclusionsList>
+    </S.InclusionsBlock>
+  );
+}
+
 function FeaturedItemBlock({ item, contextLabel, onOpenDetail, labels = {} }) {
   const featuredTag = labels.featuredCollection ?? 'Featured Collection'
   const detailsLabel = labels.viewFullDetails ?? 'View full details'
@@ -45,6 +68,8 @@ function FeaturedItemBlock({ item, contextLabel, onOpenDetail, labels = {} }) {
     ? getImageAlt(item.image, item.name)
     : getImageAlt(item.options?.[0]?.image, item.name);
   const hasOptionMain = Boolean(optionMainSrc);
+
+  const inclusionsNode = <InclusionsList items={item.inclusions} />;
 
   const openFeatureDetail = () =>
     onOpenDetail(
@@ -77,6 +102,7 @@ function FeaturedItemBlock({ item, contextLabel, onOpenDetail, labels = {} }) {
               {item.tagline ? <S.CollectionSubtitle>{item.tagline}</S.CollectionSubtitle> : null}
               {item.description ? <S.CollectionSubtitle>{item.description}</S.CollectionSubtitle> : null}
               {item.dimensions ? <S.OptionSpecs>{item.dimensions}</S.OptionSpecs> : null}
+              {inclusionsNode}
               <S.SplitActions>
                 <Button
                   type="button"
@@ -97,6 +123,7 @@ function FeaturedItemBlock({ item, contextLabel, onOpenDetail, labels = {} }) {
             {item.tagline ? <S.CollectionSubtitle>{item.tagline}</S.CollectionSubtitle> : null}
             {item.description ? <S.CollectionSubtitle>{item.description}</S.CollectionSubtitle> : null}
             {item.dimensions ? <S.OptionSpecs>{item.dimensions}</S.OptionSpecs> : null}
+            {inclusionsNode}
           </div>
         )}
         <S.OptionGrid>
@@ -153,6 +180,7 @@ function FeaturedItemBlock({ item, contextLabel, onOpenDetail, labels = {} }) {
               {priceNode}
               {item.tagline ? <S.CollectionSubtitle>{item.tagline}</S.CollectionSubtitle> : null}
               {item.description ? <S.CollectionSubtitle>{item.description}</S.CollectionSubtitle> : null}
+              {inclusionsNode}
               <S.SplitActions>
                 <Button
                   type="button"
@@ -171,6 +199,7 @@ function FeaturedItemBlock({ item, contextLabel, onOpenDetail, labels = {} }) {
             {priceNode}
             {item.tagline ? <S.CollectionSubtitle>{item.tagline}</S.CollectionSubtitle> : null}
             {item.description ? <S.CollectionSubtitle>{item.description}</S.CollectionSubtitle> : null}
+            {inclusionsNode}
           </S.FeaturedIntro>
         )}
         <S.GalleryGrid>
@@ -208,6 +237,7 @@ function FeaturedItemBlock({ item, contextLabel, onOpenDetail, labels = {} }) {
               {priceNode}
               {item.tagline ? <S.CollectionSubtitle>{item.tagline}</S.CollectionSubtitle> : null}
               {item.description ? <S.CollectionSubtitle>{item.description}</S.CollectionSubtitle> : null}
+              {inclusionsNode}
               <S.SplitActions>
                 <Button to="/contact" variant="primary" size="medium">
                   <span>{requestLabel}</span>
@@ -233,6 +263,7 @@ function FeaturedItemBlock({ item, contextLabel, onOpenDetail, labels = {} }) {
       <S.FeaturedName>{item.name}</S.FeaturedName>
       {priceNode}
       {item.description ? <S.CollectionSubtitle>{item.description}</S.CollectionSubtitle> : null}
+      {inclusionsNode}
     </S.FeaturedFeature>
   );
 }

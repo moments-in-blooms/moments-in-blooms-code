@@ -4,7 +4,7 @@ import ImageField from '../../../components/admin/ImageField/index.js'
 import Repeater from '../../../components/admin/Repeater/index.js'
 import ToggleSwitch from '../../../components/admin/ToggleSwitch/index.js'
 
-const StringsRepeater = ({ label, items, onChange, addLabel, placeholder }) => (
+export const StringsRepeater = ({ label, items, onChange, addLabel, placeholder }) => (
   <Repeater
     items={items}
     onChange={onChange}

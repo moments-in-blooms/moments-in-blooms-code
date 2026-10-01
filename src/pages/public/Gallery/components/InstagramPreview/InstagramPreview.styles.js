@@ -48,12 +48,20 @@ export const InstagramGrid = styled.div`
   }
 `
 
-export const InstagramItem = styled(motion.div)`
+export const InstagramItem = styled(motion.a)`
+  display: block;
   position: relative;
   aspect-ratio: 1;
+  color: inherit;
+  text-decoration: none;
   border-radius: ${({ theme }) => theme.radii.md};
   overflow: hidden;
   cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.focus};
+    outline-offset: 2px;
+  }
 `
 
 export const InstagramImage = styled.img`

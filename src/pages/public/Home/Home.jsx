@@ -4,6 +4,7 @@ import useSiteSettings from '../../../hooks/useSiteSettings.js'
 import SEO from '../../../components/SEO/index.js'
 import { HOME_SECTION_IDS } from '../../../constants/homepage.js'
 import { buildServiceCards } from '../../../services/homepageCards.js'
+import { buildInstagramProfileUrl } from '../../../utils/social.js'
 import { buildBreadcrumbJsonLd, buildLocalBusinessJsonLd } from '../../../utils/seo.js'
 import CTA from './CTA/CTA.jsx'
 import GalleryPreview from './GalleryPreview/GalleryPreview.jsx'
@@ -73,6 +74,7 @@ function Home() {
       <InstagramPreview
         items={values.instagramItems}
         heading={values.instagramHeading}
+        profileUrl={buildInstagramProfileUrl(values.instagramHeading?.handle)}
         id={HOME_SECTION_IDS.INSTAGRAM}
       />
       <CTA content={values.cta} id={HOME_SECTION_IDS.CTA} />

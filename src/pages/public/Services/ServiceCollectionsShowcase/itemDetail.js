@@ -56,7 +56,8 @@ export const toDecorFeatureDetail = (item, mainImage, defaultCta = 'Request a Qu
   price: item?.price ?? null,
   specs: item?.dimensions ?? null,
   description: item?.description ?? null,
-  items: [],
+  items: Array.isArray(item?.inclusions) ? item.inclusions : [],
+  itemsIcon: 'check',
   ctaLabel: defaultCta,
 })
 
