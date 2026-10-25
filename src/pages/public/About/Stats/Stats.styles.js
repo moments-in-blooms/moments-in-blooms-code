@@ -70,6 +70,9 @@ export const StatLabel = styled.h3`
 `
 
 export const StatDescription = styled.p`
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   margin: 0;
   color: ${({ theme }) => theme.colors.textSecondary};
   font-size: 0.875rem;

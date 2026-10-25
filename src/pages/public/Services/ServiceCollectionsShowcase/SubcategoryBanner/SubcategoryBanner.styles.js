@@ -98,6 +98,9 @@ export const Subtitle = styled.p`
 `
 
 export const Description = styled.p`
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   margin: 0;
   max-width: 560px;
   color: ${({ $onImage, theme }) =>

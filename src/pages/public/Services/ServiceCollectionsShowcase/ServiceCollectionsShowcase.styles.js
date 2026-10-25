@@ -85,6 +85,9 @@ export const CollectionHeroTitle = styled.h3`
 `;
 
 export const CollectionHeroDesc = styled.p`
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   margin: 0 0 ${({ theme }) => theme.spacing.lg};
   color: ${({ theme }) => theme.colors.textSecondary};
   font-size: 1.05rem;

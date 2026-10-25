@@ -48,6 +48,9 @@ export const CTATitle = styled.h2`
 `
 
 export const CTADescription = styled.p`
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   max-width: 32rem;
   margin-top: ${({ theme }) => theme.spacing.xl};
   color: ${({ theme }) => theme.colors.textSecondary};

@@ -58,6 +58,9 @@ export const ExclusiveFramesTitle = styled.h4`
 `;
 
 export const ExclusiveFramesDesc = styled.p`
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   margin: 0 0 1.5rem;
   color: rgba(255, 255, 255, 0.8);
   font-size: 1rem;
@@ -122,6 +125,9 @@ export const StudioTitle = styled.h4`
 `;
 
 export const StudioDesc = styled.p`
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   margin: 0;
   max-width: 650px;
   color: ${({ theme }) => theme.colors.textSecondary};
@@ -158,6 +164,9 @@ export const StudioFeatureCard = styled.div`
     color: ${({ theme }) => theme.colors.textSecondary};
     font-size: 0.875rem;
     line-height: 1.6;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
   }
 `;
 
@@ -186,6 +195,9 @@ export const PricingTitle = styled.h4`
 `;
 
 export const PricingDesc = styled.p`
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   margin: 0;
   color: ${({ theme }) => theme.colors.textSecondary};
   font-size: 1rem;

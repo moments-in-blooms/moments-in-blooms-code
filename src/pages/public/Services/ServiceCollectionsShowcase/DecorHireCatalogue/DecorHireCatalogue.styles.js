@@ -53,6 +53,9 @@ export const CollectionPrice = styled.span`
 `;
 
 export const CollectionSubtitle = styled.p`
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   margin: 0;
   color: ${({ theme }) => theme.colors.textSecondary};
   font-size: 0.95rem;
@@ -182,6 +185,9 @@ export const OptionSpecs = styled.span`
 `;
 
 export const OptionDesc = styled.p`
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   margin: 0;
   color: ${({ theme }) => theme.colors.textSecondary};
   font-size: 0.85rem;

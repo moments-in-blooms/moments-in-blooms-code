@@ -192,6 +192,9 @@ export const ItemSpecs = styled.span`
 `
 
 export const ItemDescription = styled.p`
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   margin: 0;
   color: ${({ theme }) => theme.colors.textSecondary};
   font-size: 1rem;

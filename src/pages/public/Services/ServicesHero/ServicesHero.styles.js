@@ -89,6 +89,9 @@ export const HeroTitle = styled.h1`
 `
 
 export const HeroDescription = styled(motion.p)`
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   margin: 0 0 ${({ theme }) => theme.spacing.xl};
   color: rgba(255, 255, 255, 0.92);
   font-size: clamp(1.05rem, 1.6vw, 1.25rem);

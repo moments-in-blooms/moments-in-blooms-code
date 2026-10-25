@@ -52,6 +52,9 @@ export const InfoTitle = styled.h2`
 `
 
 export const InfoDescription = styled.p`
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   margin: 0;
   max-width: 40ch;
   color: ${({ theme }) => theme.colors.textSecondary};

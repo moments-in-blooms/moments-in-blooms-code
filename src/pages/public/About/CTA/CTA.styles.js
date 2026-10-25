@@ -80,6 +80,9 @@ export const CTATitle = styled.h2`
 `
 
 export const CTADescription = styled.p`
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   margin: 0 0 ${({ theme }) => theme.spacing.xl};
   color: var(--section-text-secondary, ${({ theme }) => theme.colors.textSecondary});
   font-size: clamp(1.05rem, 1.5vw, 1.2rem);

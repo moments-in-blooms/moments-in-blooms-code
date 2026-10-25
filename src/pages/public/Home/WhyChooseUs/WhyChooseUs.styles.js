@@ -115,6 +115,9 @@ export const ReasonTitle = styled.h3`
 `
 
 export const ReasonDescription = styled.p`
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   max-width: 31rem;
   color: ${({ theme }) => theme.colors.textSecondary};
   font-size: 0.875rem;

@@ -154,6 +154,9 @@ export const ServiceTitle = styled.h3`
 `
 
 export const ServiceDescription = styled.p`
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   max-width: 18rem;
   color: ${({ theme }) => theme.colors.textSecondary};
   font-size: 0.875rem;

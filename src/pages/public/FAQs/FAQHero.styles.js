@@ -45,6 +45,9 @@ export const FaqHeroTitle = styled.h1`
 `
 
 export const FaqHeroDescription = styled.p`
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   font-family: ${({ theme }) => theme.typography.bodyFont};
   font-size: clamp(1rem, 1.5vw, 1.2rem);
   line-height: 1.8;

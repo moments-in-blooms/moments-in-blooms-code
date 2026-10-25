@@ -70,6 +70,9 @@ export const HeroTitle = styled.h1`
 `
 
 export const HeroDescription = styled.p`
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   font-family: ${({ theme }) => theme.typography.bodyFont};
   font-size: clamp(1rem, 1.5vw, 1.25rem);
   line-height: 1.7;

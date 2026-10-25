@@ -89,6 +89,9 @@ export const HeroTitle = styled.h1`
 `
 
 export const HeroDescription = styled.p`
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   margin: 0 0 ${({ theme }) => theme.spacing.lg};
   color: rgba(255, 255, 255, 0.92);
   font-size: clamp(1rem, 1.6vw, 1.2rem);

@@ -92,6 +92,9 @@ export const ValueTitle = styled.h3`
 `
 
 export const ValueDescription = styled.p`
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   margin: 0;
   color: ${({ theme }) => theme.colors.textSecondary};
   font-size: 0.95rem;

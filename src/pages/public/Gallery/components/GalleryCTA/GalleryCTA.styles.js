@@ -34,6 +34,9 @@ export const CTATitle = styled.h2`
 `
 
 export const CTADescription = styled.p`
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   font-family: ${({ theme }) => theme.typography.bodyFont};
   font-size: clamp(1rem, 1.3vw, 1.25rem);
   line-height: 1.7;

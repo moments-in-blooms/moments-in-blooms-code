@@ -37,6 +37,9 @@ export const CtaTitle = styled.h2`
 `
 
 export const CtaDescription = styled.p`
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   max-width: 560px;
   margin: 0 auto;
   color: rgba(26, 26, 26, 0.78);

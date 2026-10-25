@@ -37,6 +37,9 @@ export const FaqFilterTitle = styled.h2`
 `
 
 export const FaqFilterDescription = styled.p`
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   color: ${({ theme }) => theme.colors.textSecondary};
   font-size: 0.9rem;
   line-height: 1.7;

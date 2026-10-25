@@ -82,6 +82,9 @@ export const HeroTitle = styled.h1`
 `
 
 export const HeroDescription = styled.p`
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   max-width: 31rem;
   color: ${({ theme }) => theme.colors.textPrimary};
   font-size: clamp(1rem, 1.7vw, 1.2rem);

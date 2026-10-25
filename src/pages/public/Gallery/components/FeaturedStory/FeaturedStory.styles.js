@@ -110,6 +110,9 @@ export const StoryTitle = styled.h3`
 `
 
 export const StoryDescription = styled.p`
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   font-family: ${({ theme }) => theme.typography.bodyFont};
   font-size: 1rem;
   line-height: 1.7;
